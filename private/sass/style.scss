@@ -1,0 +1,842 @@
+//////////////////////// Sass Prerequisites //////////////////////////
+// scrollbar and selection restyling
+@import "_scrollbar";
+@import "_defaults";
+///////////////////// Main Styling /////////////////////////////////
+/*///////////////////////// prerequisites /////////////////////////*/
+$terquis: rgba(0, 255, 160, 1);
+$grey: rgba(150,150,150,1);
+
+a {
+	text-decoration: none;
+	color: inherit;
+	font-weight: bold;
+	box-shadow: 0 2px 0 0 $darkBlue;
+	border-radius: 0 0 2px 2px;
+	line-height: 22px;
+}
+
+body {
+	margin: 0;
+	background: $lightBlue;
+	color: rgba(40, 40, 40, 1);
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 0;
+	padding: 0;
+	font-weight: normal;
+}
+
+header, section, footer {
+	display: block;
+}
+/* recycle styles */
+.parent {
+	position: relative;
+}
+section {
+	position: relative;
+	padding: 5em 0;
+}
+.page-wrap {
+	position: relative;
+	display: block;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+.img-contain img{
+	max-width: 100%;
+	max-height: 100%;
+}
+.img-cover img{
+	max-width: 100%;
+	text-align: center;
+}
+.black-font {
+	color: black;
+}
+.mid-blue {
+	color: $midBlue;
+}
+.mid-blue-bg {
+	background: $midBlue;
+}
+.dim-blue {
+	color: $dimBlue;
+}
+.dim-blue-bg {
+	background: $dimBlue;
+}
+.light-blue {
+	color: $lightBlue;
+}
+.light-blue-bg {
+	background: $lightBlue;
+}
+.very-light-blue {
+	color: $veryLightBlue;
+}
+.very-light-blue-bg {
+	background: $veryLightBlue;
+}
+.dark-blue {
+	color: $darkBlue;
+}
+.dark-blue-bg {
+	background: $darkBlue;
+}
+.underline {
+	text-decoration: underline;
+}
+.left-justify {
+	text-align: left;
+}
+.center-justify {
+	text-align: center;
+}
+.right-justify {
+	text-align: right;
+}
+.align-top {
+	vertical-align: top;
+}
+.align-middle {
+	vertical-align: text-middle;
+}
+.align-bottom {
+	vertical-align: bottom;
+}
+.bold {
+	font-weight: bold;
+}
+.block {
+	display: block;
+}
+.inline-block {
+	display: inline-block;
+}
+.hidden {
+	display: none;
+}
+.invisible {
+	visibility: hidden;
+}
+.line-spacer {
+	margin: .5em auto;
+	max-width: 50%;
+	height: 4px;
+}
+.fillout {
+	width: 100%;
+	height: 100%;
+}
+.form-box {
+	max-width: 20em;
+	margin: 0 auto;
+	& input, textarea, button, select {
+		width: 100%;
+		padding: .5em;
+		margin: .5em 0;
+		border-radius: .5em;
+		border: none;
+		background: $veryLightBlue;
+	}
+	& button {
+		background: $dimBlue;
+		color: $veryLightBlue;
+		cursor: pointer;
+		&:hover {
+			background: $tintedBlue;
+		}
+	}
+}
+/* column styles */
+.col-4-3-2-1 {
+	display: inline-block;
+	width: 25%;
+}
+.col-3-2-1 {
+	display: inline-block;
+	width: 33.3333333333%;
+}
+.col-2-1 {
+	display: inline-block;
+	width: 50%;
+}
+.col-2 {
+	display: inline-block;
+	width: 50%;
+}
+.col-3 {
+	display: inline-block;
+	width: 33.3333333333%;
+}
+.col-4 {
+	display: inline-block;
+	width: 25%;
+}
+/* font styles */
+@for $i from 1 through 3 {
+	@for $d from 0 through 5 {
+		.font-size-#{$i}_#{$d} {
+			font-size: ($i) + (($d * .1) * 2) + em;
+		}
+	}
+}
+/* padding styles */
+/* x-axis */
+@for $i from 0 through 3 {
+	@for $d from 0 through 9 {
+		.x-pad-#{$i}_#{$d} {
+			padding-left: ($i) + ($d * .1) + em;
+			padding-right: ($i) + ($d * .1) + em;
+		}
+	}
+}
+/* y-axis */
+@for $i from 0 through 3 {
+	@for $d from 0 through 9 {
+		.y-pad-#{$i}_#{$d} {
+			padding-top: ($i) + ($d * .1) + em;
+			padding-bottom: ($i) + ($d * .1) + em;
+		}
+	}
+}
+/* padding styles */
+/* x-axis */
+@for $i from 0 through 3 {
+	@for $d from 0 through 9 {
+		.x-marg-#{$i}_#{$d} {
+			margin-left: ($i) + ($d * .1) + em;
+			margin-right: ($i) + ($d * .1) + em;
+		}
+	}
+}
+/* y-axis */
+@for $i from 0 through 3 {
+	@for $d from 0 through 9 {
+		.y-marg-#{$i}_#{$d} {
+			margin-top: ($i) + ($d * .1) + em;
+			margin-bottom: ($i) + ($d * .1) + em;
+		}
+	}
+}
+/* border radius */
+@for $i from 0 through 3 {
+	@for $d from 0 through 9 {
+		.border-radius-#{$i}_#{$d} {
+			border-radius: ($i) + ($d * .1) + em;
+		}
+	}
+}
+
+.items-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	& li:not(:last-child) {
+		margin: 0 0 2px;
+		box-shadow: 0 1.1em 0 -1em $dimBlue;
+	}
+}
+
+/*///////////////////////// content styling /////////////////////////*/
+/* body ----------------------------*/
+body.home #home {
+	box-shadow: inset 0 -.1em 0 0 $veryLightBlue;
+}
+/*signupin*/
+label[for="signup-tab"], label[for="login-tab"], label[for="admin-tab"] {
+	position: relative;
+	top: .4em;
+	padding: .5em .8em 1em;
+	margin: 0 .5em -.6em;
+	background: $lightBlue;
+	display: inline-block;
+	border-radius: .5em;
+	cursor: pointer;
+	&:before {
+		content: "";
+		position: absolute;
+		right: 99%;
+		bottom: .6em;
+		width: 1em;
+		height: 1em;
+		border-radius: .5em;
+		box-shadow: .0em .0em 0 0 $lightBlue;
+	}
+	&:after {
+		content: "";
+		position: absolute;
+		left: 99%;
+		bottom: .6em;
+		width: 1em;
+		height: 1em;
+		border-radius: .5em;
+		box-shadow: -.0em .0em 0 0 $lightBlue;
+	}
+}
+label[for="admin-tab"] {
+	color: red;
+}
+#signup-tab {
+	display: none;
+	&:not(:checked) {
+		& ~ #sign-up-in #signup {
+			display: none;
+		}
+	}
+	&:checked {
+		& + label {
+			top: 0;
+			&:before {
+				content: "";
+				position: absolute;
+				right: 99%;
+				bottom: .6em;
+				width: 1em;
+				height: 1em;
+				border-radius: .5em;
+				box-shadow: .4em .4em 0 0 $lightBlue;
+			}
+			&:after {
+				content: "";
+				position: absolute;
+				left: 99%;
+				bottom: .6em;
+				width: 1em;
+				height: 1em;
+				border-radius: .5em;
+				box-shadow: -.4em .4em 0 0 $lightBlue;
+			}
+		}
+		& ~ #sign-up-in #signup {
+			display: block;
+		}
+	}
+}
+#login-tab {
+	display: none;
+	&:not(:checked) {
+		& ~ #sign-up-in #login {
+			display: none;
+		}
+	}
+	&:checked {
+		& + label {
+			top: 0;
+			&:before {
+				content: "";
+				position: absolute;
+				right: 99%;
+				bottom: .6em;
+				width: 1em;
+				height: 1em;
+				border-radius: .5em;
+				box-shadow: .4em .4em 0 0 $lightBlue;
+			}
+			&:after {
+				content: "";
+				position: absolute;
+				left: 99%;
+				bottom: .6em;
+				width: 1em;
+				height: 1em;
+				border-radius: .5em;
+				box-shadow: -.4em .4em 0 0 $lightBlue;
+			}
+		}
+		& ~ #sign-up-in #login {
+			display: block;
+		}
+	}
+}
+#admin-tab {
+	display: none;
+	&:not(:checked) {
+		& ~ #sign-up-in #admin-signup {
+			display: none;
+		}
+	}
+	&:checked {
+		& + label {
+			top: 0;
+			&:before {
+				content: "";
+				position: absolute;
+				right: 99%;
+				bottom: .6em;
+				width: 1em;
+				height: 1em;
+				border-radius: .5em;
+				box-shadow: .4em .4em 0 0 $lightBlue;
+			}
+			&:after {
+				content: "";
+				position: absolute;
+				left: 99%;
+				bottom: .6em;
+				width: 1em;
+				height: 1em;
+				border-radius: .5em;
+				box-shadow: -.4em .4em 0 0 $lightBlue;
+			}
+		}
+		& ~ #sign-up-in #admin-signup {
+			display: block;
+		}
+	}
+}
+#sign-up-in {
+	position: relative;
+	background: $lightBlue;
+	z-index: 1;
+}
+/*chat*/
+#messages {
+	overflow-y: auto;
+	& .chat, .update, .command {
+		padding: .2em;
+	}
+	& .chat {
+		&:nth-type-of(odd) {
+			background-color: $lightBlue;
+		}
+	}
+	& .update {
+		background-color: $terquis;
+	}
+}
+.notification {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: .2em;
+	background: rgba(0, 255, 10, 1);
+}
+#chat-box {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	@include transformT(-50%, -50%);
+	display: block;
+	width: 100%;
+	height: 90%;
+	max-width: 40em;
+	background-color: $midBlue;
+	border-radius: .5em;
+	box-shadow: 0 0 0 .2em $darkBlue;
+	& > div {
+		padding: 0 13em 3.54em 0;
+		& #messages {
+			display: block;
+			border-radius: .5em 0 0 0 ;
+			width: 100%;
+			height: 100%;
+			background-color: $veryLightBlue;
+		}
+		& #side-bar {
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 13em;
+			height: 100%;
+			background-color: $darkBlue;
+			padding: 0 0 0 .2em;
+			box-shadow: inset .2em 0 0 0 $darkBlue;
+			& > div {
+				text-align: right;
+				& #logout {
+					box-shadow: 0 .2em 0 0 $darkBlue,
+											0 .4em 0 0 $lightBlue;
+					& button {
+						border: none;
+						padding: .2em .5em;
+						background-color: $lightBlue;
+						color: $darkBlue;
+						border-radius: 0 .5em  0 0;
+						&:hover {
+							background-color: $dimBlue;
+						}
+						&:active {
+							background-color: $lightBlue;
+						}
+					}
+				}
+				& #room-list {
+					text-align: left;
+					& ul {
+						padding: 0;
+					}
+					& .room {
+						list-style: none;
+						color: $lightBlue;
+						& > span {
+							cursor: pointer;
+							display: inline-block;
+							width: 100%;
+							background-color: $dimBlue;
+							padding: .1em 1.5em;
+						}
+						&:not(:last-child) {
+							margin: 0 0 .1em;
+						}
+						&:before {
+							content: "-";
+							position: absolute;
+							top: 0;
+							left: .5em;
+							transition: all 0s;
+						}
+						&:after {
+							content: "\2610";
+							position: absolute;
+							top: 0em;
+							right: .5em;
+						}
+						&.inside:after {
+							content: "\2611";
+						}
+						& ul {
+							display: none;
+							padding: 0 0 0 1em;
+							& li {
+								padding: .2em 0;
+								&:before {
+									content: "\2517";
+									margin: 0 .2em 0 0;
+								}
+							}
+						}
+						&.open {
+							& ul {
+								display: block;
+							}
+							&:before {
+								content: "+";
+								top: .1em;
+								left: .4em;
+							}
+						}
+						& .user {
+							list-style: none;
+						}
+						&.draggable {
+							position: fixed;
+							box-shadow: 0 0 .2em .1em white;
+							transition: 0s all;
+						}
+					}
+				}
+			}
+		}
+		& #tools {
+			padding: 1em;
+			background-color: $darkBlue;
+		}
+		& #chat {
+			width: 100%;
+			& #list-box {
+				padding: .1em;
+				position: absolute;
+				bottom: 100%;
+				left: 0;
+				border-radius: .5em;
+				background-color: $darkBlue;
+				display: none;
+			}
+			& .fillout {
+				padding: 0 3.7em 0 0;
+				box-shadow: 0 -0.1em 0 0 $lightBlue;
+				& #chat-val {
+					width: 100%;
+					border-radius: 0 0 0 .5em;
+					border: none;
+					background: white;
+					padding: .2em;
+				}
+				& button {
+					position: absolute;
+					top: 0;
+					right: 0;
+					border: none;
+					padding: .2em .5em;
+					background-color: $lightBlue;
+					color: rgba(150,150,150,1);
+					&:hover {
+						background-color: $dimBlue;
+					}
+					&:active {
+						background-color: $lightBlue;
+					}
+					&.full {
+						color: black;
+					}
+				}
+			}
+		}
+	}
+}
+/*admin chat*/
+#admin {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	@include transformT(-50%, -50%);
+	display: block;
+	width: 100%;
+	min-width: 40em;
+	max-width: 40em;
+	height: 90%;
+	padding: 2em 0 0 ;
+	background: $midBlue;
+	border-radius: .5em;
+	box-shadow: 0 0 0 .2em $darkBlue;
+	text-align: center;
+	& #chat-box {
+		position: relative;
+		top: 0;
+		left: 0;
+		@include transformT(0, 0);
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+	& .panel {
+		height: 100%;
+		display: none;
+	}
+	& .tab {
+		position: relative;
+		top: -.2em;
+		z-index: 0;
+		background-color: $lightBlue;
+		border-radius: .5em .5em 0 0;
+		padding: .5em;
+		margin: 0 .5em;
+		box-shadow: 0 0 0 .15em $darkBlue;
+		&:before {
+			content: "";
+			position: absolute;
+			bottom: 0;
+			left: -1.14em;
+			width: 1em;
+			height: 1em;
+			border-radius: 0 0 .5em 0;
+			box-shadow: .14em .14em 0 0 $darkBlue,
+									.5em .5em 0 0 $lightBlue;
+		}
+		&:after {
+			content: "";
+			position: absolute;
+			bottom: 0;
+			right: -1.16em;
+			width: 1em;
+			height: 1em;
+			border-radius: 0 0 0 .5em;
+			box-shadow: -.14em .14em 0 0 $darkBlue,
+									-.5em .5em 0 0 $lightBlue;
+		}
+	}
+	& input {
+
+		&#chat:checked {
+			& + label {
+				top: -.6em;
+			}
+			& ~ .panel.chat {
+				display: block;
+			}
+		}
+		&#chat-opt:checked {
+			& + label {
+				top: -.6em;
+			}
+			& ~ .panel.chat-opt {
+				display: block;
+			}
+		}
+		&#rooms:checked {
+			& + label {
+				top: -.6em;
+			}
+			& ~ .panel.rooms {
+				display: block;
+			}
+		}
+		&#users:checked {
+			& + label {
+				top: -.6em;
+			}
+			& ~ .panel.users {
+				display: block;
+			}
+		}
+		&#msgs:checked {
+			& + label {
+				top: -.6em;
+			}
+			& ~ .panel.msgs {
+				display: block;
+			}
+		}
+	}
+	& #mgmt {
+		position: relative;
+		top: 0;
+		left: 0;
+		@include transformT(0, 0);
+		display: block;
+		width: 100%;
+		height: 100%;
+		max-width: 40em;
+		background-color: $midBlue;
+		border-radius: .5em;
+		box-shadow: 0 0 0 .2em $darkBlue;
+		& #item-list {
+			vertical-align: top;
+			margin: 0;
+			padding: 0em;
+			display: inline-block;
+			width: 25%;
+			box-shadow: .1em 0 0 0 $darkBlue;
+			height: 100%;
+			& .item {
+				list-style: none;
+				text-align: left;
+				color: $lightBlue;
+				&:first-child span.name {
+					border-radius: .5em 0 0 0;
+				}
+				& > .name {
+					cursor: pointer;
+					display: inline-block;
+					width: 100%;
+					background-color: $dimBlue;
+					padding: .1em .2em;
+				}
+				&:not(:last-child) {
+					margin: 0 0 .1em;
+				}
+				& .number {
+					position: absolute;
+					top: 0;
+					right: 1em;
+				}
+			}
+		}
+		& #item-options {
+			vertical-align: top;
+			display: inline-block;
+			width: 75%;
+			& .title {
+				margin: 0 0 1em;
+			}
+			& #option-box {
+				& #banned-list {
+					padding: 0;
+					margin: 0;
+					& .word {
+						list-style: none;
+						display: inline-block;
+						margin: .25em;
+						padding: .25em;
+						border-radius: .5em;
+						background-color: $dimBlue;
+						& .close {
+							display: inline-block;
+							background-color: $darkBlue;
+							margin: 0 0 0 .25em;
+							padding: 0 .3em;
+							border-radius: 100%;
+							cursor: pointer;
+						}
+					}
+				}
+			}
+			& form {
+				& input, select, button {
+					background-color: $veryLightBlue;
+					padding: .5em;
+					border: none;
+					border-radius: .5em;
+					width: 100%;
+				}
+				& button {
+					cursor: pointer;
+					box-shadow: 0 0 0 0em $lightBlue;
+					&:hover {
+						box-shadow: 0 0 0 .2em $lightBlue;
+					}
+				}
+				text-align: left;
+				& .options {
+					text-align: left;
+				}
+				& div:not(:last-child) {
+					display: inline-block;
+					width: 50%;
+					margin: 0 0 .5em;
+					padding: 0 1em;
+					& label {
+						vertical-align: top;
+						font-weight: bold;
+					}
+				}
+			}
+		}
+	}
+}
+
+/* footer ----------------------------*/
+/* hover events ----------------------------*/
+
+/*///////////////////////// responsive styling /////////////////////////*/
+
+@include media-max(1024px) {
+	/* prereqs ----------------------------*/
+	.col-4-3-2-1 {
+		display: inline-block;
+		width: 33.3333333333%;
+	}
+	/* header ----------------------------*/
+	/* body ----------------------------*/
+	/* footer ----------------------------*/
+	/* hover events ----------------------------*/
+}
+@include media-max(800px) {
+	/* prereqs ----------------------------*/
+	.col-4-3-2-1 {
+		display: inline-block;
+		width: 50%;
+	}
+	.col-3-2-1 {
+		display: inline-block;
+		width: 50%;
+	}
+	/* header ----------------------------*/
+	/* body ----------------------------*/
+	/* footer ----------------------------*/
+	/* hover events ----------------------------*/
+}
+@include media-max(540px) {
+	/* prereqs ----------------------------*/
+	.col-4-3-2-1 {
+		display: block;
+		width: 100%;
+	}
+	.col-3-2-1 {
+		display: block;
+		width: 100%;
+	}
+	.col-2-1 {
+		display: block;
+		width: 100%;
+	}
+	/* header ----------------------------*/
+	/* body ----------------------------*/
+	/* footer ----------------------------*/
+	/* hover events ----------------------------*/
+}

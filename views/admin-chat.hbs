@@ -1,0 +1,220 @@
+<section>
+	<div id="username" class="hidden" data-username="{{username}}"></div>
+	<div id="room" class="hidden" data-room="{{room}}"></div>
+	<div class="page-wrap">
+		<div class="x-pad-1_0 y-pad-1_0">
+			<div id="admin">
+				<input type="radio" name="tabs" id="chat" class="hidden" checked><!--
+				--><label for="chat" class="tab">Chat</label><!--
+				--><input type="radio" name="tabs" id="chat-opt" class="hidden" checked><!--
+				--><label for="chat-opt" class="tab">Chat Options</label><!--
+				--><input type="radio" name="tabs" id="rooms" class="hidden" checked><!--
+				--><label for="rooms" class="tab">Rooms</label><!--
+				--><input type="radio" name="tabs" id="users" class="hidden" ><!--
+				--><label for="users" class="tab">Users</label><!--
+				--><input type="radio" name="tabs" id="msgs" class="hidden"><!--
+				--><label for="msgs" class="tab">Messages</label>
+				<div class="panel chat">
+					<div id="chat-box">
+						<div class="parent fillout">
+							<div id="messages"></div>
+							<div id="side-bar">
+								<div class="parent fillout">
+									<form id="logout" action="/logout">
+										<button>Logout</button>
+									</form>
+									<div id="room-list">
+										<ul>
+											{{#each rooms}}
+											<li class="room block parent">
+												<span>{{roomName}}</span>
+												<ul>
+													{{#each users}}
+													<li class="user parent">{{username}}</li>
+													{{/each}}
+												</ul>
+											</li>
+											{{/each}}
+										</ul>
+									</div>
+								</div>
+							</div>
+							<div id="tools"></div>
+							<form id="chat">
+								<div class="fillout parent">
+									<div id="list-box"></div>
+									<input id="chat-val" type="text" name="msg" placeholder="Enter chat message..." {{disable}}>
+									<button type="submit" {{disable}}>SEND</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="panel chat-opt">
+					<div id="mgmt">
+						<ul id="item-list">
+							{{#each chatOptions}}
+								<li class="item">
+									<span class="name">{{name}}</span>
+								</li>
+							{{/each}}
+						</ul><!--
+						--><div id="item-options">
+							<h1 class="title font-size-1_5">Chat Options</h1>
+							{{#each chatOptions}}
+								<div id="option-box"{{#if @key}} class="hidden" {{/if}} data-section="{{name}}">
+									{{#if emoticons}}
+										<h1 class="title font-size-1_2">Add Emote</h1>
+										<form class="add-window" action="/add-emote">
+											<div class="col-2 left-justify">
+												<label>Emoticon Name: </label>
+											</div><!--
+											--><div class="col-2 right-justify">
+												<input type="text" name="roomname" placeholder="Enter the room name..."><br>
+											</div><br>
+											<div class="col-2 left-justify">
+												<label>Emoticon Image: </label>
+											</div><!--
+											--><div class="col-2 right-justify">
+												<input type="file" name="roomname" placeholder="upload an image..."><br>
+											</div>
+											<div class="center-justify x-pad-3_9">
+												<button>Submit</button>
+											</div>
+										</form>
+										<div class="y-marg-1_0">
+											<h1 class="title font-size-1_2">Current Emotes</h1>
+											<ul class="emote-list">
+												{{#each items}}
+													<li class="emote"><img src="{{path}}" title="{{name}}" alt="{{name}}"></li>
+												{{/each}}
+											</ul>
+										</div>
+									{{/if}}
+									{{#if bannedWords}}
+										<h1 class="title font-size-1_2">Add Banned Word</h1>
+										<form class="add-window" action="/add-banned">
+											<div class="col-2 left-justify">
+												<label>Word: </label>
+											</div><!--
+											--><div class="col-2 right-justify">
+												<input type="text" name="word" placeholder="Enter the word to ban"><br>
+											</div>
+											<div class="center-justify x-pad-3_9">
+												<button>Submit</button>
+											</div>
+										</form>
+										<div class="y-marg-1_0">
+											<ul id="banned-list">
+												<h1 class="title font-size-1_2">Current Bans</h1>
+												{{#each items}}
+													<li class="word" data-word="{{this}}">{{this}}<div class="close">x</div></li>
+												{{/each}}
+											</ul>
+										</div>
+									{{/if}}
+								</div>
+							{{/each}}
+						</div>
+					</div>
+				</div>
+				<div class="panel rooms">
+					<div id="mgmt">
+						<ul id="item-list">
+							{{#each rooms}}
+								<li class="item parent">
+									<span class="name" data-roomname="{{roomName}}" data-topic="{{topic}}" data-mods="{{minMods}}">{{roomName}}</span>
+									<span class="number">{{users.length}}</span>
+								</li>
+							{{/each}}
+							<li class="item add"><span class="name">Add A Room +</span></li>
+						</ul><!--
+						--><div id="item-options">
+							<h1 class="title font-size-1_5">Add Room</h1>
+							<form class="add-window" action="/update-rooms">
+								<div class="left-justify">
+									<label>Room Name: </label>
+								</div><!--
+								--><div class="right-justify">
+									<input type="text" name="roomname" placeholder="Enter the room name..."><br>
+								</div><br>
+								<div class="left-justify">
+									<label>Minimum Moderators: </label>
+								</div><!--
+								--><div class="right-justify">
+									<select name="min-mods">
+										<option data-ind="0">0</option>
+										<option data-ind="1">1</option>
+										<option data-ind="2" selected>2</option>
+										<option data-ind="3">3</option>
+									</select><br>
+								</div><br>
+								<div class="left-justify">
+									<label>Room Topic: </label>
+								</div><!--
+								--><div class="right-justify">
+									<input type="text" name="topic" placeholder="Enter the room topic"><br>
+								</div>
+								<div class="center-justify x-pad-3_9">
+									<button>Submit</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="panel users">
+					<div id="mgmt">
+						<ul id="item-list">
+							{{#each users}}
+								<li class="item">
+									<span class="name" data-username="{{username}}">{{username}}</span>
+								</li>
+							{{/each}}
+						</ul><!--
+						--><div id="item-options" class="invisible">
+							<h1 class="title font-size-1_5">User Options</h1>
+							<h1 class="title font-size-1_2">Adjust User Info</h1>
+							<form class="add-window" action="/adjust-user">
+								<div class="col-2 left-justify">
+									<label>Username: </label>
+								</div><!--
+								--><div class="col-2 right-justify">
+									<input type="text" name="newUsername" placeholder="Enter a new username"><br>
+								</div><br>
+								<div class="col-2 left-justify">
+									<label>Access Level: </label>
+								</div><!--
+								--><div class="col-2 right-justify">
+									<select name="accessLevel">
+										<option>regular</option>
+										<option>teen mod</option>
+										<option>junior mod</option>
+										<option>moderator</option>
+										<option>admin</option>
+									</select>
+								</div><br>
+								<div class="col-2 left-justify">
+									<label>Ban user: </label>
+								</div><!--
+								--><div class="col-2 right-justify">
+									<input type="checkbox" name="ban" value="true">
+								</div>
+								<div class="center-justify x-pad-3_9">
+									<button>Submit</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="panel messages">
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/js/chat-handle.js"></script>
+<script type="text/javascript" src="/js/admin-panel.js"></script>
+<!-- <script type="text/javascript" src="/js/drag-n-drop.js"></script> -->
+<!-- <script type="text/javascript">dragNdrop("#room-list ul", ".room", ".room");</script> -->

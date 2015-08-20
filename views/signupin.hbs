@@ -1,0 +1,45 @@
+<section>
+	<div class="page-wrap">
+		<div class="form-box x-pad-1_0 y-pad-1_0 center-justify mid-blue-bg border-radius-0_5">
+			<h1 class="very-light-blue">Sign Up or Login</h1>
+			<br><br>
+			<input id="signup-tab" type="radio" name="options" class="hidden" {{sign-checked}}>
+			<label for="signup-tab">Signup</label><!--
+			--><input id="login-tab" type="radio" name="options" class="hidden" {{log-checked}}><!--
+			--><label for="login-tab">Login</label><!--
+			--><input id="admin-tab" type="radio" name="options" class="hidden"><!--
+			--><label for="admin-tab">Admin</label>
+			<div id="sign-up-in" class="border-radius-0_5">
+				<div id="signup">
+					<form action="/signup" method="POST" class="x-pad-0_5 y-pad-0_5">
+						<input type="text" name="email" placeholder="email" value="piecedigitalstudios@gmail.com">
+						<input type="text" name="username" placeholder="username" value="user">
+						<input type="password" name="password" value="pass">
+						<input type="password" name="passwordconfirm" value="pass">
+						<input type="hidden" name="formtype" value="regular">
+						<button>Submit</button>
+					</form>
+				</div>
+				<div id="login">
+					<form action="/login" method="POST" class="x-pad-0_5">
+						<input type="text" name="username" placeholder="username">
+						<input type="password" name="password">
+						<button>Submit</button>
+					</form>
+				</div>
+				<div id="admin-signup">
+					<form action="/signup" method="POST" class="x-pad-0_5 y-pad-0_5">
+						<input type="text" name="email" placeholder="email" value="piecedigitalstudios@gmail.com">
+						<input type="text" name="username" placeholder="username" value="user">
+						<input type="password" name="password" value="pass">
+						<input type="password" name="passwordconfirm" value="pass">
+						<input type="hidden" name="formtype" value="admin">
+						<span>This signup is meant for approved admins. If you have not been directed here by an admin, please use the other signup</span>
+						<button>Submit</button>
+					</form>
+				</div>
+			</div>
+			<span id="err-msg">{{msg}}</span>
+		</div>
+	</div>
+</section>
