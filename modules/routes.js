@@ -12,11 +12,14 @@ var Server = MongoClient.Server,
 Db = MongoClient.Db,
 db = new Db("GCC-db", new Server("localhost", 27017));
 
-var account = require("./accounts");
+var account = require("./accounts"),
+		getIP = require("./acquire-ip");
 
 var User = db.collection("users"),
 		Pending = db.collection("pending"),
-		Sess = db.collection("sessions");
+		Sess = db.collection("sessions"),
+		Room = db.collection("rooms"),
+		Chat = db.collection("chatOptions");
 //sass compile
 var sass = require('node-sass');
 sass.render({
@@ -191,31 +194,51 @@ db.open(function(err, db) {
 	            if(err2) throw err2;
 
 	            if(userQDoc) {
-	            	var roomsToHave = ["lobby", "main"];
-	            	var rooms = {
-	            		"lobby": {
-	            			"roomName": "Lobby",
-	            			"minMods": 1,
-	            			"topic": "Nothing",
-	            			"users": [{
-	            				"username": "user"
-	            			}]
-	            		},
-	            		"main": {
-	            			"roomName": "Main",
-										"minMods": 2,
-	            			"topic": "Nothing",
-	            			"users": [{
-	            				"username": "user"
-	            			}]
+
+	            	var keyVars = {
+	            		"rooms": null,
+	            		"users": null,
+	            		"chatOptions": null
+	            	};
+	            	var checkVars = function(obj) {
+	            		var clear = true;
+	            		for(var key in obj) {
+	            			if(!keyVars[key]) {
+	            				clear = false;
+	            			}
+	            		}
+	            		if(clear) {
+	            			console.log(obj);
+	            			var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
+
+		  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "chatOptions" : keyVars.chatOptions, "users" : keyVars.users });
 	            		}
 	            	}
-	            	var arr = roomsToHave.map(function(elem) {
-	            		return rooms[elem];
+
+	            	Room.find({}, { "_id" : 0, "roomname" : 1, "roomnameHyph" : 1, "minMods" : 1, "topic" : 1 }).toArray(function(roomQErr, roomQDoc) {
+	            		if(roomQErr) throw roomQErr;
+
+	            		if(roomQDoc) {
+	            			keyVars.rooms = roomQDoc;
+	            			checkVars(keyVars);
+	            		}
 	            	});
-	            	
-	            	var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
-		  					res.render(dest, { "title" : "Guide Cyberclub Chat", "username" : userQDoc.usernameFull, "room" : "", "disable" : "disabled", "rooms" : rooms });
+	            	User.find({ "accessLevel" : { "$in" : [ "regular", "teen mod", "junior mod", "moderator" ] } }).toArray(function(userQErr, userQDoc) {
+	            		if(userQErr) throw userQErr;
+
+	            		if(userQDoc) {
+	            			keyVars.users = userQDoc;
+	            			checkVars(keyVars);
+	            		}
+	            	});
+	            	Chat.findOne({ "optionName" : "bannedWords" }, function(coQErr, coQDoc) {
+	            		if(coQErr) throw coQErr;
+
+	            		if(coQDoc && coQDoc.list) {
+	            			keyVars[coQDoc.optionName] = coQDoc.list;
+	            			checkVars(keyVars);
+	            		}
+	            	});
 
 	            } else {
 	        			res.redirect("/signup");
@@ -242,6 +265,69 @@ db.open(function(err, db) {
 	            if(userQErr) throw userQErr;
 
 	            if(userQDoc) {
+	            	// key variables needed before rendering the page
+	            	var keyVars = {
+	            		"rooms": null,
+	            		"users": null,
+	            		"bannedWords": null
+	            	};
+	            	// options for handling chat
+	            	var chatOptions = [{
+	            		"wordBans": true,
+	            		"name": "Banned Words"
+	            	}];
+	            	// check a given object of variables
+	            	var checkVars = function(obj) {
+	            		var clear = true;
+	            		for(var key in obj) {
+	            			if(!keyVars[key]) {
+	            				clear = false;
+	            				console.log(obj);
+	            			}
+	            		}
+	            		if(clear) {
+	            			console.log(obj);
+	            			var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
+
+		  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "users" : keyVars.users, "chatOptions" : chatOptions });
+	            		}
+	            	}
+
+	            	Room.find({}, { "_id" : 0, "roomname" : 1, "roomnameHyph" : 1, "minMods" : 1, "topic" : 1 }).toArray(function(roomQErr, roomQDoc) {
+	            		if(roomQErr) throw roomQErr;
+
+	            		if(roomQDoc) {
+	            			keyVars.rooms = roomQDoc;
+	            			checkVars(keyVars);
+	            		} else {
+	            			keyVars.rooms = [];
+	            			checkVars(keyVars);
+	            		}
+	            	});
+	            	User.find({ "accessLevel" : { "$in" : [ "regular", "teen mod", "junior mod", "moderator" ] } }).toArray(function(userQErr, userQDoc) {
+	            		if(userQErr) throw userQErr;
+
+	            		if(userQDoc) {
+	            			keyVars.users = userQDoc;
+	            			checkVars(keyVars);
+	            		} else {
+	            			keyVars.users = [];
+	            			checkVars(keyVars);
+	            		}
+	            	});
+	            	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
+	            		if(chatQErr) throw chatQErr;
+
+	            		console.log(chatQDoc)
+	            		if(chatQDoc) {
+	            			keyVars.bannedWords = chatQDoc.list;
+	            			checkVars(keyVars);
+	            		} else {
+	            			keyVars.bannedWords = [];
+	            			checkVars(keyVars);
+	            		}
+	            	});
+	            	/*
 	            	var rooms = {
 	            		"lobby": {
 	            			"roomName": "Lobby",
@@ -266,6 +352,7 @@ db.open(function(err, db) {
 	            			}]
 	            		}
 	            	}
+	            	*/
 
 	            	/*
 	            	var chatOptions = [{
@@ -288,12 +375,13 @@ db.open(function(err, db) {
 	            		"items": ["fuck", "fucker", "fucking", "shitter", "shitting", "shit", "damnit", "damn it", "dammit", "cunt", "nig", "nigger", "asshole"]
 	            	}];
 								*/
+								/*
 								var chatOptions = [{
 	            		"bannedWords": true,
-	            		"name": "Banned Words",
-	            		"items": ["fuck", "fucker", "fucking", "shitter", "shitting", "shit", "damn", "damnit", "damn it", "dammit", "cunt", "nig", "nigger", "asshole"]
+	            		"name": "Banned Words"
 	            	}];
-
+								*/
+								/*
 	            	var users = [{
 	            		"username": "user1",
 	            		"color": "red",
@@ -309,10 +397,7 @@ db.open(function(err, db) {
 	            		"color": "green",
 	            		"accessLevel": "regular"
 	            	}]
-
-	            	var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
-
-		  					res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "room" : "", "disable" : "disabled", "rooms" : rooms, "chatOptions" : chatOptions, "users" : users });
+								*/
 
 	            } else {
 	        			res.clearCookie("sessId");
@@ -395,6 +480,7 @@ db.open(function(err, db) {
 		})
 		.get("*", function(req, res, next) {
 			res.send("Error 404: page not found");
+			getIP.getIP2();
 		});
 
 	// POST requests
@@ -408,8 +494,46 @@ db.open(function(err, db) {
 		.post("/update-rooms", function(req, res, next) {
 			console.log("update rooms function")
 			console.log(req.body);
-			if(!req.body.roomname) {
-				res.status(417).send("Unacceptable room name")
+			
+			var roomname = req.body.roomname || "",
+					roomnameHyph = req.body.roomname.replace(/\s/g, "-").toLowerCase(),
+					minMods = req.body.minmods,
+					topic = req.body.topic || "nothing";
+
+			if(roomname) {
+				Room.update({ "roomnameHyph" : roomnameHyph }, { "roomname" : roomname, "roomnameHyph" : roomnameHyph, "minMods" : minMods, "topic" : topic }, { "upsert" : true }, function(roomQErr, roomQDoc) {
+					if(err) throw err;
+
+					if(roomQDoc && roomQDoc.result.ok) {
+						res.status(200).send({
+							"msg": "success"
+						});
+					}
+				});
+
+			} else {
+				res.status(417).send("Unacceptable room name");
+			}
+		})
+		.post("/add-banned", function(req, res, next) {
+			console.log("update banned words function")
+			console.log(req.body);
+			
+			var word = req.body.word || "";
+
+			if(word) {
+				Chat.update({ "optionName" : "bannedWords" }, { "$push" : { "list" : word } }, { "upsert" : true }, function(chatQErr, chatQDoc) {
+					if(chatQErr) throw chatQErr;
+
+					if(chatQDoc && chatQDoc.result.ok) {
+						res.status(200).send({
+							"msg": "success"
+						});
+					}
+				});
+
+			} else {
+				res.status(417).send("Unacceptable room name");
 			}
 		})
 		;

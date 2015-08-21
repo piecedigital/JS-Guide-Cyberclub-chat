@@ -2,11 +2,18 @@ var username;
 
 // PANEL functions
 var panels = {
+	chatOpt: $(".panel.chat-opt"),
 	rooms: $(".panel.rooms"),
 	users: $(".panel.users")
 }
+// chat options panel
+// <li class='word' data-word='{{this}}'>{{this}}<div class='close'>x</div></li>
+panels.chatOpt.find("#item-options").on("click", ".close". function() {
+	var word = $("this").parent().data("word");
+	functions.ajax("/remove-banned", "POST", "json", { "word" : word });
+});
 // rooms panel
-panels.rooms.find("#item-list .item .name").on("click", function() {
+panels.rooms.find("#item-list .item").on("click", ".name", function() {
 	// variables
 	roomName = $(this).data("roomname");
 	mods = parseInt($(this).data("mods"));
@@ -20,7 +27,7 @@ panels.rooms.find("#item-list .item .name").on("click", function() {
 	panels.rooms.find("#item-options").find("input[name='topic']").attr("value", topic);
 });
 //(adding tab)
-panels.rooms.find("#item-list .add .name").on("click", function() {
+panels.rooms.find("#item-list .add").on("click", ".name", function() {
 	// DOM manipulation
 	panels.rooms.find("#item-options").find(".title").text("Add Room");
 
@@ -29,7 +36,7 @@ panels.rooms.find("#item-list .add .name").on("click", function() {
 	panels.rooms.find("#item-options").find("input[name='topic']").attr("value", "");
 });
 // users panel
-panels.users.find("#item-list .item .name").on("click", function() {
+panels.users.find("#item-list .item").on("click", ".name", function() {
 	// variables
 	username = $(this).data("username");
 

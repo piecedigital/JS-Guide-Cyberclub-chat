@@ -1927,6 +1927,10 @@ label[for="admin-tab"] {
   width: 100%;
 }
 
+#admin #mgmt #item-options form input[type="radio"], #admin #mgmt #item-options form select[type="radio"], #admin #mgmt #item-options form button[type="radio"] {
+  width: auto;
+}
+
 #admin #mgmt #item-options form button {
   cursor: pointer;
   box-shadow: 0 0 0 0em #9be0ff;

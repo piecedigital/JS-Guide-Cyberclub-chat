@@ -763,6 +763,9 @@ label[for="admin-tab"] {
 					border: none;
 					border-radius: .5em;
 					width: 100%;
+					&[type="radio"] {
+						width: auto;
+					}
 				}
 				& button {
 					cursor: pointer;

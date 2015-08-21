@@ -10,10 +10,10 @@
 				--><label for="chat-opt" class="tab">Chat Options</label><!--
 				--><input type="radio" name="tabs" id="rooms" class="hidden" checked><!--
 				--><label for="rooms" class="tab">Rooms</label><!--
-				--><input type="radio" name="tabs" id="users" class="hidden" ><!--
+				--><input type="radio" name="tabs" id="users" class="hidden" checked><!--
 				--><label for="users" class="tab">Users</label><!--
 				--><input type="radio" name="tabs" id="msgs" class="hidden"><!--
-				--><label for="msgs" class="tab">Messages</label>
+				--> <!-- <label for="msgs" class="tab">Messages</label> -->
 				<div class="panel chat">
 					<div id="chat-box">
 						<div class="parent fillout">
@@ -91,7 +91,7 @@
 											</ul>
 										</div>
 									{{/if}}
-									{{#if bannedWords}}
+									{{#if wordBans}}
 										<h1 class="title font-size-1_2">Add Banned Word</h1>
 										<form class="add-window" action="/add-banned">
 											<div class="col-2 left-justify">
@@ -107,7 +107,7 @@
 										<div class="y-marg-1_0">
 											<ul id="banned-list">
 												<h1 class="title font-size-1_2">Current Bans</h1>
-												{{#each items}}
+												{{#each ../../bannedWords}}
 													<li class="word" data-word="{{this}}">{{this}}<div class="close">x</div></li>
 												{{/each}}
 											</ul>
@@ -123,7 +123,7 @@
 						<ul id="item-list">
 							{{#each rooms}}
 								<li class="item parent">
-									<span class="name" data-roomname="{{roomName}}" data-topic="{{topic}}" data-mods="{{minMods}}">{{roomName}}</span>
+									<span class="name" data-roomname="{{roomname}}" data-topic="{{topic}}" data-mods="{{minMods}}">{{roomname}}</span>
 									<span class="number">{{users.length}}</span>
 								</li>
 							{{/each}}
@@ -142,7 +142,7 @@
 									<label>Minimum Moderators: </label>
 								</div><!--
 								--><div class="right-justify">
-									<select name="min-mods">
+									<select name="minmods">
 										<option data-ind="0">0</option>
 										<option data-ind="1">1</option>
 										<option data-ind="2" selected>2</option>
@@ -197,7 +197,10 @@
 									<label>Ban user: </label>
 								</div><!--
 								--><div class="col-2 right-justify">
-									<input type="checkbox" name="ban" value="true">
+									<label>Account Ban</label>
+									<input type="radio" name="ban" value="acc"><br>
+									<label>IP Ban: </label>
+									<input type="radio" name="ban" value="IP">
 								</div>
 								<div class="center-justify x-pad-3_9">
 									<button>Submit</button>
