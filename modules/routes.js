@@ -498,36 +498,68 @@ db.open(function(err, db) {
 			var roomname = req.body.roomname || "",
 					roomnameHyph = req.body.roomname.replace(/\s/g, "-").toLowerCase(),
 					minMods = req.body.minmods,
-					topic = req.body.topic || "nothing";
+					topic = req.body.topic || "nothing",
+					op = req.body.op || false;
 
 			if(roomname) {
-				Room.update({ "roomnameHyph" : roomnameHyph }, { "roomname" : roomname, "roomnameHyph" : roomnameHyph, "minMods" : minMods, "topic" : topic }, { "upsert" : true }, function(roomQErr, roomQDoc) {
-					if(err) throw err;
+				var sendRes = function() {
+					res.status(200).send({
+						"msg": "success",
+						"action": "callback",
+						"callback": "updateRooms",
+						"data": {
+							"roomname": roomname,
+							"roomnameHyph": roomnameHyph,
+							"minMods": minMods,
+							"topic": topic
+						},
+						"op": op
+					});
+				};
+				
+				if(!op) {
+					Room.update({ "roomnameHyph" : roomnameHyph }, { "roomname" : roomname, "roomnameHyph" : roomnameHyph, "minMods" : minMods, "topic" : topic }, { "upsert" : true }, function(roomQErr, roomQDoc) {
+						if(err) throw err;
 
-					if(roomQDoc && roomQDoc.result.ok) {
-						res.status(200).send({
-							"msg": "success"
-						});
-					}
-				});
+						if(roomQDoc && roomQDoc.result.ok) {
+							sendRes();
+						}
+					});
+				} else {
+					Room.remove({ "roomnameHyph" : roomnameHyph }, function(roomQErr, roomQDoc) {
+						if(err) throw err;
+
+						if(roomQDoc && roomQDoc.result.ok) {
+							sendRes();
+						}
+					});
+				}
 
 			} else {
 				res.status(417).send("Unacceptable room name");
 			}
 		})
-		.post("/add-banned", function(req, res, next) {
+		.post("/update-banned", function(req, res, next) {
 			console.log("update banned words function")
 			console.log(req.body);
 			
-			var word = req.body.word || "";
+			var word = req.body.word || "",
+					op = req.body.op || "$push";
 
 			if(word) {
-				Chat.update({ "optionName" : "bannedWords" }, { "$push" : { "list" : word } }, { "upsert" : true }, function(chatQErr, chatQDoc) {
+				var updateObj = {};
+				updateObj[op] = { "list" : word } 
+
+				Chat.update({ "optionName" : "bannedWords" }, updateObj, { "upsert" : true }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
 					if(chatQDoc && chatQDoc.result.ok) {
 						res.status(200).send({
-							"msg": "success"
+							"msg": "success",
+							"action": "callback",
+							"callback": "updateBannedWords",
+							"which": word,
+							"op": op
 						});
 					}
 				});

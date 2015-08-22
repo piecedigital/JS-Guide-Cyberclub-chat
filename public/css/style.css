@@ -208,6 +208,10 @@ section {
   display: none;
 }
 
+.hidden-force {
+  display: none !important;
+}
+
 .invisible {
   visibility: hidden;
 }

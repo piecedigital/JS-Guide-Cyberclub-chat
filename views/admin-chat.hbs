@@ -10,7 +10,7 @@
 				--><label for="chat-opt" class="tab">Chat Options</label><!--
 				--><input type="radio" name="tabs" id="rooms" class="hidden" checked><!--
 				--><label for="rooms" class="tab">Rooms</label><!--
-				--><input type="radio" name="tabs" id="users" class="hidden" checked><!--
+				--><input type="radio" name="tabs" id="users" class="hidden" ><!--
 				--><label for="users" class="tab">Users</label><!--
 				--><input type="radio" name="tabs" id="msgs" class="hidden"><!--
 				--> <!-- <label for="msgs" class="tab">Messages</label> -->
@@ -27,7 +27,7 @@
 										<ul>
 											{{#each rooms}}
 											<li class="room block parent">
-												<span>{{roomName}}</span>
+												<span>{{roomname}}</span>
 												<ul>
 													{{#each users}}
 													<li class="user parent">{{username}}</li>
@@ -93,7 +93,7 @@
 									{{/if}}
 									{{#if wordBans}}
 										<h1 class="title font-size-1_2">Add Banned Word</h1>
-										<form class="add-window" action="/add-banned">
+										<form class="add-window" action="/update-banned">
 											<div class="col-2 left-justify">
 												<label>Word: </label>
 											</div><!--
@@ -154,6 +154,12 @@
 								</div><!--
 								--><div class="right-justify">
 									<input type="text" name="topic" placeholder="Enter the room topic"><br>
+								</div>
+								<div class="left-justify hide hidden-force">
+									<label>Delete Room: </label>
+								</div><!--
+								--><div class="right-justify hide hidden-force">
+									<input type="checkbox" name="op" value="true"><br>
 								</div>
 								<div class="center-justify x-pad-3_9">
 									<button>Submit</button>
