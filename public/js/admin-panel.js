@@ -1,4 +1,5 @@
-var username;
+var username,
+		roomname;
 
 // PANEL functions
 var panels = {
@@ -15,14 +16,14 @@ panels.chatOpt.find("#item-options").on("click", ".close", function() {
 // rooms panel
 panels.rooms.find("#item-list .item").on("click", ".name", function() {
 	// variables
-	roomName = $(this).data("roomname");
-	mods = parseInt($(this).data("mods"));
-	topic = $(this).data("topic");
+	roomname = $(this).data("roomname");
+	var mods = parseInt($(this).data("mods"));
+	var topic = $(this).data("topic");
 
 	// DOM manipulation
-	panels.rooms.find("#item-options").find(".title").text("Edit Room: " + roomName);
+	panels.rooms.find("#item-options").find(".title").text("Edit Room: " + roomname);
 
-	panels.rooms.find("#item-options").find("input[name='roomname']").attr("value", roomName);
+	panels.rooms.find("#item-options").find("input[name='roomname']").val(roomname);
 	
 	panels.rooms.find("#item-options").find("select").find("option[data-ind='" + (mods) + "']").attr("selected", true);
 	
@@ -34,10 +35,13 @@ panels.rooms.find("#item-list .item").on("click", ".name", function() {
 });
 //(adding tab)
 panels.rooms.find("#item-list .add").on("click", ".name", function() {
+	// variables
+	roomname = null;
+
 	// DOM manipulation
 	panels.rooms.find("#item-options").find(".title").text("Add Room");
 
-	panels.rooms.find("#item-options").find("input[name='roomname']").attr("value", "");
+	panels.rooms.find("#item-options").find("input[name='roomname']").val("");
 	
 	panels.rooms.find("#item-options").find("select").find("option[data-ind='2']").attr("selected", true);
 	
@@ -55,14 +59,20 @@ panels.users.find("#item-list .item").on("click", ".name", function() {
 	// DOM manipulation
 	panels.users.find("#item-options").removeClass("invisible");
 	panels.users.find(".add-window").find("input[name='newUsername']").attr("value", username);
+	panels.users.find(".add-window").find("input[name='ban']").attr("checked", false);
 });
 
 // form submission handling
-$(".add-window").on("submit", function(e) {
+$(document).on("submit", ".add-window", function(e) {
 	var formData = $(this).serializeArray();
 
 	var dataObj = functions.parseForm(formData);
-	dataObj.originalName = username;
+	if(dataObj.newUsername) {
+		dataObj.originalName = username || dataObj.username;
+	}
+	if(dataObj.roomname) {
+		dataObj.originalName = roomname || dataObj.roomname;
+	}
 	var action = functions.parseAction(e);
 
 	if(dataObj.ban) {
@@ -132,6 +142,7 @@ var functions = {
 		}
 		if(operation === "$push") {
 			console.log("adding");
+			console.log(data);
 
 			panels.chatOpt.find("#item-options #banned-list").append("<li class='word' data-word='" + data + "'>" + data + "<div class='close'>x</div></li>");
 		}
@@ -141,12 +152,49 @@ var functions = {
 		if(operation) {
 			console.log("removing");
 
-			panels.rooms.find("#item-list").find(".item .name[data-roomname='" + data.roomname + "']").parent().remove();
+			panels.rooms.find("#item-list").find(".item .name[data-roomname='" + data.originalName + "']").parent().remove();
 			
 		} else {
-			console.log("adding");
+			var tag = panels.rooms.find("#item-list").find(".item .name[data-roomname='" + data.originalName + "']") || "";
+			
+			console.log(tag);
 
-			panels.rooms.find("#item-list").prepend("<li class='item parent'><span class='name' data-roomname='" + data.roomname + "' data-topic='" + data.topis + "' data-mods='" + data.mindMods + "'>" + data.roomname + "</span><span class='number'>0</span></li>");
+			if(tag.length > 0) {
+				console.log("updating");
+
+				tag.attr({
+					"data-roomname": data.roomname,
+					"data-topic": data.topic,
+					"data-mods": data.mindMods
+				})
+				.html(data.roomname);
+			} else {
+				console.log("adding");
+
+				panels.rooms.find("#item-list").prepend("<li class='item parent'><span class='name' data-roomname='" + data.roomname + "' data-topic='" + data.topis + "' data-mods='" + data.mindMods + "'>" + data.roomname + "</span><span class='number'></span></li>");
+			}
+			roomname = data.roomname;
+		}
+	},
+	updateUsers: function(data, operation) {
+		console.log(data, operation);
+		if(operation) {
+			console.log("removing");
+
+			var tag = panels.users.find("#item-list").find(".item .name[data-username='" + data.username + "']").parent();
+
+			tag.find(".number").addClass("banned-true");
+			tag.find(".name").attr("data-username", data.newName).html(data.newName);
+			username = data.newName;
+			
+		} else {
+			console.log("updating");
+
+			var tag = panels.users.find("#item-list").find(".item .name[data-username='" + data.username + "']").parent()
+			
+			tag.find(".number").removeClass("banned-, banned-true");
+			tag.find(".name").attr("data-username", data.newName).html(data.newName);
+			username = data.newName;
 		}
 	}
 }

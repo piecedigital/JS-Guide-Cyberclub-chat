@@ -1823,11 +1823,11 @@ label[for="admin-tab"] {
   display: block;
 }
 
-#admin input#msgs:checked + label {
+#admin input#addrs:checked + label {
   top: -.6em;
 }
 
-#admin input#msgs:checked ~ .panel.msgs {
+#admin input#addrs:checked ~ .panel.addrs {
   display: block;
 }
 
@@ -1958,6 +1958,10 @@ label[for="admin-tab"] {
 #admin #mgmt #item-options form div:not(:last-child) label {
   vertical-align: top;
   font-weight: bold;
+}
+
+.banned-true:before {
+  content: "\2716";
 }
 
 /* footer ----------------------------*/

@@ -37,14 +37,6 @@ sass.render({
 	});
 });
 
-// custom handlebars
-hb.registerHelper('ifCond', function(v1, v2, options) {
-  if(v1 === v2) {
-    return options.fn(this);
-  }
-  return options.inverse(this);
-});
-
 //start db for routes
 db.open(function(err, db) {
 	if(err) throw err;
@@ -480,7 +472,7 @@ db.open(function(err, db) {
 		})
 		.get("*", function(req, res, next) {
 			res.send("Error 404: page not found");
-			getIP.getIP2();
+			//getIP.getIP2();
 		});
 
 	// POST requests
@@ -497,6 +489,8 @@ db.open(function(err, db) {
 			
 			var roomname = req.body.roomname || "",
 					roomnameHyph = req.body.roomname.replace(/\s/g, "-").toLowerCase(),
+					originalName = req.body.originalName || "",
+					originalNameHyph = req.body.originalName.replace(/\s/g, "-").toLowerCase() || "",
 					minMods = req.body.minmods,
 					topic = req.body.topic || "nothing",
 					op = req.body.op || false;
@@ -509,7 +503,7 @@ db.open(function(err, db) {
 						"callback": "updateRooms",
 						"data": {
 							"roomname": roomname,
-							"roomnameHyph": roomnameHyph,
+							"originalName": originalName,
 							"minMods": minMods,
 							"topic": topic
 						},
@@ -518,7 +512,7 @@ db.open(function(err, db) {
 				};
 				
 				if(!op) {
-					Room.update({ "roomnameHyph" : roomnameHyph }, { "roomname" : roomname, "roomnameHyph" : roomnameHyph, "minMods" : minMods, "topic" : topic }, { "upsert" : true }, function(roomQErr, roomQDoc) {
+					Room.update({ "roomnameHyph" : originalNameHyph }, { "roomname" : roomname, "roomnameHyph" : roomnameHyph, "minMods" : minMods, "topic" : topic }, { "upsert" : true }, function(roomQErr, roomQDoc) {
 						if(err) throw err;
 
 						if(roomQDoc && roomQDoc.result.ok) {
@@ -558,7 +552,7 @@ db.open(function(err, db) {
 							"msg": "success",
 							"action": "callback",
 							"callback": "updateBannedWords",
-							"which": word,
+							"data": word,
 							"op": op
 						});
 					}

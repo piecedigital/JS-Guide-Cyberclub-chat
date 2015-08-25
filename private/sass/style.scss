@@ -677,11 +677,11 @@ label[for="admin-tab"] {
 				display: block;
 			}
 		}
-		&#msgs:checked {
+		&#addrs:checked {
 			& + label {
 				top: -.6em;
 			}
-			& ~ .panel.msgs {
+			& ~ .panel.addrs {
 				display: block;
 			}
 		}
@@ -794,6 +794,10 @@ label[for="admin-tab"] {
 			}
 		}
 	}
+}
+
+.banned-true:before {
+	content: "\2716";
 }
 
 /* footer ----------------------------*/

@@ -13,7 +13,8 @@ var mailer = require("./mailer");
 module.exports = function(db) {
   var User = db.collection("users"),
       Pending = db.collection("pending"),
-      Sess = db.collection("sessions");
+      Sess = db.collection("sessions"),
+      IPA = db.collection("bannedIPs");
 
   var generateKey = function(Save, dbObj, email, usernameFull, msgToUser, res) {
     console.log("creating match ID...");
@@ -265,8 +266,50 @@ module.exports = function(db) {
     updateUser: function(req, res, next){
       console.log("update user function");
       console.log(req.body);
-      if(req.body.ban) {
+      var newUsername = req.body.newUsername || "",
+          originalName = req.body.originalName || "",
+          accessLevel = req.body.accessLevel || "",
+          ban = req.body.ban || "";
+      if(!ban) {
+        User.update({ "username" : originalName }, { "$set" : { "username" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
+          if(userQErr) throw userQErr;
 
+          if(userQDoc && userQDoc.result.ok) { 
+            res.status(200).send({
+              "msg": "success",
+              "action": "callback",
+              "callback": "updateUsers",
+              "data": {
+                "username": originalName,
+                "newName": newUsername
+              },
+              "op": ban
+            });
+          }
+        });
+
+      } else {
+        if(ban === "ACC") {
+          User.update({ "username" : originalName }, { "$set" : { "banned" : true } }, function(userQErr, userQDoc) {
+            if(userQErr) throw userQErr;
+
+            if(userQDoc && userQDoc.result.ok) { 
+              res.status(200).send({
+                "msg": "success",
+                "action": "callback",
+                "callback": "updateUsers",
+                "data": {
+                  "username": originalName,
+                  "newName": newUsername
+                },
+                "op": ban
+              });
+            }
+          });
+        }
+        if(ban === "IP") {
+
+        }
       }
     }
   }
