@@ -8,12 +8,10 @@
 				--><label for="chat" class="tab">Chat</label><!--
 				--><input type="radio" name="tabs" id="chat-opt" class="hidden" checked><!--
 				--><label for="chat-opt" class="tab">Chat Options</label><!--
-				--><input type="radio" name="tabs" id="rooms" class="hidden" checked><!--
+				--><input type="radio" name="tabs" id="rooms" class="hidden" ><!--
 				--><label for="rooms" class="tab">Rooms</label><!--
 				--><input type="radio" name="tabs" id="users" class="hidden" ><!--
-				--><label for="users" class="tab">Users</label><!--
-				--><input type="radio" name="tabs" id="addrs" class="hidden"><!--
-				--> <label for="addrs" class="tab">Banned IP Addrs.</label>
+				--><label for="users" class="tab">Users</label>
 				<div class="panel chat">
 					<div id="chat-box">
 						<div class="parent fillout">
@@ -55,14 +53,14 @@
 						<ul id="item-list">
 							{{#each chatOptions}}
 								<li class="item">
-									<span class="name">{{name}}</span>
+									<span class="name" data-ind="{{@key}}">{{name}}</span>
 								</li>
 							{{/each}}
 						</ul><!--
 						--><div id="item-options">
 							<h1 class="title font-size-1_5">Chat Options</h1>
 							{{#each chatOptions}}
-								<div id="option-box"{{#if @key}} class="hidden" {{/if}} data-section="{{name}}">
+								<div id="option-box" data-section="{{@key}}" {{#if @key}} class="hidden" {{/if}}>
 									{{#if emoticons}}
 										<h1 class="title font-size-1_2">Add Emote</h1>
 										<form class="add-window" action="/add-emote">
@@ -109,6 +107,42 @@
 												<h1 class="title font-size-1_2">Current Bans</h1>
 												{{#each ../../bannedWords}}
 													<li class="word" data-word="{{this}}">{{this}}<div class="close">x</div></li>
+												{{/each}}
+											</ul>
+										</div>
+									{{/if}}
+									{{#if addresses}}
+										<h1 class="title font-size-1_2">Edit Banned IP Addresses</h1>
+										<form class="add-window" action="/update-ips">
+											<div class="col-2 left-justify">
+												<label>Address: </label>
+											</div><!--
+											--><div class="col-2 right-justify">
+												<div class="col-4 unset-force align-top">
+													<input type="text" name="addr" maxlength="3" class="col-4 center-justify"><!--
+													--><span> : </span>
+												</div><!--
+												--><div class="col-4 unset-force align-top">
+													<input type="text" name="addr" maxlength="3" class="col-4 center-justify"><!--
+													--><span> : </span>
+												</div><!--
+												--><div class="col-4 unset-force align-top">
+													<input type="text" name="addr" maxlength="3" class="col-4 center-justify"><!--
+													--><span> : </span>
+												</div><!--
+												--><div class="col-4 unset-force align-top">
+													<input type="text" name="addr" maxlength="3" class="col-4 center-justify">
+												</div>
+											</div>
+											<div class="center-justify x-pad-3_9">
+												<button>Submit</button>
+											</div>
+										</form>
+										<div class="y-marg-1_0">
+											<ul id="banned-list">
+												<h1 class="title font-size-1_2">Current Bans</h1>
+												{{#each ../../bannedAddrs}}
+													<li class="word" data-addr="{{this}}">{{this}}<div class="close">x</div></li>
 												{{/each}}
 											</ul>
 										</div>

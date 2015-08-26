@@ -261,12 +261,17 @@ db.open(function(err, db) {
 	            	var keyVars = {
 	            		"rooms": null,
 	            		"users": null,
-	            		"bannedWords": null
+	            		"bannedWords": null,
+	            		"bannedAddrs": null
 	            	};
 	            	// options for handling chat
 	            	var chatOptions = [{
 	            		"wordBans": true,
 	            		"name": "Banned Words"
+	            	},
+	            	{
+	            		"addresses": true,
+	            		"name": "Banned IP Addresses"
 	            	}];
 	            	// check a given object of variables
 	            	var checkVars = function(obj) {
@@ -281,7 +286,7 @@ db.open(function(err, db) {
 	            			console.log(obj);
 	            			var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
 
-		  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "users" : keyVars.users, "chatOptions" : chatOptions });
+		  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "chatOptions" : chatOptions });
 	            		}
 	            	}
 
@@ -316,6 +321,18 @@ db.open(function(err, db) {
 	            			checkVars(keyVars);
 	            		} else {
 	            			keyVars.bannedWords = [];
+	            			checkVars(keyVars);
+	            		}
+	            	});
+	            	Chat.findOne({ "optionName" : "bannedAddrs" }, function(chatQErr, chatQDoc) {
+	            		if(chatQErr) throw chatQErr;
+
+	            		console.log(chatQDoc)
+	            		if(chatQDoc) {
+	            			keyVars.bannedAddrs = chatQDoc.list;
+	            			checkVars(keyVars);
+	            		} else {
+	            			keyVars.bannedAddrs = [];
 	            			checkVars(keyVars);
 	            		}
 	            	});

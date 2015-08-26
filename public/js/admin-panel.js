@@ -8,8 +8,23 @@ var panels = {
 	users: $(".panel.users")
 }
 // chat options panel
-// <li class='word' data-word='{{this}}'>{{this}}<div class='close'>x</div></li>
-panels.chatOpt.find("#item-options").on("click", ".close", function() {
+panels.chatOpt.find("#item-list .item").on("click", ".name", function() {
+	var itemOptions = $(this).data("ind");
+	console.log(itemOptions);
+
+	// DOM manipulation
+	panels.chatOpt.find("#item-options").find("#option-box").addClass("hidden");
+	panels.chatOpt.find("#item-options").find("#option-box[data-section='1']").addClass("hidden");
+	
+	panels.chatOpt.find("#item-options").find("#option-box[data-section='" + itemOptions + "']").removeClass("hidden");
+});
+// banned ip deletion
+panels.chatOpt.find("#item-options #option-box[data-section='Banned IP Addresses']").on("click", ".close", function() {
+	var addr = $(this).parent().data("addr");
+	functions.ajax("/update-ips", "POST", "json", { "ip" : addr, "op" : "$pull" });
+});
+// banned word deletion
+panels.chatOpt.find("#item-options #option-box[data-section='Banned Words']").on("click", ".close", function() {
 	var word = $(this).parent().data("word");
 	functions.ajax("/update-banned", "POST", "json", { "word" : word, "op" : "$pull" });
 });
@@ -27,9 +42,9 @@ panels.rooms.find("#item-list .item").on("click", ".name", function() {
 	
 	panels.rooms.find("#item-options").find("select").find("option[data-ind='" + (mods) + "']").attr("selected", true);
 	
-	panels.rooms.find("#item-options").find("input[name='topic']").attr("value", topic);
+	panels.rooms.find("#item-options").find("input[name='topic']").val(topic);
 
-	panels.rooms.find("#item-options").find("input[type='checkbox']").attr("checked", false);
+	panels.rooms.find("#item-options").find("input[type='checkbox']").val(false);
 
 	panels.rooms.find("#item-options").find(".hide").removeClass("hidden-force");
 });
@@ -45,9 +60,9 @@ panels.rooms.find("#item-list .add").on("click", ".name", function() {
 	
 	panels.rooms.find("#item-options").find("select").find("option[data-ind='2']").attr("selected", true);
 	
-	panels.rooms.find("#item-options").find("input[name='topic']").attr("value", "");
+	panels.rooms.find("#item-options").find("input[name='topic']").val("");
 	
-	panels.rooms.find("#item-options").find("input[type='checkbox']").attr("checked", false);
+	panels.rooms.find("#item-options").find("input[type='checkbox']").val(false);
 
 	panels.rooms.find("#item-options").find(".hide").addClass("hidden-force");
 });
@@ -58,8 +73,8 @@ panels.users.find("#item-list .item").on("click", ".name", function() {
 
 	// DOM manipulation
 	panels.users.find("#item-options").removeClass("invisible");
-	panels.users.find(".add-window").find("input[name='newUsername']").attr("value", username);
-	panels.users.find(".add-window").find("input[name='ban']").attr("checked", false);
+	panels.users.find(".add-window").find("input[name='newUsername']").val(username);
+	panels.users.find(".add-window").find("input[name='ban']").val(false);
 });
 
 // form submission handling

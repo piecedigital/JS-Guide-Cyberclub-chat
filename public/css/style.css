@@ -227,6 +227,16 @@ section {
   height: 100%;
 }
 
+.unset {
+  padding: 0;
+  margin: 0;
+}
+
+.unset-force {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .form-box {
   max-width: 20em;
   margin: 0 auto;
@@ -1948,14 +1958,14 @@ label[for="admin-tab"] {
   text-align: left;
 }
 
-#admin #mgmt #item-options form div:not(:last-child) {
+#admin #mgmt #item-options form > div:not(:last-child) {
   display: inline-block;
   width: 50%;
   margin: 0 0 0.5em;
   padding: 0 1em;
 }
 
-#admin #mgmt #item-options form div:not(:last-child) label {
+#admin #mgmt #item-options form > div:not(:last-child) label {
   vertical-align: top;
   font-weight: bold;
 }
