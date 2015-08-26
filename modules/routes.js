@@ -579,6 +579,35 @@ db.open(function(err, db) {
 				res.status(417).send("Unacceptable room name");
 			}
 		})
+		.post("/update-ips", function(req, res, next) {
+			console.log("update banned IPs function")
+			console.log(req.body);
+			
+			var ip = req.body.ip || "",
+					op = req.body.op || "$push";
+
+			if(ip) {
+				var updateObj = {};
+				updateObj[op] = { "list" : ip } 
+
+				Chat.update({ "optionName" : "bannedAddrs" }, updateObj, { "upsert" : true }, function(chatQErr, chatQDoc) {
+					if(chatQErr) throw chatQErr;
+
+					if(chatQDoc && chatQDoc.result.ok) {
+						res.status(200).send({
+							"msg": "success",
+							"action": "callback",
+							"callback": "updateBannedAddrs",
+							"data": ip,
+							"op": op
+						});
+					}
+				});
+
+			} else {
+				res.status(417).send("Unacceptable room name");
+			}
+		})
 		;
 });	
 module.exports = app;
