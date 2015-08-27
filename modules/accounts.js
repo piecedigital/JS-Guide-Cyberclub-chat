@@ -313,12 +313,12 @@ module.exports = function(db) {
           });
         }
         if(ban === "IP") {
-          User.findOne({ "username" : req.originalName }, function(userQErr, userQDoc) {
+          User.findOne({ "username" : originalName }, function(userQErr, userQDoc) {
             if(userQErr) throw userQErr;
 
             if(userQDoc) {
               User.update({ "username" : originalName }, { "$set" : { "banned" : true } });
-              Chat.update({ "optionName" : "bannedAddrs" }, updateObj, { "upsert" : true }, function(chatQErr, chatQDoc) {
+              Chat.update({ "optionName" : "bannedAddrs" }, { "$push" : { "list" : userQDoc.currentIp } }, { "upsert" : true }, function(chatQErr, chatQDoc) {
                 if(chatQErr) throw chatQErr;
 
                 if(chatQDoc && chatQDoc.result.ok) {
@@ -331,7 +331,7 @@ module.exports = function(db) {
                       "newName": newUsername
                     },
                     userQDoc.currentIp],
-                    "op": ban
+                    "op": [ban, "$push"]
                   });
                 } else {
                   res.status(417).send("DB write error");

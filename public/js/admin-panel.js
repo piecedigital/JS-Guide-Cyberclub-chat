@@ -74,7 +74,7 @@ panels.users.find("#item-list .item").on("click", ".name", function() {
 	// DOM manipulation
 	panels.users.find("#item-options").removeClass("invisible");
 	panels.users.find(".add-window").find("input[name='newUsername']").val(username);
-	panels.users.find(".add-window").find("input[name='ban']").val(false);
+	panels.users.find(".add-window").find("input[name='ban']").attr("checked", false);
 });
 
 // form submission handling
