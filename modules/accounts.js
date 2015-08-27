@@ -318,6 +318,7 @@ module.exports = function(db) {
 
             if(userQDoc) {
               User.update({ "username" : originalName }, { "$set" : { "banned" : true } });
+              Sess.remove({ "user" : originalName });
               Chat.update({ "optionName" : "bannedAddrs" }, { "$push" : { "list" : userQDoc.currentIp } }, { "upsert" : true }, function(chatQErr, chatQDoc) {
                 if(chatQErr) throw chatQErr;
 
