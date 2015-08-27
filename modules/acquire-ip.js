@@ -16,15 +16,17 @@ module.exports = {
 		return IP;
 	},
 	getIP2: function() {
-		Object.keys(ifaces).forEach(function(elem) {
-
+		for(var elem in ifaces) {
+			var IP;
 			ifaces[elem].map(function(face) {
 				if(face.family !== "IPv4" || face.internal !== false) {
 					return; // http://stackoverflow.com/questions/3653065/get-local-ip-address-in-node-js
 				}
 
 				console.log(elem, face.address);
+				IP = face.address;
 			});
-		});
+			return IP;
+		};
 	}
 }

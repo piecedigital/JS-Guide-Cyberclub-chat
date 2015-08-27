@@ -749,7 +749,7 @@ label[for="admin-tab"] {
 				& #banned-list {
 					padding: 0;
 					margin: 0;
-					& .word {
+					& .word, .addr {
 						list-style: none;
 						display: inline-block;
 						margin: .25em;

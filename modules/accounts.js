@@ -14,7 +14,8 @@ module.exports = function(db) {
   var User = db.collection("users"),
       Pending = db.collection("pending"),
       Sess = db.collection("sessions"),
-      IPA = db.collection("bannedIPs");
+      IPA = db.collection("bannedIPs"),
+      Chat = db.collection("chatOptions");
 
   var generateKey = function(Save, dbObj, email, usernameFull, msgToUser, res) {
     console.log("creating match ID...");
@@ -199,34 +200,38 @@ module.exports = function(db) {
             //account could not be found
             console.log("searching for user");
             if(userQDoc) {
-              console.log("username found");
-              //bcrypt checks the given password against the username in the
-              //database. if it's true then it proceeds to log them in.
-              //if not the the user is notified that the provided password is
-              //invalid
-              //console.log(userQDoc);
-              usernameFull = userQDoc.usernameFull;
-              bcrypt.compare(password, userQDoc.password, function(bcErr, bcSuccess) {
-                if(bcErr) throw bcErr;
+              if(!userQDoc.banned) {
+                console.log("username found");
+                //bcrypt checks the given password against the username in the
+                //database. if it's true then it proceeds to log them in.
+                //if not the the user is notified that the provided password is
+                //invalid
+                //console.log(userQDoc);
+                usernameFull = userQDoc.usernameFull;
+                bcrypt.compare(password, userQDoc.password, function(bcErr, bcSuccess) {
+                  if(bcErr) throw bcErr;
 
-                if(bcSuccess) {
-                  console.log("password matches");
-                  Sess.insert({ "user" : username, "time" : new Date().getTime() }, function(sessQErr, sessQDoc) {
-                    if(sessQErr) throw sessQErr;
-                    
-                    //sets the coookie sessId
-                    var newSession = sessQDoc.ops[0]._id;
-                    console.log("session created. _id:" + newSession);
-                    res.cookie("sessId", newSession);
+                  if(bcSuccess) {
+                    console.log("password matches");
+                    Sess.insert({ "user" : username, "time" : new Date().getTime() }, function(sessQErr, sessQDoc) {
+                      if(sessQErr) throw sessQErr;
+                      
+                      //sets the coookie sessId
+                      var newSession = sessQDoc.ops[0]._id;
+                      console.log("session created. _id:" + newSession);
+                      res.cookie("sessId", newSession);
 
-                    var dest = (userQDoc.accessLevel === "admin") ? "/admin-chat" : "/chat";
-                    res.redirect(dest);
-                  });
-                } else {
-                  console.log("password doesn't match");
-                  res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Password does not match", "sign-checked" : "", "log-checked" : "checked" });
-                }
-              });
+                      var dest = (userQDoc.accessLevel === "admin") ? "/admin-chat" : "/chat";
+                      res.redirect(dest);
+                    });
+                  } else {
+                    console.log("password doesn't match");
+                    res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Password does not match", "sign-checked" : "", "log-checked" : "checked" });
+                  }
+                });
+              } else {
+                res.redirect("/banned/account");
+              }
             } else {
               console.log("user not found");
               res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "User not found", "sign-checked" : "", "log-checked" : "checked" });
@@ -308,7 +313,34 @@ module.exports = function(db) {
           });
         }
         if(ban === "IP") {
+          User.findOne({ "username" : req.originalName }, function(userQErr, userQDoc) {
+            if(userQErr) throw userQErr;
 
+            if(userQDoc) {
+              User.update({ "username" : originalName }, { "$set" : { "banned" : true } });
+              Chat.update({ "optionName" : "bannedAddrs" }, updateObj, { "upsert" : true }, function(chatQErr, chatQDoc) {
+                if(chatQErr) throw chatQErr;
+
+                if(chatQDoc && chatQDoc.result.ok) {
+                  res.status(200).send({
+                    "msg": "success",
+                    "action": "callback",
+                    "callback": ["updateUsers", "updateBannedAddrs"],
+                    "data": [{
+                      "username": originalName,
+                      "newName": newUsername
+                    },
+                    userQDoc.currentIp],
+                    "op": ban
+                  });
+                } else {
+                  res.status(417).send("DB write error");
+                }
+              });
+            } else {
+              res.status(417).send("User not found");
+            }
+          });
         }
       }
     }

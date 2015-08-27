@@ -1911,7 +1911,7 @@ label[for="admin-tab"] {
   margin: 0;
 }
 
-#admin #mgmt #item-options #option-box #banned-list .word {
+#admin #mgmt #item-options #option-box #banned-list .word, #admin #mgmt #item-options #option-box #banned-list .addr {
   list-style: none;
   display: inline-block;
   margin: .25em;
@@ -1920,7 +1920,7 @@ label[for="admin-tab"] {
   background-color: #017ab1;
 }
 
-#admin #mgmt #item-options #option-box #banned-list .word .close {
+#admin #mgmt #item-options #option-box #banned-list .word .close, #admin #mgmt #item-options #option-box #banned-list .addr .close {
   display: inline-block;
   background-color: #004B6E;
   margin: 0 0 0 0.25em;

@@ -115,23 +115,20 @@
 										<h1 class="title font-size-1_2">Edit Banned IP Addresses</h1>
 										<form class="add-window" action="/update-ips">
 											<div class="col-2 left-justify">
-												<label>Address: </label>
+												<label>Add Address: </label>
 											</div><!--
 											--><div class="col-2 right-justify">
-												<div class="col-4 unset-force align-top">
-													<input type="text" name="addr" maxlength="3" class="col-4 center-justify"><!--
-													--><span> : </span>
+												<div class="col-4 unset-force align-top x-pad-0_1">
+													<input value="192" type="text" name="addr1" maxlength="3" class="center-justify">
 												</div><!--
-												--><div class="col-4 unset-force align-top">
-													<input type="text" name="addr" maxlength="3" class="col-4 center-justify"><!--
-													--><span> : </span>
+												--><div class="col-4 unset-force align-top x-pad-0_1">
+													<input value="168" type="text" name="addr2" maxlength="3" class="center-justify">
 												</div><!--
-												--><div class="col-4 unset-force align-top">
-													<input type="text" name="addr" maxlength="3" class="col-4 center-justify"><!--
-													--><span> : </span>
+												--><div class="col-4 unset-force align-top x-pad-0_1">
+													<input value="0" type="text" name="addr3" maxlength="3" class="center-justify">
 												</div><!--
-												--><div class="col-4 unset-force align-top">
-													<input type="text" name="addr" maxlength="3" class="col-4 center-justify">
+												--><div class="col-4 unset-force align-top x-pad-0_1">
+													<input value="13" type="text" name="addr4" maxlength="3" class="center-justify">
 												</div>
 											</div>
 											<div class="center-justify x-pad-3_9">
@@ -142,7 +139,7 @@
 											<ul id="banned-list">
 												<h1 class="title font-size-1_2">Current Bans</h1>
 												{{#each ../../bannedAddrs}}
-													<li class="word" data-addr="{{this}}">{{this}}<div class="close">x</div></li>
+													<li class="addr" data-addr="{{this}}">{{this}}<div class="close">x</div></li>
 												{{/each}}
 											</ul>
 										</div>
@@ -239,9 +236,9 @@
 								</div><!--
 								--><div class="col-2 right-justify">
 									<label>Account Ban</label>
-									<input type="radio" name="ban" value="ACC"><br>
+									<input type="radio" name="ACC" value="ACC"><br>
 									<label>IP Ban: </label>
-									<input type="radio" name="ban" value="IP">
+									<input type="radio" name="IP" value="IP">
 								</div>
 								<div class="center-justify x-pad-3_9">
 									<button>Submit</button>
@@ -249,8 +246,6 @@
 							</form>
 						</div>
 					</div>
-				</div>
-				<div class="panel addresses">
 				</div>
 			</div>
 		</div>

@@ -18,15 +18,15 @@ panels.chatOpt.find("#item-list .item").on("click", ".name", function() {
 	
 	panels.chatOpt.find("#item-options").find("#option-box[data-section='" + itemOptions + "']").removeClass("hidden");
 });
-// banned ip deletion
-panels.chatOpt.find("#item-options #option-box[data-section='Banned IP Addresses']").on("click", ".close", function() {
-	var addr = $(this).parent().data("addr");
-	functions.ajax("/update-ips", "POST", "json", { "ip" : addr, "op" : "$pull" });
-});
 // banned word deletion
-panels.chatOpt.find("#item-options #option-box[data-section='Banned Words']").on("click", ".close", function() {
+panels.chatOpt.find("#item-options #option-box[data-section='0']").on("click", ".close", function() {
 	var word = $(this).parent().data("word");
 	functions.ajax("/update-banned", "POST", "json", { "word" : word, "op" : "$pull" });
+});
+// banned ip deletion
+panels.chatOpt.find("#item-options #option-box[data-section='1']").on("click", ".close", function() {
+	var addr = $(this).parent().data("addr");
+	functions.ajax("/update-ips", "POST", "json", { "ip" : addr, "op" : "$pull" });
 });
 // rooms panel
 panels.rooms.find("#item-list .item").on("click", ".name", function() {
@@ -135,7 +135,13 @@ var functions = {
 				alert(data.msg);
 
 				if(data.action === "callback") {
-					functions[data.callback](data.data, data.op)
+					if(typeof data.callback === "object") {
+						for(var i = 0; i < data.callback.length; i++) {
+							functions[data.callback[i]](data.data[i], data.op[i]);
+						}
+					} else {
+						functions[data.callback](data.data, data.op)
+					}
 				}
 			},
 			error: function(error1, error2, error3) {
@@ -152,14 +158,29 @@ var functions = {
 		if(operation === "$pull") {
 			console.log("removing");
 
-			panels.chatOpt.find("#item-options #banned-list").find(".word[data-word='" + data + "']").remove();
+			panels.chatOpt.find("#item-options #option-box[data-section='0'] #banned-list").find(".word[data-word='" + data + "']").remove();
 			
 		}
 		if(operation === "$push") {
 			console.log("adding");
 			console.log(data);
 
-			panels.chatOpt.find("#item-options #banned-list").append("<li class='word' data-word='" + data + "'>" + data + "<div class='close'>x</div></li>");
+			panels.chatOpt.find("#item-options #option-box[data-section='0'] #banned-list").append("<li class='word' data-word='" + data + "'>" + data + "<div class='close'>x</div></li>");
+		}
+	},
+	updateBannedAddrs: function(data, operation) {
+		console.log(data, operation);
+		if(operation === "$pull") {
+			console.log("removing");
+
+			panels.chatOpt.find("#item-options #option-box[data-section='1'] #banned-list").find(".addr[data-addr='" + data + "']").remove();
+			
+		}
+		if(operation === "$push") {
+			console.log("adding");
+			console.log(data);
+
+			panels.chatOpt.find("#item-options #option-box[data-section='1'] #banned-list").append("<li class='addr' data-addr='" + data + "'>" + data + "<div class='close'>x</div></li>");
 		}
 	},
 	updateRooms: function(data, operation) {
