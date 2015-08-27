@@ -276,7 +276,7 @@ module.exports = function(db) {
           accessLevel = req.body.accessLevel || "",
           ban = req.body.ban || "";
       if(!ban) {
-        User.update({ "username" : originalName }, { "$set" : { "username" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
+        User.update({ "username" : originalName }, { "$set" : { "username" : (newUsername.toLowerCase()), "usernameFull" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
           if(userQErr) throw userQErr;
 
           if(userQDoc && userQDoc.result.ok) { 
