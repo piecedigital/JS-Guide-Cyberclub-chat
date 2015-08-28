@@ -170,6 +170,8 @@
 	//socket responses on room entry
 	socket.on("enter room", function(data){
 		$("#messages").append($("<li class='plain'>").html(data.msg) );
+		$("#room-list").find(".room").removeClass("inside");
+		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").addClass("inside");
 		scrollToBottom();
 	});
 	socket.on("new entry", function(data){
@@ -274,7 +276,7 @@
 				setTimeout(function() {
 					current = null;
 					console.log("current: ", current);
-				}, 500);
+				}, 250);
 			}
 		}
 	});
