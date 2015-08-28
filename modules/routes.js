@@ -209,6 +209,8 @@ db.open(function(err, db) {
 				if(chatQErr) throw chatQErr;
 
 				if(!chatQDoc) {
+					console.log("ip is not banned");
+
 					if(session) {
 			      Sess.findOne({ "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
 			        if(sessQErr) throw sessQErr;
@@ -218,24 +220,36 @@ db.open(function(err, db) {
 			            if(err2) throw err2;
 
 			            if(userQDoc) {
-
+			            	// key variables needed before rendering the page
 			            	var keyVars = {
 			            		"rooms": null,
 			            		"users": null,
-			            		"chatOptions": null
+			            		"bannedWords": null,
+			            		"bannedAddrs": null
 			            	};
+			            	// options for handling chat
+			            	var chatOptions = [{
+			            		"wordBans": true,
+			            		"name": "Banned Words"
+			            	},
+			            	{
+			            		"addresses": true,
+			            		"name": "Banned IP Addresses"
+			            	}];
+			            	// check a given object of variables
 			            	var checkVars = function(obj) {
 			            		var clear = true;
 			            		for(var key in obj) {
 			            			if(!keyVars[key]) {
 			            				clear = false;
+			            				//console.log(obj);
 			            			}
 			            		}
 			            		if(clear) {
-			            			console.log(obj);
+			            			//console.log(obj);
 			            			var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
 
-				  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "chatOptions" : keyVars.chatOptions, "users" : keyVars.users });
+				  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "chatOptions" : chatOptions });
 			            		}
 			            	}
 
@@ -245,6 +259,9 @@ db.open(function(err, db) {
 			            		if(roomQDoc) {
 			            			keyVars.rooms = roomQDoc;
 			            			checkVars(keyVars);
+			            		} else {
+			            			keyVars.rooms = [];
+			            			checkVars(keyVars);
 			            		}
 			            	});
 			            	User.find({ "accessLevel" : { "$in" : [ "regular", "teen mod", "junior mod", "moderator" ] } }).toArray(function(userQErr, userQDoc) {
@@ -253,13 +270,32 @@ db.open(function(err, db) {
 			            		if(userQDoc) {
 			            			keyVars.users = userQDoc;
 			            			checkVars(keyVars);
+			            		} else {
+			            			keyVars.users = [];
+			            			checkVars(keyVars);
 			            		}
 			            	});
-			            	Chat.findOne({ "optionName" : "bannedWords" }, function(coQErr, coQDoc) {
-			            		if(coQErr) throw coQErr;
+			            	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
+			            		if(chatQErr) throw chatQErr;
 
-			            		if(coQDoc && coQDoc.list) {
-			            			keyVars[coQDoc.optionName] = coQDoc.list;
+			            		//console.log(chatQDoc)
+			            		if(chatQDoc) {
+			            			keyVars.bannedWords = chatQDoc.list;
+			            			checkVars(keyVars);
+			            		} else {
+			            			keyVars.bannedWords = [];
+			            			checkVars(keyVars);
+			            		}
+			            	});
+			            	Chat.findOne({ "optionName" : "bannedAddrs" }, function(chatQErr, chatQDoc) {
+			            		if(chatQErr) throw chatQErr;
+
+			            		//console.log(chatQDoc)
+			            		if(chatQDoc) {
+			            			keyVars.bannedAddrs = chatQDoc.list;
+			            			checkVars(keyVars);
+			            		} else {
+			            			keyVars.bannedAddrs = [];
 			            			checkVars(keyVars);
 			            		}
 			            	});
@@ -555,17 +591,15 @@ db.open(function(err, db) {
 	            	User.update({ "username" : userQDoc.username }, { "$set" : { "currentIp" : IP } });
 
 	            } else {
-	            	res.clearCookie("sessId");
-	        			res.redirect("/signup");
+	            	console.log("user not present. no file write");
 	            }
 	          });
 	        } else {
-	        	res.clearCookie("sessId");
-						res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
+	        	console.log("sessiion not present. no file write");
 	        }
 	      });
 			} else {
-				res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
+				console.log("session cookie not present. no file write");
 			}
 		});
 

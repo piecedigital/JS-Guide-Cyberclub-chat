@@ -807,6 +807,30 @@ label[for="admin-tab"] {
 .banned-true:before {
 	content: "\2716";
 }
+#new-context-menu {
+	transition: 0s all;
+	position: fixed;
+	display: none;
+	padding: 0;
+	margin: 0;
+	width: 5em;
+	box-shadow: 0 0 0 .1em $darkBlue;
+	border-radius: .5em;
+	overflow: hidden;
+	& li {
+		width: 100%;
+		list-style: none;
+		padding: .5em;
+		color: $darkBlue;
+		background-color: $veryLightBlue;
+		&:not(:last-child) {
+			box-shadow: 0 .6em 0 -.5em $darkBlue;
+		}
+		&:hover {
+			background-color: $midBlue;
+		}
+	}
+}
 
 /* footer ----------------------------*/
 /* hover events ----------------------------*/

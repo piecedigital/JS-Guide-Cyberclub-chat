@@ -1974,6 +1974,34 @@ label[for="admin-tab"] {
   content: "\2716";
 }
 
+#new-context-menu {
+  transition: 0s all;
+  position: fixed;
+  display: none;
+  padding: 0;
+  margin: 0;
+  width: 5em;
+  box-shadow: 0 0 0 0.1em #004B6E;
+  border-radius: .5em;
+  overflow: hidden;
+}
+
+#new-context-menu li {
+  width: 100%;
+  list-style: none;
+  padding: .5em;
+  color: #004B6E;
+  background-color: #e8f8ff;
+}
+
+#new-context-menu li:not(:last-child) {
+  box-shadow: 0 0.6em 0 -0.5em #004B6E;
+}
+
+#new-context-menu li:hover {
+  background-color: #00a2eb;
+}
+
 /* footer ----------------------------*/
 /* hover events ----------------------------*/
 /*///////////////////////// responsive styling /////////////////////////*/

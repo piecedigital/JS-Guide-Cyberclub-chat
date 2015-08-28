@@ -1,6 +1,7 @@
 ~(function () {
 	var socket = io(),
-	username = $("#username").data("username"),
+	usernameFull = $("#username").data("username"),
+	username = usernameFull.toLowerCase(),
 	displayName = username,
 	userList, listArray,
 	regUser = new RegExp( username, "gi"),
@@ -9,7 +10,7 @@
 	originalTitleMention = "&#x2589;" + $("title").html(),
 	originalTitle = $("title").html(),
 	showTitle = originalTitle;
-	room = window.location.pathname.split("/").pop();
+	room = "door";
 	//get time for current users
 	function getTimeNow() {
 		return moment().format('h:mm a');
@@ -29,7 +30,7 @@
 		$("#messages")[0].scrollTop = $("#messages")[0].scrollHeight;
 	}
 
-	socket.emit("join", { "username" : username, "room" : room });
+	socket.emit("join", { "username" : username});
 
 	socket.on("illegal", function(res){
 		alert(res);
@@ -165,6 +166,17 @@
 		$("#messages").append($("<li class='command'>").html("[COMMAND] " + msg) );
 		scrollToBottom();
 	});
+
+	//socket responses on room entry
+	socket.on("enter room", function(data){
+		$("#messages").append($("<li class='plain'>").html(data.msg) );
+		scrollToBottom();
+	});
+	socket.on("new entry", function(data){
+		$("#room-list .room ul").find(".user[data-username='" + data.username + "']").remove();
+		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-username='" + data.username + "'>" + data.userDisplay + "</li>");
+		scrollToBottom();
+	});
 	//filter chat for links and emites
 	function regexFilter(filter, person){
 		//smiles
@@ -231,8 +243,48 @@
 
 	$("#chat-val").focus();
 
-	// interface interactions
-	$("#room-list").on("click", ".room", function() {
-		$(this).toggleClass("open");
+	///////////////////////////
+	// interface interactions//
+	///////////////////////////
+
+	$("body").append("<ul id='new-context-menu'><li data-option='join'>Join</li></ul>");
+	var click = false, current;
+	$("#room-list").on("mousedown", ".room", function(e) {
+		if(e.buttons === 2) {
+			document.oncontextmenu = function() {
+				return false;
+			};
+			$("#new-context-menu").css({
+				"top": e.clientY,
+				"left": e.clientX,
+				"display": "block"
+			});
+			click = true;
+		} else {
+			if(current === $(this).data("roomname")) {
+				console.log("current: ", current);
+				current = null;
+				
+				var roomname = $(this).data("roomname");
+				socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
+			} else {
+				$(this).toggleClass("open");
+				current = $(this).data("roomname");
+				
+				setTimeout(function() {
+					current = null;
+					console.log("current: ", current);
+				}, 500);
+			}
+		}
+	});
+
+	$(document).on("mousedown", function(e) {
+		if(e.buttons === 1) {
+			$("#new-context-menu").css({
+				"display": "none"
+			});
+			document.oncontextmenu = null;
+		}
 	});
 }());

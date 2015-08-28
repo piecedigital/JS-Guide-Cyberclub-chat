@@ -217,12 +217,17 @@ module.exports = function(db) {
                       if(sessQErr) throw sessQErr;
                       
                       //sets the coookie sessId
-                      var newSession = sessQDoc.ops[0]._id;
-                      console.log("session created. _id:" + newSession);
-                      res.cookie("sessId", newSession);
+                      if(sessQDoc) {
+                        var newSession = sessQDoc.ops[0]._id;
+                        console.log("session created. id: ", newSession);
+                        res.cookie("sessId", newSession);
 
-                      var dest = (userQDoc.accessLevel === "admin") ? "/admin-chat" : "/chat";
-                      res.redirect(dest);
+                        var dest = (userQDoc.accessLevel === "admin") ? "/admin-chat" : "/chat";
+
+                        res.redirect(dest);
+                      } else {
+                        res.status(500).send("session write error");
+                      }
                     });
                   } else {
                     console.log("password doesn't match");

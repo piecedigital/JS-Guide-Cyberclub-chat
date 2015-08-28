@@ -24,7 +24,7 @@
 									<div id="room-list">
 										<ul>
 											{{#each rooms}}
-											<li class="room block parent">
+											<li data-roomname="{{roomname}}" class="room block parent">
 												<span>{{roomname}}</span>
 												<ul>
 													{{#each users}}
@@ -253,6 +253,14 @@
 </section>
 <script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+	var bannedWords = "{{bannedWords}}";
+	var bannedArr = bannedWords.split(",").map(function(elem) {
+		return "(" + elem + ")?";
+	}).join("");
+
+	var bannedReg = new RegExp(bannedArr, "gi");
+</script>
 <script type="text/javascript" src="/js/chat-handle.js"></script>
 <script type="text/javascript" src="/js/admin-panel.js"></script>
 <!-- <script type="text/javascript" src="/js/drag-n-drop.js"></script> -->
