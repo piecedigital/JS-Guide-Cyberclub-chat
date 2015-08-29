@@ -27,12 +27,13 @@ module.exports = function(io, db) {
 							socket.leave(thisRoom);
 							socket.join(obj.room);
         			thisRoom = obj.room;
-        			
+							console.log(obj.room, thisRoom);
+
 							io.to(socket.id).emit("enter room", {
 								"msg": "Joined " + obj.room,
 								"room": obj.room
 							});
-							io.to(socket.id).emit("new entry", {
+							io.in(thisRoom).emit("new entry", {
 								"msg": "Joined " + obj.room,
 								"user": obj.username,
 								"userDisplay": obj.displayName,
@@ -45,6 +46,13 @@ module.exports = function(io, db) {
 				}
 			})
 			.on("chat message", function(obj) {
+				console.log("'chat message' socket function");
+				console.log(obj);
+				io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "user" : obj.user });
+			})
+			.on("example", function(obj) {
+				console.log("'join' socket function");
+				console.log(obj);
 			})
 			.on("disconnect", function() {
 				console.log("disconnected");

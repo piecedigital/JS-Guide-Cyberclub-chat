@@ -3,8 +3,7 @@
 	usernameFull = $("#username").data("username"),
 	username = usernameFull.toLowerCase(),
 	displayName = username,
-	userList, listArray,
-	regUser = new RegExp( username, "gi"),
+	userList = [], listArray = [],
 	windowFocus = true,
 	unread = 0,
 	originalTitleMention = "&#x2589;" + $("title").html(),
@@ -149,9 +148,10 @@
 		$("#messages").append($("<li class='chat'>").html("[<span class='log'>" + logDate(time) + "</span>] <span class='user'> " + who + "</span>: " + "<p class='chat-text'>" + regexFilter(msg, who) + "</p>" ) );
 		$("#messages")[0].scrollTop = $("#messages")[0].scrollHeight;
 	});
-	//socket response on chat message
-	socket.on("chat message", function(who, msg){
-		$("#messages").append($("<li class='chat'>").html("[" + getTimeNow() + "] <span class='user'> " + who + "</span>: " + "<p class='chat-text'>" + regexFilter(msg, who) + "</p>" ) );
+	//socket response on chat response
+	socket.on("chat response", function(data){
+		$("#messages").append($("<li class='chat'>").html("[" + getTimeNow() + "] <span class='user'> " + data.user + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
+		console.log(data)
 		scrollToBottom();
 	});
 	//socket response on update
@@ -172,8 +172,9 @@
 		$("#messages").append($("<li class='plain'>").html(data.msg) );
 		$("#room-list").find(".room").removeClass("inside");
 		$("#room-list").find(".room[data-roomname='" + data.room + "']").addClass("inside");
-		$("#chat").find("#chat-val, button").attr("disabled", false);
+		$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", false);
 		var room = data.room;
+		console.log(data, room)
 		scrollToBottom();
 	});
 	socket.on("new entry", function(data){
@@ -183,6 +184,8 @@
 	});
 	//filter chat for links and emites
 	function regexFilter(filter, person){
+		regUser = new RegExp( displayName, "gi"),
+
 		//smiles
 		filter = filter.replace(/(http(s)?[:\/\/]*)([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig, "<a href='" +
 		 filter.match(/(http(s)?[:\/\/]*)([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig) +
@@ -197,13 +200,6 @@
 		filter = filter.replace(/(:\-\/)/ig, "<img id='indif' src='/images/emojis/indif.png'>");
 		//match mentions
 		if(filter.match(regUser) && person.toLowerCase() !== displayName.toLowerCase() ){
-			var ment = filter.indexOf("@");
-			var sub = filter.substring(ment-20,ment+20);
-			if(filter.slice(ment-20).length > sub.length){
-				$("body").append("<div class='notification'>"+person+" Mentioned You: "+sub+"...</div>");
-			} else {
-				$("body").append("<div class='notification'>"+person+" Mentioned You: "+sub+"</div>");
-			}
 			filter = filter.replace(regUser, "<span class='mention'>@"+displayName+"</span>");
 			showTitle = originalTitleMention;
 			if(windowFocus) {
@@ -212,7 +208,7 @@
 				unread++;
 				$("title").text( "(" + unread + ") " + showTitle);
 			}
-			killNot();
+
 		} else {
 			if(windowFocus) {
 				showTitle = originalTitle;
@@ -224,15 +220,10 @@
 		}
 		return filter;
 	}
-	function killNot(){
-		$(".notification:last").animate({"height": "2em"}, 200);
-		setTimeout(function(){
-			$(".notification:first").remove();
-		}, 5000)
-	}
+
 	//chat message submission
-	$('#chat').submit(function(){
-		socket.emit("chat message", { "msg" : $("#chat-val").val(), "room" : room });
+	$('#chat-form').submit(function(){
+		socket.emit("chat message", { "msg" : $("#chat-val").val(), "user" : displayName });
 		$("#chat-val").val("");
 		$("#chat-val button").removeClass("full");
 		return false;
@@ -252,14 +243,13 @@
 	///////////////////////////
 
 	$("body").append("<ul id='new-context-menu'><li data-option='join'>Join</li></ul>");
-	var click = false, current;
+	var click = false, current, roomname;
 	$("#room-list").on("mousedown", ".room", function(e) {
 		if(e.buttons === 2) {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			var roomname = $(this).data("roomname");
-			contextMenu(roomname);
+			roomname = $(this).data("roomname");
 			$("#new-context-menu").css({
 				"top": e.clientY,
 				"left": e.clientX,
@@ -271,7 +261,7 @@
 				console.log("current: ", current);
 				current = null;
 				
-				var roomname = $(this).data("roomname");
+				roomname = $(this).data("roomname");
 				socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
 			} else {
 				$(this).toggleClass("open");
@@ -284,22 +274,22 @@
 			}
 		}
 	});
-	function contextMenu(roomname) {
-		$("#new-context-menu").on("click", "li", function() {
-			var options = {
-				join: function() {
-					socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
-				},
-				leave: function() {
-					socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
-				}
-			};
 
-			var opt = $(this).data("option");
-			console.log(opt)
-			options[opt]();
-		});
-	}
+	$("#new-context-menu").on("click", "li", function() {
+		var options = {
+			join: function() {
+				socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
+			},
+			leave: function() {
+				socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
+			}
+		};
+
+		var opt = $(this).data("option");
+		console.log(opt)
+		options[opt]();
+	});
+
 
 	$(document).on("click", function(e) {
 		$("#new-context-menu").css({

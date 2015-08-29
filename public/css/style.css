@@ -1560,6 +1560,7 @@ label[for="admin-tab"] {
   width: 100%;
   height: 100%;
   background-color: #e8f8ff;
+  text-align: left;
 }
 
 #chat-box > div #side-bar {
@@ -1680,11 +1681,11 @@ label[for="admin-tab"] {
   background-color: #004B6E;
 }
 
-#chat-box > div #chat {
+#chat-box > div #chat-form {
   width: 100%;
 }
 
-#chat-box > div #chat #list-box {
+#chat-box > div #chat-form #list-box {
   padding: .1em;
   position: absolute;
   bottom: 100%;
@@ -1694,12 +1695,12 @@ label[for="admin-tab"] {
   display: none;
 }
 
-#chat-box > div #chat .fillout {
+#chat-box > div #chat-form .fillout {
   padding: 0 3.7em 0 0;
   box-shadow: 0 -0.1em 0 0 #9be0ff;
 }
 
-#chat-box > div #chat .fillout #chat-val {
+#chat-box > div #chat-form .fillout #chat-val {
   width: 100%;
   border-radius: 0 0 0 0.5em;
   border: none;
@@ -1707,7 +1708,7 @@ label[for="admin-tab"] {
   padding: .2em;
 }
 
-#chat-box > div #chat .fillout button {
+#chat-box > div #chat-form .fillout button {
   position: absolute;
   top: 0;
   right: 0;
@@ -1717,15 +1718,15 @@ label[for="admin-tab"] {
   color: #969696;
 }
 
-#chat-box > div #chat .fillout button:hover {
+#chat-box > div #chat-form .fillout button:hover {
   background-color: #017ab1;
 }
 
-#chat-box > div #chat .fillout button:active {
+#chat-box > div #chat-form .fillout button:active {
   background-color: #9be0ff;
 }
 
-#chat-box > div #chat .fillout button.full {
+#chat-box > div #chat-form .fillout button.full {
   color: black;
 }
 

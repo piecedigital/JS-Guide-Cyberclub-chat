@@ -447,6 +447,7 @@ label[for="admin-tab"] {
 			width: 100%;
 			height: 100%;
 			background-color: $veryLightBlue;
+			text-align: left;
 		}
 		& #side-bar {
 			position: absolute;
@@ -547,7 +548,7 @@ label[for="admin-tab"] {
 			padding: 1em;
 			background-color: $darkBlue;
 		}
-		& #chat {
+		& #chat-form {
 			width: 100%;
 			& #list-box {
 				padding: .1em;

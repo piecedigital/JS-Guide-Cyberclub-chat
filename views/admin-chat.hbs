@@ -6,7 +6,7 @@
 			<div id="admin">
 				<input type="radio" name="tabs" id="chat" class="hidden" checked><!--
 				--><label for="chat" class="tab">Chat</label><!--
-				--><input type="radio" name="tabs" id="chat-opt" class="hidden" checked><!--
+				--><input type="radio" name="tabs" id="chat-opt" class="hidden" ><!--
 				--><label for="chat-opt" class="tab">Chat Options</label><!--
 				--><input type="radio" name="tabs" id="rooms" class="hidden" ><!--
 				--><label for="rooms" class="tab">Rooms</label><!--
@@ -38,7 +38,7 @@
 								</div>
 							</div>
 							<div id="tools"></div>
-							<form id="chat">
+							<form id="chat-form">
 								<div class="fillout parent">
 									<div id="list-box"></div>
 									<input id="chat-val" type="text" name="msg" placeholder="Enter chat message..." {{disable}}>
@@ -119,16 +119,16 @@
 											</div><!--
 											--><div class="col-2 right-justify">
 												<div class="col-4 unset-force align-top x-pad-0_1">
-													<input value="192" type="text" name="addr1" maxlength="3" class="center-justify">
+													<input value="" type="text" name="addr1" maxlength="3" class="center-justify">
 												</div><!--
 												--><div class="col-4 unset-force align-top x-pad-0_1">
-													<input value="168" type="text" name="addr2" maxlength="3" class="center-justify">
+													<input value="" type="text" name="addr2" maxlength="3" class="center-justify">
 												</div><!--
 												--><div class="col-4 unset-force align-top x-pad-0_1">
-													<input value="0" type="text" name="addr3" maxlength="3" class="center-justify">
+													<input value="" type="text" name="addr3" maxlength="3" class="center-justify">
 												</div><!--
 												--><div class="col-4 unset-force align-top x-pad-0_1">
-													<input value="13" type="text" name="addr4" maxlength="3" class="center-justify">
+													<input value="" type="text" name="addr4" maxlength="3" class="center-justify">
 												</div>
 											</div>
 											<div class="center-justify x-pad-3_9">
