@@ -171,7 +171,9 @@
 	socket.on("enter room", function(data){
 		$("#messages").append($("<li class='plain'>").html(data.msg) );
 		$("#room-list").find(".room").removeClass("inside");
-		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").addClass("inside");
+		$("#room-list").find(".room[data-roomname='" + data.room + "']").addClass("inside");
+		$("#chat").find("#chat-val, button").attr("disabled", false);
+		var room = data.room;
 		scrollToBottom();
 	});
 	socket.on("new entry", function(data){
@@ -229,11 +231,11 @@
 		}, 5000)
 	}
 	//chat message submission
-	$('#chat').submit(function(event){
+	$('#chat').submit(function(){
 		socket.emit("chat message", { "msg" : $("#chat-val").val(), "room" : room });
 		$("#chat-val").val("");
 		$("#chat-val button").removeClass("full");
-		event.preventDefault();
+		return false;
 	});
 	// link warning
 	$('#chat-box #messages').on('click', 'a', function(event) {
@@ -256,6 +258,8 @@
 			document.oncontextmenu = function() {
 				return false;
 			};
+			var roomname = $(this).data("roomname");
+			contextMenu(roomname);
 			$("#new-context-menu").css({
 				"top": e.clientY,
 				"left": e.clientX,
@@ -280,13 +284,27 @@
 			}
 		}
 	});
+	function contextMenu(roomname) {
+		$("#new-context-menu").on("click", "li", function() {
+			var options = {
+				join: function() {
+					socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
+				},
+				leave: function() {
+					socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
+				}
+			};
 
-	$(document).on("mousedown", function(e) {
-		if(e.buttons === 1) {
-			$("#new-context-menu").css({
-				"display": "none"
-			});
-			document.oncontextmenu = null;
-		}
+			var opt = $(this).data("option");
+			console.log(opt)
+			options[opt]();
+		});
+	}
+
+	$(document).on("click", function(e) {
+		$("#new-context-menu").css({
+			"display": "none"
+		});
+		document.oncontextmenu = null;
 	});
 }());

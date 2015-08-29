@@ -15,6 +15,7 @@ module.exports = function(io, db) {
 				console.log(obj);
 
 				if(!obj.room) {
+					thisRoom = obj.room;
 					io.to(socket.id).emit("update", {
 						"msg": "Welcome, " + obj.username + ", to the Guide Cyberclub chat! Please select one of our available rooms to begin chatting."
 					});
@@ -23,8 +24,10 @@ module.exports = function(io, db) {
         		if(roomQErr) throw roomQErr;
 
         		if(roomQDoc) {
+							socket.leave(thisRoom);
+							socket.join(obj.room);
         			thisRoom = obj.room;
-							socket.join(thisRoom);
+        			
 							io.to(socket.id).emit("enter room", {
 								"msg": "Joined " + obj.room,
 								"room": obj.room
