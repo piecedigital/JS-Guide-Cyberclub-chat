@@ -10,14 +10,12 @@
 	originalTitle = $("title").html(),
 	showTitle = originalTitle;
 	room = "door";
-	//get time for current users
-	function getTimeNow() {
-		return moment().format('h:mm a');
-	}
+
 	//get relative of chat log for new users
 	function logDate(time){
+		time = time || "";
 		var period = "am";
-		var now = new Date(time);
+		var now = (time) ? new Date(time) : new Date();
 		var hours = now.getHours();
 		var minutes = now.getMinutes();
 		if(hours > 12){ hours -= 12; period = "pm"}
@@ -150,7 +148,7 @@
 	});
 	//socket response on chat response
 	socket.on("chat response", function(data){
-		$("#messages").append($("<li class='chat'>").html("[" + getTimeNow() + "] <span class='user'> " + data.user + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
+		$("#messages").append($("<li class='chat'>").html("[" + logDate() + "] <span class='user'> " + data.user + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
 		console.log(data)
 		scrollToBottom();
 	});
