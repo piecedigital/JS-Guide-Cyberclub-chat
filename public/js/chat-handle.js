@@ -1,6 +1,6 @@
 ~(function () {
 	var socket = io(),
-	usernameFull = $("#username").data("username"),
+	usernameFull = $("#user-data").data("username"),
 	username = usernameFull.toLowerCase(),
 	displayName = username,
 	userList = [], listArray = [],
@@ -10,7 +10,8 @@
 	originalTitle = $("title").html(),
 	showTitle = originalTitle;
 	room = "door",
-	myColor = "black";
+	myColor = "black",
+	myLevel = $("#user-data").data("access");
 
 	//get relative of chat log for new users
 	function logDate(time){
@@ -149,7 +150,7 @@
 	});
 	//socket response on chat response
 	socket.on("chat response", function(data){
-		$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.color + "'> " + data.user + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
+		$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='" + data.level + " " + data.color + "'> " + data.user + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
 		console.log(data)
 		scrollToBottom();
 	});
@@ -222,7 +223,7 @@
 
 	//chat message submission
 	$('#chat-form').submit(function(){
-		socket.emit("chat message", { "msg" : $("#chat-val").val(), "user" : displayName, "color" : myColor });
+		socket.emit("chat message", { "msg" : $("#chat-val").val(), "user" : displayName, "color" : myColor, "level" : myLevel });
 		$("#chat-val").val("");
 		$("#chat-val button").removeClass("full");
 		return false;

@@ -445,7 +445,9 @@ label[for="admin-tab"] {
 					display: inline-block;
 					margin: 0;
 				}
-				& .user, .teen-mod, .jr-mod, .mod, .admin {
+				& .regular, .teen-mod, .junior-mod, .moderator, .admin {
+					padding: .5em;
+					border-radius: .5em;
 					&.black { color: black; }
 					&.grey { color: grey; }
 					&.brown { color: brown; }
@@ -454,6 +456,11 @@ label[for="admin-tab"] {
 					&.orange { color: orange; }
 					&.pink { color: pink; }
 				}
+				& .regular { background-color: grey;}
+				& .teen-mod { background-color: rgba(0,200,0, 1);}
+				& .junior-mod { background-color: orange;}
+				& .moderator { background-color: blue;}
+				& .admin { background-color: red;}
 			}
 			& .chat {
 				& p {
@@ -462,7 +469,7 @@ label[for="admin-tab"] {
 					word-break: break-word;
 					background-color: rgba(0, 200, 255, .2);
 				}
-				&:nth-of-type(odd)  p{
+				&:nth-of-type(odd) p {
 					background-color: rgba(0, 150, 200, .2);
 				}
 			}
@@ -552,9 +559,6 @@ label[for="admin-tab"] {
 								top: .1em;
 								left: .4em;
 							}
-						}
-						& .user {
-							list-style: none;
 						}
 						&.draggable {
 							position: fixed;

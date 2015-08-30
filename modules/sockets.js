@@ -50,7 +50,7 @@ module.exports = function(io, db) {
 				console.log(obj);
 				obj.msg = obj.msg.replace(/[<]/gi, "&lt;")
 					.replace(/[>]/gi, "&gt;")
-				io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "user" : obj.user, "color" : obj.color });
+				io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "user" : obj.user, "color" : obj.color, "level" : obj.level });
 			})
 			.on("example", function(obj) {
 				console.log("'join' socket function");
