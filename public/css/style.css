@@ -1508,22 +1508,6 @@ label[for="admin-tab"] {
 }
 
 /*chat*/
-#messages {
-  overflow-y: auto;
-}
-
-#messages .chat, #messages .update, #messages .command {
-  padding: .2em;
-}
-
-#messages .chat:nth-type-of(odd) {
-  background-color: #9be0ff;
-}
-
-#messages .update {
-  background-color: #00ffa0;
-}
-
 .notification {
   position: fixed;
   top: 0;
@@ -1561,6 +1545,49 @@ label[for="admin-tab"] {
   height: 100%;
   background-color: #e8f8ff;
   text-align: left;
+  overflow-y: auto;
+}
+
+#chat-box > div #messages .chat, #chat-box > div #messages .update, #chat-box > div #messages .command, #chat-box > div #messages .plain {
+  padding: .2em;
+  list-style: none;
+}
+
+#chat-box > div #messages .chat p, #chat-box > div #messages .update p, #chat-box > div #messages .command p, #chat-box > div #messages .plain p {
+  display: inline-block;
+  margin: 0;
+}
+
+#chat-box > div #messages .chat .user.black, #chat-box > div #messages .update .user.black, #chat-box > div #messages .command .user.black, #chat-box > div #messages .plain .user.black {
+  color: black;
+}
+
+#chat-box > div #messages .chat .user.grey, #chat-box > div #messages .update .user.grey, #chat-box > div #messages .command .user.grey, #chat-box > div #messages .plain .user.grey {
+  color: grey;
+}
+
+#chat-box > div #messages .chat .user.brown, #chat-box > div #messages .update .user.brown, #chat-box > div #messages .command .user.brown, #chat-box > div #messages .plain .user.brown {
+  color: brown;
+}
+
+#chat-box > div #messages .chat .user.green, #chat-box > div #messages .update .user.green, #chat-box > div #messages .command .user.green, #chat-box > div #messages .plain .user.green {
+  color: green;
+}
+
+#chat-box > div #messages .chat .user.blue, #chat-box > div #messages .update .user.blue, #chat-box > div #messages .command .user.blue, #chat-box > div #messages .plain .user.blue {
+  color: blue;
+}
+
+#chat-box > div #messages .chat .user.orange, #chat-box > div #messages .update .user.orange, #chat-box > div #messages .command .user.orange, #chat-box > div #messages .plain .user.orange {
+  color: orange;
+}
+
+#chat-box > div #messages .chat .user.pink, #chat-box > div #messages .update .user.pink, #chat-box > div #messages .command .user.pink, #chat-box > div #messages .plain .user.pink {
+  color: pink;
+}
+
+#chat-box > div #messages .update {
+  background-color: #00ffa0;
 }
 
 #chat-box > div #side-bar {

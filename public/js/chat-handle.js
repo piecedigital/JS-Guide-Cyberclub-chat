@@ -9,7 +9,8 @@
 	originalTitleMention = "&#x2589;" + $("title").html(),
 	originalTitle = $("title").html(),
 	showTitle = originalTitle;
-	room = "door";
+	room = "door",
+	myColor = "black";
 
 	//get relative of chat log for new users
 	function logDate(time){
@@ -148,7 +149,7 @@
 	});
 	//socket response on chat response
 	socket.on("chat response", function(data){
-		$("#messages").append($("<li class='chat'>").html("[" + logDate() + "] <span class='user'> " + data.user + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
+		$("#messages").append($("<li class='chat'>").html("[" + logDate() + "] <span class='user " + data.color + "'> " + data.user + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
 		console.log(data)
 		scrollToBottom();
 	});
@@ -221,7 +222,7 @@
 
 	//chat message submission
 	$('#chat-form').submit(function(){
-		socket.emit("chat message", { "msg" : $("#chat-val").val(), "user" : displayName });
+		socket.emit("chat message", { "msg" : $("#chat-val").val(), "user" : displayName, "color" : myColor });
 		$("#chat-val").val("");
 		$("#chat-val button").removeClass("full");
 		return false;

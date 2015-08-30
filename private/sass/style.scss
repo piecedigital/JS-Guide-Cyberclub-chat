@@ -405,20 +405,6 @@ label[for="admin-tab"] {
 	z-index: 1;
 }
 /*chat*/
-#messages {
-	overflow-y: auto;
-	& .chat, .update, .command {
-		padding: .2em;
-	}
-	& .chat {
-		&:nth-type-of(odd) {
-			background-color: $lightBlue;
-		}
-	}
-	& .update {
-		background-color: $terquis;
-	}
-}
 .notification {
 	position: fixed;
 	top: 0;
@@ -448,6 +434,27 @@ label[for="admin-tab"] {
 			height: 100%;
 			background-color: $veryLightBlue;
 			text-align: left;
+			overflow-y: auto;
+			& .chat, .update, .command, .plain {
+				padding: .2em;
+				list-style: none;
+				& p {
+					display: inline-block;
+					margin: 0;
+				}
+				& .user {
+					&.black { color: black; }
+					&.grey { color: grey; }
+					&.brown { color: brown; }
+					&.green { color: green; }
+					&.blue { color: blue; }
+					&.orange { color: orange; }
+					&.pink { color: pink; }
+				}
+			}
+			& .update {
+				background-color: $terquis;
+			}
 		}
 		& #side-bar {
 			position: absolute;
