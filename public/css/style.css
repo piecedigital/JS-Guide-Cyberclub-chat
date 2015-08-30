@@ -1548,8 +1548,12 @@ label[for="admin-tab"] {
   overflow-y: auto;
 }
 
+#chat-box > div #messages.hide-time .time-code {
+  display: none;
+}
+
 #chat-box > div #messages .chat, #chat-box > div #messages .update, #chat-box > div #messages .command, #chat-box > div #messages .plain {
-  padding: .2em;
+  padding: 0.2em 0.5em;
   list-style: none;
 }
 
@@ -1558,32 +1562,43 @@ label[for="admin-tab"] {
   margin: 0;
 }
 
-#chat-box > div #messages .chat .user.black, #chat-box > div #messages .update .user.black, #chat-box > div #messages .command .user.black, #chat-box > div #messages .plain .user.black {
+#chat-box > div #messages .chat .user.black, #chat-box > div #messages .chat .teen-mod.black, #chat-box > div #messages .chat .jr-mod.black, #chat-box > div #messages .chat .mod.black, #chat-box > div #messages .chat .admin.black, #chat-box > div #messages .update .user.black, #chat-box > div #messages .update .teen-mod.black, #chat-box > div #messages .update .jr-mod.black, #chat-box > div #messages .update .mod.black, #chat-box > div #messages .update .admin.black, #chat-box > div #messages .command .user.black, #chat-box > div #messages .command .teen-mod.black, #chat-box > div #messages .command .jr-mod.black, #chat-box > div #messages .command .mod.black, #chat-box > div #messages .command .admin.black, #chat-box > div #messages .plain .user.black, #chat-box > div #messages .plain .teen-mod.black, #chat-box > div #messages .plain .jr-mod.black, #chat-box > div #messages .plain .mod.black, #chat-box > div #messages .plain .admin.black {
   color: black;
 }
 
-#chat-box > div #messages .chat .user.grey, #chat-box > div #messages .update .user.grey, #chat-box > div #messages .command .user.grey, #chat-box > div #messages .plain .user.grey {
+#chat-box > div #messages .chat .user.grey, #chat-box > div #messages .chat .teen-mod.grey, #chat-box > div #messages .chat .jr-mod.grey, #chat-box > div #messages .chat .mod.grey, #chat-box > div #messages .chat .admin.grey, #chat-box > div #messages .update .user.grey, #chat-box > div #messages .update .teen-mod.grey, #chat-box > div #messages .update .jr-mod.grey, #chat-box > div #messages .update .mod.grey, #chat-box > div #messages .update .admin.grey, #chat-box > div #messages .command .user.grey, #chat-box > div #messages .command .teen-mod.grey, #chat-box > div #messages .command .jr-mod.grey, #chat-box > div #messages .command .mod.grey, #chat-box > div #messages .command .admin.grey, #chat-box > div #messages .plain .user.grey, #chat-box > div #messages .plain .teen-mod.grey, #chat-box > div #messages .plain .jr-mod.grey, #chat-box > div #messages .plain .mod.grey, #chat-box > div #messages .plain .admin.grey {
   color: grey;
 }
 
-#chat-box > div #messages .chat .user.brown, #chat-box > div #messages .update .user.brown, #chat-box > div #messages .command .user.brown, #chat-box > div #messages .plain .user.brown {
+#chat-box > div #messages .chat .user.brown, #chat-box > div #messages .chat .teen-mod.brown, #chat-box > div #messages .chat .jr-mod.brown, #chat-box > div #messages .chat .mod.brown, #chat-box > div #messages .chat .admin.brown, #chat-box > div #messages .update .user.brown, #chat-box > div #messages .update .teen-mod.brown, #chat-box > div #messages .update .jr-mod.brown, #chat-box > div #messages .update .mod.brown, #chat-box > div #messages .update .admin.brown, #chat-box > div #messages .command .user.brown, #chat-box > div #messages .command .teen-mod.brown, #chat-box > div #messages .command .jr-mod.brown, #chat-box > div #messages .command .mod.brown, #chat-box > div #messages .command .admin.brown, #chat-box > div #messages .plain .user.brown, #chat-box > div #messages .plain .teen-mod.brown, #chat-box > div #messages .plain .jr-mod.brown, #chat-box > div #messages .plain .mod.brown, #chat-box > div #messages .plain .admin.brown {
   color: brown;
 }
 
-#chat-box > div #messages .chat .user.green, #chat-box > div #messages .update .user.green, #chat-box > div #messages .command .user.green, #chat-box > div #messages .plain .user.green {
+#chat-box > div #messages .chat .user.green, #chat-box > div #messages .chat .teen-mod.green, #chat-box > div #messages .chat .jr-mod.green, #chat-box > div #messages .chat .mod.green, #chat-box > div #messages .chat .admin.green, #chat-box > div #messages .update .user.green, #chat-box > div #messages .update .teen-mod.green, #chat-box > div #messages .update .jr-mod.green, #chat-box > div #messages .update .mod.green, #chat-box > div #messages .update .admin.green, #chat-box > div #messages .command .user.green, #chat-box > div #messages .command .teen-mod.green, #chat-box > div #messages .command .jr-mod.green, #chat-box > div #messages .command .mod.green, #chat-box > div #messages .command .admin.green, #chat-box > div #messages .plain .user.green, #chat-box > div #messages .plain .teen-mod.green, #chat-box > div #messages .plain .jr-mod.green, #chat-box > div #messages .plain .mod.green, #chat-box > div #messages .plain .admin.green {
   color: green;
 }
 
-#chat-box > div #messages .chat .user.blue, #chat-box > div #messages .update .user.blue, #chat-box > div #messages .command .user.blue, #chat-box > div #messages .plain .user.blue {
+#chat-box > div #messages .chat .user.blue, #chat-box > div #messages .chat .teen-mod.blue, #chat-box > div #messages .chat .jr-mod.blue, #chat-box > div #messages .chat .mod.blue, #chat-box > div #messages .chat .admin.blue, #chat-box > div #messages .update .user.blue, #chat-box > div #messages .update .teen-mod.blue, #chat-box > div #messages .update .jr-mod.blue, #chat-box > div #messages .update .mod.blue, #chat-box > div #messages .update .admin.blue, #chat-box > div #messages .command .user.blue, #chat-box > div #messages .command .teen-mod.blue, #chat-box > div #messages .command .jr-mod.blue, #chat-box > div #messages .command .mod.blue, #chat-box > div #messages .command .admin.blue, #chat-box > div #messages .plain .user.blue, #chat-box > div #messages .plain .teen-mod.blue, #chat-box > div #messages .plain .jr-mod.blue, #chat-box > div #messages .plain .mod.blue, #chat-box > div #messages .plain .admin.blue {
   color: blue;
 }
 
-#chat-box > div #messages .chat .user.orange, #chat-box > div #messages .update .user.orange, #chat-box > div #messages .command .user.orange, #chat-box > div #messages .plain .user.orange {
+#chat-box > div #messages .chat .user.orange, #chat-box > div #messages .chat .teen-mod.orange, #chat-box > div #messages .chat .jr-mod.orange, #chat-box > div #messages .chat .mod.orange, #chat-box > div #messages .chat .admin.orange, #chat-box > div #messages .update .user.orange, #chat-box > div #messages .update .teen-mod.orange, #chat-box > div #messages .update .jr-mod.orange, #chat-box > div #messages .update .mod.orange, #chat-box > div #messages .update .admin.orange, #chat-box > div #messages .command .user.orange, #chat-box > div #messages .command .teen-mod.orange, #chat-box > div #messages .command .jr-mod.orange, #chat-box > div #messages .command .mod.orange, #chat-box > div #messages .command .admin.orange, #chat-box > div #messages .plain .user.orange, #chat-box > div #messages .plain .teen-mod.orange, #chat-box > div #messages .plain .jr-mod.orange, #chat-box > div #messages .plain .mod.orange, #chat-box > div #messages .plain .admin.orange {
   color: orange;
 }
 
-#chat-box > div #messages .chat .user.pink, #chat-box > div #messages .update .user.pink, #chat-box > div #messages .command .user.pink, #chat-box > div #messages .plain .user.pink {
+#chat-box > div #messages .chat .user.pink, #chat-box > div #messages .chat .teen-mod.pink, #chat-box > div #messages .chat .jr-mod.pink, #chat-box > div #messages .chat .mod.pink, #chat-box > div #messages .chat .admin.pink, #chat-box > div #messages .update .user.pink, #chat-box > div #messages .update .teen-mod.pink, #chat-box > div #messages .update .jr-mod.pink, #chat-box > div #messages .update .mod.pink, #chat-box > div #messages .update .admin.pink, #chat-box > div #messages .command .user.pink, #chat-box > div #messages .command .teen-mod.pink, #chat-box > div #messages .command .jr-mod.pink, #chat-box > div #messages .command .mod.pink, #chat-box > div #messages .command .admin.pink, #chat-box > div #messages .plain .user.pink, #chat-box > div #messages .plain .teen-mod.pink, #chat-box > div #messages .plain .jr-mod.pink, #chat-box > div #messages .plain .mod.pink, #chat-box > div #messages .plain .admin.pink {
   color: pink;
+}
+
+#chat-box > div #messages .chat p {
+  border-radius: .5em;
+  padding: .5em;
+  word-break: break-word;
+  background-color: rgba(0, 200, 255, 0.2);
+}
+
+#chat-box > div #messages .chat:nth-of-type(odd) p {
+  background-color: rgba(0, 150, 200, 0.2);
 }
 
 #chat-box > div #messages .update {

@@ -149,7 +149,7 @@
 	});
 	//socket response on chat response
 	socket.on("chat response", function(data){
-		$("#messages").append($("<li class='chat'>").html("[" + logDate() + "] <span class='user " + data.color + "'> " + data.user + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
+		$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.color + "'> " + data.user + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
 		console.log(data)
 		scrollToBottom();
 	});

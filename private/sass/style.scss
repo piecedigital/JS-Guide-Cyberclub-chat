@@ -435,14 +435,17 @@ label[for="admin-tab"] {
 			background-color: $veryLightBlue;
 			text-align: left;
 			overflow-y: auto;
+			&.hide-time .time-code{
+				display: none;
+			}
 			& .chat, .update, .command, .plain {
-				padding: .2em;
+				padding: .2em .5em;
 				list-style: none;
 				& p {
 					display: inline-block;
 					margin: 0;
 				}
-				& .user {
+				& .user, .teen-mod, .jr-mod, .mod, .admin {
 					&.black { color: black; }
 					&.grey { color: grey; }
 					&.brown { color: brown; }
@@ -450,6 +453,17 @@ label[for="admin-tab"] {
 					&.blue { color: blue; }
 					&.orange { color: orange; }
 					&.pink { color: pink; }
+				}
+			}
+			& .chat {
+				& p {
+					border-radius: .5em;
+					padding: .5em;
+					word-break: break-word;
+					background-color: rgba(0, 200, 255, .2);
+				}
+				&:nth-of-type(odd)  p{
+					background-color: rgba(0, 150, 200, .2);
 				}
 			}
 			& .update {
