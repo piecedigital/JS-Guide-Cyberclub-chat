@@ -1714,11 +1714,12 @@ label[for="admin-tab"] {
   padding: 0 0 0 1em;
 }
 
-#chat-box > div #side-bar > div #room-list .room ul li {
+#chat-box > div #side-bar > div #room-list .room ul .user {
+  list-style: none;
   padding: .2em 0;
 }
 
-#chat-box > div #side-bar > div #room-list .room ul li:before {
+#chat-box > div #side-bar > div #room-list .room ul .user:before {
   content: "\2517";
   margin: 0 0.2em 0 0;
 }

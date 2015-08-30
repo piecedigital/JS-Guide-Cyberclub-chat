@@ -46,11 +46,13 @@ module.exports = function(io, db) {
 				}
 			})
 			.on("chat message", function(obj) {
-				console.log("'chat message' socket function");
-				console.log(obj);
-				obj.msg = obj.msg.replace(/[<]/gi, "&lt;")
-					.replace(/[>]/gi, "&gt;")
-				io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "user" : obj.user, "color" : obj.color, "level" : obj.level });
+				if(obj.msg) {
+					console.log("'chat message' socket function");
+					console.log(obj);
+					obj.msg = obj.msg.replace(/[<]/gi, "&lt;")
+						.replace(/[>]/gi, "&gt;")
+					io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "user" : obj.user, "color" : obj.color, "level" : obj.level });
+				}
 			})
 			.on("example", function(obj) {
 				console.log("'join' socket function");

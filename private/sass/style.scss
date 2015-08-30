@@ -542,7 +542,8 @@ label[for="admin-tab"] {
 						& ul {
 							display: none;
 							padding: 0 0 0 1em;
-							& li {
+							& .user {
+								list-style: none;
 								padding: .2em 0;
 								&:before {
 									content: "\2517";

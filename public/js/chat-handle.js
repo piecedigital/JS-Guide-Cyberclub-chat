@@ -93,7 +93,7 @@
 	//check for keydown events
 	$("#chat-val").keydown(function(k){
 		if( $("#chat-val").val() ) {
-			$("#chat button").addClass("full");
+			$("#chat-form button").addClass("full");
 		}
 
 		listLen = $("#list-box .matched-user").size();
@@ -225,6 +225,7 @@
 	$('#chat-form').submit(function(){
 		socket.emit("chat message", { "msg" : $("#chat-val").val(), "user" : displayName, "color" : myColor, "level" : myLevel });
 		$("#chat-val").val("");
+		$("#chat-form button").removeClass("full");
 		$("#chat-val button").removeClass("full");
 		return false;
 	});
