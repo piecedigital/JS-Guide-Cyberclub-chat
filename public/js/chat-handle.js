@@ -80,7 +80,7 @@
 			$("#list-box").css({"display": "none"});
 		}
 		subStr = $(this).val().split("").slice(caretPosition+1).join("");
-		var matchedUser = new RegExp("\\b(" + subStr + ")", "gi");
+		var matchedUser = new RegExp("\b(" + subStr + ")", "gi");
 		$("#list-box").html("");
 		listArray.map(function(elem, index){
 			if (elem.match(matchedUser) && $("#list-box").attr("style") === "display: inline-block;") {
@@ -192,12 +192,9 @@
 		  "' target='_blank'>" +
 		   filter.match(/(http(s)?[:\/\/]*)([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig) +
 		    "</a>");
-		//smiles
-		filter = filter.replace(/(:\))/ig, "<img id='smile' src='/images/emojis/smile.png'>");
-		filter = filter.replace(/(:\-\))/ig, "<img id='smile' src='/images/emojis/smile.png'>");
-		//indifferents
-		filter = filter.replace(/\B(:\/)\B/ig, "<img id='indif' src='/images/emojis/indif.png'>");
-		filter = filter.replace(/(:\-\/)/ig, "<img id='indif' src='/images/emojis/indif.png'>");
+		//emoticons
+		var emote = filter.match(/(:\))?(:\-\))?(\B(:\/)\B)?(:\-\/)?/ig)[0];
+		filter = filter.replace(emote, "<span class='emote'><span>" + emote + "</span></span>");
 		//match mentions
 		if(filter.match(regUser) && person.toLowerCase() !== displayName.toLowerCase() ){
 			filter = filter.replace(regUser, "<span class='mention'>@"+displayName+"</span>");

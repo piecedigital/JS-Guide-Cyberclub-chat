@@ -49,6 +49,12 @@ $darkBlue: #004B6E;
 	-webkit-transform: scale($val1) translate($val2);
 	transform: scale($val1) translate($val2);
 }
+@mixin transformRT($val1, $val2...) {
+	-ms-transform: rotate($val1) translate($val2);
+	-moz-transform: rotate($val1) translate($val2);
+	-webkit-transform: rotate($val1) translate($val2);
+	transform: rotate($val1) translate($val2);
+}
 @mixin media-min($val) {
 	@media screen and (min-width: $val) {
 		@content;
