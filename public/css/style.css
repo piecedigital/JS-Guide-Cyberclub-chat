@@ -1582,10 +1582,10 @@ label[for="admin-tab"] {
   height: 100%;
   top: 50%;
   left: 50%;
-  -ms-transform: rotate(90deg) translate(-25%, 65%);
-  -moz-transform: rotate(90deg) translate(-25%, 65%);
-  -webkit-transform: rotate(90deg) translate(-25%, 65%);
-  transform: rotate(90deg) translate(-25%, 65%);
+  -ms-transform: rotate(90deg) translate(-25%, 60%);
+  -moz-transform: rotate(90deg) translate(-25%, 60%);
+  -webkit-transform: rotate(90deg) translate(-25%, 60%);
+  transform: rotate(90deg) translate(-25%, 60%);
 }
 
 #chat-box > div #messages .chat .regular, #chat-box > div #messages .chat .teen-mod, #chat-box > div #messages .chat .junior-mod, #chat-box > div #messages .chat .moderator, #chat-box > div #messages .chat .admin, #chat-box > div #messages .update .regular, #chat-box > div #messages .update .teen-mod, #chat-box > div #messages .update .junior-mod, #chat-box > div #messages .update .moderator, #chat-box > div #messages .update .admin, #chat-box > div #messages .command .regular, #chat-box > div #messages .command .teen-mod, #chat-box > div #messages .command .junior-mod, #chat-box > div #messages .command .moderator, #chat-box > div #messages .command .admin, #chat-box > div #messages .plain .regular, #chat-box > div #messages .plain .teen-mod, #chat-box > div #messages .plain .junior-mod, #chat-box > div #messages .plain .moderator, #chat-box > div #messages .plain .admin {

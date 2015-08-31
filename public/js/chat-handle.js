@@ -192,10 +192,20 @@
 		  "' target='_blank'>" +
 		   filter.match(/(http(s)?[:\/\/]*)([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig) +
 		    "</a>");
-		//emoticons
-		var emote = filter.match(/(:\))?(:\-\))?(\B(:\/)\B)?(:\-\/)?/ig)[0];
-		filter = filter.replace(emote, "<span class='emote'><span>" + emote + "</span></span>");
-		//match mentions
+
+		//emoticons/////////////
+		var smileMatch = /(:[\-]?\)){1}/ig;
+		var indifMatch = /(\B(:[\-]?\/)\B){1}/ig;
+
+		//match smile emote
+		var smileEmote = filter.match(smileMatch) || [];
+		filter = filter.replace(smileMatch, "<span class='emote'><span>" + smileEmote[0] + "</span></span>");
+
+		//match indif emote
+		var indifEmote = filter.match(indifMatch) || [];
+		filter = filter.replace(indifMatch, "<span class='emote'><span>" + indifEmote[0] + "</span></span>");
+
+		//match mentions////////////
 		if(filter.match(regUser) && person.toLowerCase() !== displayName.toLowerCase() ){
 			filter = filter.replace(regUser, "<span class='mention'>@"+displayName+"</span>");
 			showTitle = originalTitleMention;
@@ -242,12 +252,12 @@
 
 	$("body").append("<ul id='new-context-menu'><li data-option='join'>Join</li></ul>");
 	var click = false, current, roomname;
-	$("#room-list").on("mousedown", ".room", function(e) {
+	$("#room-list").on("mousedown", ".room .name", function(e) {
 		if(e.buttons === 2) {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			roomname = $(this).data("roomname");
+			roomname = $(this).parent().data("roomname");
 			$("#new-context-menu").css({
 				"top": e.clientY,
 				"left": e.clientX,
@@ -255,15 +265,15 @@
 			});
 			click = true;
 		} else {
-			if(current === $(this).data("roomname")) {
+			if(current === $(this).parent().data("roomname")) {
 				console.log("current: ", current);
 				current = null;
 				
-				roomname = $(this).data("roomname");
+				roomname = $(this).parent().data("roomname");
 				socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
 			} else {
-				$(this).toggleClass("open");
-				current = $(this).data("roomname");
+				$(this).parent().toggleClass("open");
+				current = $(this).parent().data("roomname");
 				
 				setTimeout(function() {
 					current = null;
