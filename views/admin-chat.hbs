@@ -255,11 +255,9 @@
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
 	var bannedWords = "{{bannedWords}}";
-	var bannedArr = bannedWords.split(",").map(function(elem) {
-		return "(" + elem + ")?";
-	}).join("");
-
-	var bannedReg = new RegExp(bannedArr, "gi");
+	var bannedArr = bannedWords.split(",").map(function(elem, ind) {
+		return elem;
+	});
 </script>
 <script type="text/javascript" src="/js/chat-handle.js"></script>
 <script type="text/javascript" src="/js/admin-panel.js"></script>

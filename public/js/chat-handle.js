@@ -14,7 +14,7 @@ String.prototype.multiply = function(times) {
 	usernameFull = $("#user-data").data("username"),
 	username = usernameFull.toLowerCase(),
 	displayName = username,
-	userList = [], listArray = [],
+	listArray = [],
 	windowFocus = true,
 	unread = 0,
 	originalTitleMention = "&#x2589;" + $("title").html(),
@@ -45,13 +45,6 @@ String.prototype.multiply = function(times) {
 
 	socket.on("illegal", function(res){
 		alert(res);
-	});
-	//get user list
-	socket.on("user list", function(list){
-		listArray = list.split(/[,.]/gi);
-		listArray.pop();
-		userList = list;
-		$("#user-list").text(userList);
 	});
 
 	$(window).focus(function() {
@@ -146,7 +139,7 @@ String.prototype.multiply = function(times) {
 
 	function selectMention(){
 		//re-enable the submit button
-		$("#chat-box input[type='submit']").prop("disabled", false);
+		$("#chat-box button[type='submit']").prop("disabled", false);
 		//attach the full user names to the input value
 		$("#chat-val").val( $("#chat-val").val() + $("#list-box li:nth-child(" + selection +
 		 ")").data("name").split("").slice(subStr.length).join("") );
@@ -156,10 +149,12 @@ String.prototype.multiply = function(times) {
 	}
 
 	//socket response on chat log
+	/*
 	socket.on("chat log", function(time, who, msg){
 		$("#messages").append($("<li class='chat'>").html("[<span class='log'>" + logDate(time) + "</span>] <span class='user'> " + who + "</span>: " + "<p class='chat-text'>" + regexFilter(msg, who) + "</p>" ) );
 		$("#messages")[0].scrollTop = $("#messages")[0].scrollHeight;
 	});
+	*/
 	
 	//socket response on chat response
 	socket.on("chat response", function(data){
@@ -181,7 +176,7 @@ String.prototype.multiply = function(times) {
 		console.log(data)
 	});
 	//socket response on update
-
+/*
 	socket.on("update", function(data){
 		$("#messages").append($("<li class='update'>").html("[UPDATE] " + data.msg) );
 		scrollToBottom();
@@ -191,6 +186,11 @@ String.prototype.multiply = function(times) {
 	socket.on("command", function(msg){
 		$("#messages").append($("<li class='command'>").html("[COMMAND] " + msg) );
 		scrollToBottom();
+	});
+*/
+	
+	//socket responses on room entry
+	socket.on("user list", function(data){
 	});
 
 	//socket responses on room entry
@@ -333,7 +333,7 @@ String.prototype.multiply = function(times) {
 			roomname = $(this).data("username");
 			populateContext(userOpts);
 			console.log("user right clicked", this);
-			
+
 			$("#new-context-menu").css({
 				"top": e.clientY,
 				"left": e.clientX,
