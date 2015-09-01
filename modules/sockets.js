@@ -50,8 +50,14 @@ module.exports = function(io, db) {
 					console.log("'chat message' socket function");
 					console.log(obj);
 					obj.msg = obj.msg.replace(/[<]/gi, "&lt;")
-						.replace(/[>]/gi, "&gt;")
-					io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "user" : obj.user, "color" : obj.color, "level" : obj.level });
+						.replace(/[>]/gi, "&gt;");
+
+					if(obj.msg.match(/^(\/me)/gi)) {
+						obj.msg = obj.msg.replace(/^(\/me)/gi, "")
+						io.in(thisRoom).emit("chat me response", { "msg" : obj.msg, "user" : obj.user, "color" : obj.color, "level" : obj.level });
+					} else {
+						io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "user" : obj.user, "color" : obj.color, "level" : obj.level });
+					}
 				}
 			})
 			.on("example", function(obj) {

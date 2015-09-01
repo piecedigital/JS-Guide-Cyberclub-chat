@@ -468,8 +468,16 @@ label[for="admin-tab"] {
 						}
 					}
 				}
-				& .regular, .teen-mod, .junior-mod, .moderator, .admin {
+				& .user {
+					&:hover {
+						text-decoration: underline;
+						cursor: pointer;
+					}
+				}
+				& > .user {
+					display: inline-block;
 					padding: .5em;
+					margin: 0 0 .5em;
 					border-radius: .5em;
 					&.black { color: black; }
 					&.grey { color: grey; }
@@ -479,11 +487,11 @@ label[for="admin-tab"] {
 					&.orange { color: orange; }
 					&.pink { color: pink; }
 				}
-				& .regular { background-color: grey;}
-				& .teen-mod { background-color: rgba(0,200,0, 1);}
-				& .junior-mod { background-color: orange;}
-				& .moderator { background-color: blue;}
-				& .admin { background-color: red;}
+				& > .regular { background-color: grey;}
+				& > .teen-mod { background-color: rgba(0,200,0, 1);}
+				& > .junior-mod { background-color: orange;}
+				& > .moderator { background-color: blue;}
+				& > .admin { background-color: red;}
 			}
 			& .chat {
 				&:nth-of-type(odd) p {
@@ -562,6 +570,10 @@ label[for="admin-tab"] {
 							& .user {
 								list-style: none;
 								padding: .2em 0;
+								&:hover {
+									text-decoration: underline;
+									cursor: pointer;
+								}
 								&:before {
 									content: "\2517";
 									margin: 0 .2em 0 0;
