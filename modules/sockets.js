@@ -34,7 +34,7 @@ module.exports = function(io, db) {
 								"room": obj.room
 							});
 							io.in(thisRoom).emit("new entry", {
-								"msg": "Joined " + obj.room,
+								"msg": obj.username + "has joined ",
 								"user": obj.username,
 								"userDisplay": obj.displayName,
 								"room": obj.room
@@ -60,8 +60,25 @@ module.exports = function(io, db) {
 					}
 				}
 			})
+			.on("live update", function(obj) {
+				console.log("'live update' socket function");
+				console.log(obj);
+
+				var callbacks = {
+					updateBannedWords: function() {
+						io.emit("live update", { "callback" : obj.callback, "operation" : obj.op, "word" : obj.word });
+					},
+					updateRooms: function() {
+						io.emit("live update", { "callback" : obj.callback, "operation" : obj.op, "roomname" : obj.roomname, "topic" : obj.topic });
+					},
+					updateUsers: function() {
+						io.emit("live update", { "callback" : obj.callback, "operation" : obj.op, "username" : obj.username, "newName" : obj.newName });
+					}
+				};
+				callbacks[obj.callback];
+			})
 			.on("example", function(obj) {
-				console.log("'join' socket function");
+				console.log("'' socket function");
 				console.log(obj);
 			})
 			.on("disconnect", function() {

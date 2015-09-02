@@ -14,11 +14,11 @@
 							<div id="room-list">
 								<ul>
 									{{#each rooms}}
-									<li data-roomname="{{roomname}}" class="room block parent">
+									<li data-roomname="{{roomname}}" data-topic="{{topic}}" class="room block parent">
 										<span class="name">{{roomname}}</span>
 										<ul>
 											{{#each users}}
-											<li class="user parent">{{username}}</li>
+											<li class="user parent" data-username="{{username}}">{{username}}</li>
 											{{/each}}
 										</ul>
 									</li>

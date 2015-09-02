@@ -14,7 +14,7 @@ String.prototype.multiply = function(times) {
 	usernameFull = $("#user-data").data("username"),
 	username = usernameFull.toLowerCase(),
 	displayName = username,
-	listArray = [],
+	userList = [],
 	windowFocus = true,
 	unread = 0,
 	originalTitleMention = "&#x2589;" + $("title").html(),
@@ -87,7 +87,7 @@ String.prototype.multiply = function(times) {
 		subStr = $(this).val().split("").slice(caretPosition+1).join("");
 		var matchedUser = new RegExp("\b(" + subStr + ")", "gi");
 		$("#list-box").html("");
-		listArray.map(function(elem, index){
+		userList.map(function(elem, index){
 			if (elem.match(matchedUser) && $("#list-box").attr("style") === "display: inline-block;") {
 				var match = elem.replace(matchedUser, "<span class='match-box-str'>"+subStr+"</span>");
 				$("#list-box").append("<li class='matched-user' data-index='" + (index+1) + "' data-name='" + elem + "'>" + match + "</li>");
@@ -168,7 +168,7 @@ String.prototype.multiply = function(times) {
 
 	//socket response on chat me response
 	socket.on("chat me response", function(data){
-		var matchedUser = checkMutes();
+		var matchedUser = checkMutes(data.user);
 		if(!matchedUser) {
 			$("#messages").append($("<li class='chat " + data.color + "'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text'><span class='user " + data.level + "'> " + data.user + "</span> " + regexFilter(data.msg, data.user) + "</p>" ) );
 			scrollToBottom();
@@ -176,12 +176,12 @@ String.prototype.multiply = function(times) {
 		console.log(data)
 	});
 	//socket response on update
-/*
 	socket.on("update", function(data){
 		$("#messages").append($("<li class='update'>").html("[UPDATE] " + data.msg) );
 		scrollToBottom();
 	});
 	
+/*
 	//socket response on command
 	socket.on("command", function(msg){
 		$("#messages").append($("<li class='command'>").html("[COMMAND] " + msg) );
@@ -199,7 +199,7 @@ String.prototype.multiply = function(times) {
 		$("#room-list").find(".room").removeClass("inside");
 		$("#room-list").find(".room[data-roomname='" + data.room + "']").addClass("inside");
 		$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", false);
-		var room = data.room;
+		room = data.room;
 		console.log(data, room)
 		scrollToBottom();
 	});
@@ -207,6 +207,53 @@ String.prototype.multiply = function(times) {
 		$("#room-list .room ul").find(".user[data-username='" + data.user + "']").remove();
 		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-username='" + data.user + "'>" + data.userDisplay + "</li>");
 		scrollToBottom();
+	});
+
+	//socket responses on room entry
+	socket.on("live update", function(data){
+		$("#messages").append($("<li class='plain'>").html(data.msg) );
+		$("#room-list").find(".room").removeClass("inside");
+		$("#room-list").find(".room[data-roomname='" + data.room + "']").addClass("inside");
+		$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", false);
+
+		var callbacks = {
+			updateBannedWords: function() {
+				if(data.operation === "$pull") {
+					bannedArr.splice(bannedArr.indexOf(data.word), 1);
+				}
+				if(data.operation === "$push") {
+					bannedArr.push(data.word);
+				}
+			},
+			updateRooms: function() {
+				if(data.operation === "remove") {
+					$("#room-list").find(".room[data-roomname='" + data.room + "']").remove();
+				};
+				if(data.operation === "update") {
+					$("#room-list").find(".room[data-roomname='" + data.room + "']").attr({
+						"data-roomname": data.roomname,
+						"data-topic": data.topic
+					}).find(".name").text(data.roomname);
+				};
+				if(data.operation === "add") {
+					$("#room-list").append("li").attr({
+						"data-roomname": data.roomname,
+						"data-topic": data.topic
+					}).html("span").addClass(".name").text("");
+				};
+			},
+			updateUsers: function() {
+				if(data.operation === "remove") {
+					$("#room-list").find(".room .user[data-username='" + data.username + "']").remove();
+				};
+				if(data.operation === "update") {
+					$("#room-list").find(".room .user[data-username='" + data.username + "']").attr({
+						"data-username": data.username
+					}).text(data.username);
+				};
+			}
+		};
+		callbacks[obj.callback];
 	});
 	//filter chat for links and emites
 	function regexFilter(filter, person){
@@ -359,11 +406,6 @@ String.prototype.multiply = function(times) {
 
 		function muteUser(user) {
 			myMutes.push(user);
-			var mutesString = "";
-			for(var i = 0; i < myMutes.length; i++) {
-				muteString += "(" + myMutes +")?"
-			}
-			regexMutes = new RegExp(muteString, "gi");
 		}
 
 		var opt = $(this).data("option");
@@ -380,9 +422,10 @@ String.prototype.multiply = function(times) {
 	});
 }());
 
-function checkMutes() {	
+function checkMutes(user) {	
+	var userReg = new RegExp(user, "gi");
 	for(var i = 0; i < myMutes.length; i++) {
-		if(myMutes[i].match(data.user)) {
+		if(myMutes[i].match(userReg)) {
 			return true;
 		}
 	}
