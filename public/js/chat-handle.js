@@ -208,6 +208,14 @@ String.prototype.multiply = function(times) {
 		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-username='" + data.user + "'>" + data.userDisplay + "</li>");
 		scrollToBottom();
 	});
+	////////////////////////////////
+	////////////////////////////////
+$("#room-list").find(".room[data-roomname='" + "OPEN" + "']").attr({
+						"data-roomname": "data.roomname",
+						"data-topic": "data.topic"
+					}).find(".name").text("CHANGED");
+//////////////////////////////////
+//////////////////////////////////
 
 	//socket responses on room entry
 	socket.on("live update", function(data){
@@ -230,16 +238,16 @@ String.prototype.multiply = function(times) {
 					$("#room-list").find(".room[data-roomname='" + data.room + "']").remove();
 				};
 				if(data.operation === "update") {
-					$("#room-list").find(".room[data-roomname='" + data.room + "']").attr({
-						"data-roomname": data.roomname,
-						"data-topic": data.topic
-					}).find(".name").text(data.roomname);
+					$("#room-list").find(".room[data-roomname='" + "OPEN" + "']").attr({
+						"data-roomname": "data.roomname",
+						"data-topic": "data.topic"
+					}).find(".name").text("CHANGED");
 				};
-				if(data.operation === "add") {
-					$("#room-list").append("li").attr({
+				if(data.operation === "add") {$("#room-list ul").append( $("<li>").attr({
 						"data-roomname": data.roomname,
-						"data-topic": data.topic
-					}).html("span").addClass(".name").text("");
+						"data-topic": data.topic,
+						"class": "room block parent"
+					}).html( $("<span>").addClass(".name").text(data.roomname) ) );
 				};
 			},
 			updateUsers: function() {
