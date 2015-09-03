@@ -75,6 +75,7 @@ app.use(routes);
 // sockets module
 var sockets = require("./modules/sockets");
 io.on("connection", sockets(io, db).socketHandler);
+io.emit("some event", {for: "everyone"});
 
 db.open(function(err, dbase) {
   if(err) throw err;

@@ -33,17 +33,26 @@ module.exports = function(io, db) {
 								"msg": "Joined " + obj.room,
 								"room": obj.room
 							});
-							io.in(thisRoom).emit("new entry", {
+							io.emit("new entry", {
 								"msg": obj.username + "has joined ",
 								"user": obj.username,
 								"userDisplay": obj.displayName,
 								"room": obj.room
 							});
         		} else {
-        			io.io(socket.id).emit("command", { "msg" : "Room does not exist" });
+        			io.to(socket.id).emit("command", { "msg" : "Room does not exist" });
         		}
         	});
 				}
+			})
+			.on("leave", function(obj) {
+				console.log("'leave' socket function");
+				console.log(obj);
+
+				socket.leave(obj.room);
+				io.to(socket.id).emit("update", {
+						"msg": "You have left the room " + obj.room
+					});
 			})
 			.on("chat message", function(obj) {
 				if(obj.msg) {
@@ -66,16 +75,16 @@ module.exports = function(io, db) {
 
 				var callbacks = {
 					updateBannedWords: function() {
-						io.emit("live update", { "callback" : obj.callback, "operation" : obj.op, "word" : obj.word });
+						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "word" : obj.word });
 					},
 					updateRooms: function() {
-						io.emit("live update", { "callback" : obj.callback, "operation" : obj.op, "roomname" : obj.roomname, "topic" : obj.topic });
+						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "roomname" : obj.roomname, "topic" : obj.topic });
 					},
 					updateUsers: function() {
-						io.emit("live update", { "callback" : obj.callback, "operation" : obj.op, "username" : obj.username, "newName" : obj.newName });
+						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "username" : obj.username, "newName" : obj.newName });
 					}
 				};
-				callbacks[obj.callback];
+				callbacks[obj.callback]();
 			})
 			.on("example", function(obj) {
 				console.log("'' socket function");

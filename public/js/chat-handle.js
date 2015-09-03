@@ -208,21 +208,15 @@ String.prototype.multiply = function(times) {
 		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-username='" + data.user + "'>" + data.userDisplay + "</li>");
 		scrollToBottom();
 	});
-	////////////////////////////////
-	////////////////////////////////
-$("#room-list").find(".room[data-roomname='" + "OPEN" + "']").attr({
-						"data-roomname": "data.roomname",
-						"data-topic": "data.topic"
-					}).find(".name").text("CHANGED");
+//////////////////////////////////
+//////////////////////////////////
+// jQuery testing area
 //////////////////////////////////
 //////////////////////////////////
 
 	//socket responses on room entry
-	socket.on("live update", function(data){
-		$("#messages").append($("<li class='plain'>").html(data.msg) );
-		$("#room-list").find(".room").removeClass("inside");
-		$("#room-list").find(".room[data-roomname='" + data.room + "']").addClass("inside");
-		$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", false);
+	socket.on("real time update", function(data){
+		console.log(data);
 
 		var callbacks = {
 			updateBannedWords: function() {
@@ -235,19 +229,30 @@ $("#room-list").find(".room[data-roomname='" + "OPEN" + "']").attr({
 			},
 			updateRooms: function() {
 				if(data.operation === "remove") {
-					$("#room-list").find(".room[data-roomname='" + data.room + "']").remove();
+					console.log("remove room", data);
+
+					$("#room-list").find(".room[data-roomname='" + data.roomname + "']").remove();
+					if(room === data.roomname) {
+						socket.emit("leave", { "room" : data.roomname, "username" : username, "displayName" : displayName });
+						room = "door";
+					}
 				};
 				if(data.operation === "update") {
-					$("#room-list").find(".room[data-roomname='" + "OPEN" + "']").attr({
-						"data-roomname": "data.roomname",
-						"data-topic": "data.topic"
-					}).find(".name").text("CHANGED");
+					console.log("update room", data);
+
+					$("#room-list").find(".room[data-roomname='" + data.roomname + "']").attr({
+						"data-roomname": data.roomname,
+						"data-topic": data.topic
+					}).find(".name").text(data.roomname);
 				};
-				if(data.operation === "add") {$("#room-list ul").append( $("<li>").attr({
+				if(data.operation === "add") {
+					console.log("add room", data);
+
+					$("#room-list > ul").append( $("<li>").attr({
 						"data-roomname": data.roomname,
 						"data-topic": data.topic,
 						"class": "room block parent"
-					}).html( $("<span>").addClass(".name").text(data.roomname) ) );
+					}).html( $("<span>").addClass("name").text(data.roomname) ) );
 				};
 			},
 			updateUsers: function() {
@@ -261,7 +266,8 @@ $("#room-list").find(".room[data-roomname='" + "OPEN" + "']").attr({
 				};
 			}
 		};
-		callbacks[obj.callback];
+
+		callbacks[data.callback]();
 	});
 	//filter chat for links and emites
 	function regexFilter(filter, person){

@@ -47,7 +47,7 @@
 		
 		panels.rooms.find("#item-options").find("input[name='topic']").val(topic);
 
-		panels.rooms.find("#item-options").find("input[type='checkbox']").val(false);
+		panels.rooms.find("#item-options").find("input[type='checkbox']").attr("checked", false);
 
 		panels.rooms.find("#item-options").find(".hide").removeClass("hidden-force");
 	});
@@ -65,7 +65,7 @@
 		
 		panels.rooms.find("#item-options").find("input[name='topic']").val("");
 		
-		panels.rooms.find("#item-options").find("input[type='checkbox']").val(false);
+		panels.rooms.find("#item-options").find("input[type='checkbox']").vattr("checked", false);
 
 		panels.rooms.find("#item-options").find(".hide").addClass("hidden-force");
 	});
