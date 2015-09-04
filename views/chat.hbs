@@ -17,9 +17,8 @@
 									<li data-roomname="{{roomname}}" data-topic="{{topic}}" class="room block parent">
 										<span class="name">{{roomname}}</span>
 										<ul>
-											{{users.length}}
 											{{#each users}}
-											<li class="user parent" data-username="{{username}}" data-displayname="{{usernameFull}}">{{this}}</li>
+											<li class="user parent" data-username="{{username}}" data-displayname="{{usernameFull}}">{{username}}</li>
 											{{/each}}
 										</ul>
 									</li>

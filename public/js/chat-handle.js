@@ -347,6 +347,7 @@ String.prototype.multiply = function(times) {
 
 	function populateContext(arr) {
 		if(arr) {
+			$("#new-context-menu").html("");
 			for(var i = 0; i < arr.length; i++) {
 				$("#new-context-menu").append("<li data-option='" + arr[i].toLowerCase() + "'>" + arr[i] + "</li>");
 			};
@@ -438,7 +439,7 @@ String.prototype.multiply = function(times) {
 				socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName });
 			},
 			leave: function() {
-				socket.emit("leave", { "room" : roomname, "usernameFull" : usernameFull, "displayName" : displayName });
+				socket.emit("leave", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName });
 			},
 			mention: function() {
 				var val = $("#chat-val").val();
