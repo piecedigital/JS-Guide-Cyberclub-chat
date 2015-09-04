@@ -249,6 +249,8 @@ db.open(function(err, db) {
 			            			//console.log(obj);
 			            			var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
 
+			            			console.log(keyVars);
+
 				  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "chatOptions" : chatOptions });
 			            		}
 			            	}

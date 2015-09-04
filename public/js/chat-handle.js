@@ -13,7 +13,7 @@ String.prototype.multiply = function(times) {
 	var socket = io(),
 	usernameFull = $("#user-data").data("username"),
 	username = usernameFull.toLowerCase(),
-	displayName = username,
+	displayName = usernameFull,
 	userList = [],
 	windowFocus = true,
 	unread = 0,
@@ -41,7 +41,7 @@ String.prototype.multiply = function(times) {
 		$("#messages")[0].scrollTop = $("#messages")[0].scrollHeight;
 	}
 
-	socket.emit("join", { "username" : username});
+	socket.emit("join", { "usernameFull" : usernameFull});
 
 	socket.on("illegal", function(res){
 		alert(res);
@@ -160,7 +160,7 @@ String.prototype.multiply = function(times) {
 	socket.on("chat response", function(data){
 		var matchedUser = checkMutes();
 		if(!matchedUser) {
-			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + " " + data.color + "'> " + data.user + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
+			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + " " + data.color + "' data-username='" + data.displayName + "'> " + data.displayName + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
 			scrollToBottom();
 		}
 		console.log(data)
@@ -170,7 +170,7 @@ String.prototype.multiply = function(times) {
 	socket.on("chat me response", function(data){
 		var matchedUser = checkMutes(data.user);
 		if(!matchedUser) {
-			$("#messages").append($("<li class='chat " + data.color + "'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text'><span class='user " + data.level + "'> " + data.user + "</span> " + regexFilter(data.msg, data.user) + "</p>" ) );
+			$("#messages").append($("<li class='chat " + data.color + "'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text'><span class='user " + data.level + "' data-username='" + data.displayName + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.user) + "</p>" ) );
 			scrollToBottom();
 		}
 		console.log(data)
@@ -200,12 +200,13 @@ String.prototype.multiply = function(times) {
 		$("#room-list").find(".room[data-roomname='" + data.room + "']").addClass("inside");
 		$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", false);
 		room = data.room;
-		console.log(data, room)
+		console.log(data, room);
 		scrollToBottom();
 	});
 	socket.on("new entry", function(data){
-		$("#room-list .room ul").find(".user[data-username='" + data.user + "']").remove();
-		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-username='" + data.user + "'>" + data.userDisplay + "</li>");
+		$("#room-list .room ul").find(".user[data-username='" + data.usernameFull + "']").remove();
+		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-username='" + data.usernameFull + "' data-displayname='" + data.displayName + "'>" + data.displayName + "</li>");
+		console.log(data, room);
 		scrollToBottom();
 	});
 //////////////////////////////////
@@ -321,7 +322,7 @@ String.prototype.multiply = function(times) {
 
 	//chat message submission
 	$('#chat-form').submit(function(){
-		socket.emit("chat message", { "msg" : $("#chat-val").val(), "user" : displayName, "color" : myColor, "level" : myLevel });
+		socket.emit("chat message", { "msg" : $("#chat-val").val(), "displayName" : displayName, "color" : myColor, "level" : myLevel });
 		$("#chat-val").val("");
 		$("#chat-form button").removeClass("full");
 		$("#chat-val button").removeClass("full");
@@ -341,8 +342,8 @@ String.prototype.multiply = function(times) {
 	// interface interactions//
 	///////////////////////////
 	$("body").append("<ul id='new-context-menu'></ul>");
-	var roomOpts = ["Join", "leave"];
-	var userOpts = ["Mention", "Message", "mute"];
+	var roomOpts = ["Join", "Leave"];
+	var userOpts = ["Mention", "Message", "Mute"];
 
 	function populateContext(arr) {
 		if(arr) {
@@ -352,13 +353,13 @@ String.prototype.multiply = function(times) {
 		}
 	};
 
-	var click = false, current, roomname;
+	var click = false, current, contextRoomname, contextUsername;
 	$("#room-list").on("mousedown", ".room .name", function(e) {
 		if(e.buttons === 2) {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			roomname = $(this).parent().data("roomname");
+			contextRoomname = $(this).parent().data("roomname");
 			populateContext(roomOpts);
 
 			$("#new-context-menu").css({
@@ -372,8 +373,8 @@ String.prototype.multiply = function(times) {
 				console.log("current: ", current);
 				current = null;
 				
-				roomname = $(this).parent().data("roomname");
-				socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
+				contextRoomname = $(this).parent().data("roomname");
+				socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName });
 			} else {
 				$(this).parent().toggleClass("open");
 				current = $(this).parent().data("roomname");
@@ -386,12 +387,12 @@ String.prototype.multiply = function(times) {
 		}
 	});
 
-	$("#messages").on("mousedown", ".user", function(e) {
+	$("#room-list").on("mousedown", ".user", function(e) {
 		if(e.buttons === 2) {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			roomname = $(this).data("username");
+			contextUsername = $(this).data("username");
 			populateContext(userOpts);
 			console.log("user right clicked", this);
 
@@ -402,19 +403,54 @@ String.prototype.multiply = function(times) {
 			});
 			click = true;
 		} else {
-			var val = $("#chat-val").val("");
+			var val = $("#chat-val").val();
 			var user = $(this).data("username");
-			$("#chat-val").val( val + "@" + user);
+			$("#chat-val").val( val + "@" + user + " ");
+		}
+	});
+
+	$("#messages").on("mousedown", ".user", function(e) {
+		if(e.buttons === 2) {
+			document.oncontextmenu = function() {
+				return false;
+			};
+			contextRoomname = $(this).data("username");
+			populateContext(userOpts);
+			console.log("user right clicked", this);
+
+			$("#new-context-menu").css({
+				"top": e.clientY,
+				"left": e.clientX,
+				"display": "block"
+			});
+			click = true;
+		} else {
+			var val = $("#chat-val").val();
+			var user = $(this).data("username");
+			$("#chat-val").val( val + "@" + user + " ");
 		}
 	});
 
 	$("#new-context-menu").on("click", "li", function() {
 		var options = {
 			join: function() {
-				socket.emit("join", { "room" : roomname, "username" : username, "displayName" : displayName });
+				socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName });
+				socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName });
 			},
 			leave: function() {
-				socket.emit("leave", { "room" : roomname, "username" : username, "displayName" : displayName });
+				socket.emit("leave", { "room" : roomname, "usernameFull" : usernameFull, "displayName" : displayName });
+			},
+			mention: function() {
+				var val = $("#chat-val").val();
+				$("#chat-val").val( val + "@" + contextUsername + " ");
+			},
+			message: function() {
+				if(myLevel !== "moderator" || myLevel !== "admin") {
+					alert("You do not have appropriate permission to send messages");
+				}
+			},
+			mute: function() {
+				myMutes.push(contextUsername);
 			}
 		};
 
@@ -423,8 +459,9 @@ String.prototype.multiply = function(times) {
 		}
 
 		var opt = $(this).data("option");
-		console.log(opt)
-		options[opt]();
+		console.log(opt);
+
+		options[opt.toLowerCase()]();
 	});
 
 

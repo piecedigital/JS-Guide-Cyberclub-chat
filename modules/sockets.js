@@ -19,24 +19,32 @@ module.exports = function(io, db) {
 					io.to(socket.id).emit("update", {
 						"msg": "Welcome, " + obj.username + ", to the Guide Cyberclub chat! Please select one of our available rooms to begin chatting."
 					});
+
+					User.update({ "usernameFull" : obj.usernameFull }, { "$set" : { "socket" : socket.id } });
 				} else {
 					Room.findOne({ "roomname" : obj.room }, { "_id" : 0, "roomname" : 1, "minMods" : 1, "topic" : 1 }, function(roomQErr, roomQDoc) {
         		if(roomQErr) throw roomQErr;
 
         		if(roomQDoc) {
-							socket.leave(thisRoom);
 							socket.join(obj.room);
         			thisRoom = obj.room;
 							console.log(obj.room, thisRoom);
 
+							var userObj = {
+								"username": obj.usernameFull.toLowerCase(),
+								"usernameFull" : obj.usernameFull
+							};
+
+							Room.update({ "roomname" : obj.room }, { "$push" :{ "users" : userObj } });
+							
 							io.to(socket.id).emit("enter room", {
 								"msg": "Joined " + obj.room,
 								"room": obj.room
 							});
 							io.emit("new entry", {
-								"msg": obj.username + "has joined ",
-								"user": obj.username,
-								"userDisplay": obj.displayName,
+								"msg": obj.usernameFull + " has joined ",
+								"usernameFull": obj.usernameFull,
+								"displayName": obj.displayName,
 								"room": obj.room
 							});
         		} else {
@@ -50,9 +58,19 @@ module.exports = function(io, db) {
 				console.log(obj);
 
 				socket.leave(obj.room);
+
+				Room.update({}, { "$pull" :{ "users" : { "usernameFull" : obj.usernameFull} } });
+
 				io.to(socket.id).emit("update", {
-						"msg": "You have left the room " + obj.room
-					});
+					"msg": "You have left the room " + obj.room
+				});
+
+				io.emit("new entry", {
+					"msg": obj.username + "has left ",
+					"usernameFull": obj.usernameFull,
+					"displayName": obj.displayName,
+					"room": null
+				});
 			})
 			.on("chat message", function(obj) {
 				if(obj.msg) {
@@ -63,9 +81,9 @@ module.exports = function(io, db) {
 
 					if(obj.msg.match(/^(\/me)/gi)) {
 						obj.msg = obj.msg.replace(/^(\/me)/gi, "")
-						io.in(thisRoom).emit("chat me response", { "msg" : obj.msg, "user" : obj.user, "color" : obj.color, "level" : obj.level });
+						io.in(thisRoom).emit("chat me response", { "msg" : obj.msg, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					} else {
-						io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "user" : obj.user, "color" : obj.color, "level" : obj.level });
+						io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					}
 				}
 			})
@@ -91,7 +109,24 @@ module.exports = function(io, db) {
 				console.log(obj);
 			})
 			.on("disconnect", function() {
-				console.log("disconnected");
+				console.log("disconnected", socket.id);
+
+				User.findOne({ "socket" : socket.id }, function(userQErr, userQDoc) {
+					if(userQErr) throw userQErr;
+
+					if(userQDoc) {
+						console.log(userQDoc);
+
+						io.emit("new entry", {
+							"msg": userQDoc.username + " has left",
+							"usernameFull": userQDoc.usernameFull,
+							"displayName": userQDoc.usernameFull,
+							"room": null
+						});
+
+						Room.update({}, { "$pull" :{ "users" : { "usernameFull" : userQDoc.usernameFull} } });
+					}
+				});
 			});
 		}
 	}
