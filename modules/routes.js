@@ -249,13 +249,13 @@ db.open(function(err, db) {
 			            			//console.log(obj);
 			            			var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
 
-			            			console.log(keyVars);
+			            			//console.log(keyVars);
 
 				  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "chatOptions" : chatOptions });
 			            		}
 			            	}
 
-			            	Room.find({}, { "_id" : 0, "roomname" : 1, "roomnameHyph" : 1, "minMods" : 1, "topic" : 1 }).toArray(function(roomQErr, roomQDoc) {
+			            	Room.find({}).toArray(function(roomQErr, roomQDoc) {
 			            		if(roomQErr) throw roomQErr;
 
 			            		if(roomQDoc) {
@@ -369,7 +369,7 @@ db.open(function(err, db) {
 			            		}
 			            	}
 
-			            	Room.find({}, { "_id" : 0, "roomname" : 1, "roomnameHyph" : 1, "minMods" : 1, "topic" : 1 }).toArray(function(roomQErr, roomQDoc) {
+			            	Room.find({}).toArray(function(roomQErr, roomQDoc) {
 			            		if(roomQErr) throw roomQErr;
 
 			            		if(roomQDoc) {
