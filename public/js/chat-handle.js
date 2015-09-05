@@ -158,9 +158,9 @@ String.prototype.multiply = function(times) {
 	
 	//socket response on chat response
 	socket.on("chat response", function(data){
-		var matchedUser = checkMutes();
+		var matchedUser = checkMutes(data.usernameFull);
 		if(!matchedUser) {
-			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + " " + data.color + "' data-username='" + data.displayName + "'> " + data.displayName + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
+			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + " " + data.color + "' data-username='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
 			scrollToBottom();
 		}
 		console.log(data)
@@ -168,9 +168,9 @@ String.prototype.multiply = function(times) {
 
 	//socket response on chat me response
 	socket.on("chat me response", function(data){
-		var matchedUser = checkMutes(data.user);
+		var matchedUser = checkMutes(data.usernameFull);
 		if(!matchedUser) {
-			$("#messages").append($("<li class='chat " + data.color + "'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text'><span class='user " + data.level + "' data-username='" + data.displayName + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.user) + "</p>" ) );
+			$("#messages").append($("<li class='chat " + data.color + "'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.username + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.user) + "</p>" ) );
 			scrollToBottom();
 		}
 		console.log(data)
@@ -204,8 +204,8 @@ String.prototype.multiply = function(times) {
 		scrollToBottom();
 	});
 	socket.on("new entry", function(data){
-		$("#room-list .room ul").find(".user[data-username='" + data.usernameFull + "']").remove();
-		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-username='" + data.usernameFull + "' data-displayname='" + data.displayName + "'>" + data.displayName + "</li>");
+		$("#room-list .room ul").find(".user[data-usernameFull='" + data.usernameFull + "']").remove();
+		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-displayname='" + data.displayName + "'>" + data.displayName + "</li>");
 		console.log(data, room);
 		scrollToBottom();
 	});
@@ -232,16 +232,16 @@ String.prototype.multiply = function(times) {
 				if(data.operation === "remove") {
 					console.log("remove room", data);
 
-					$("#room-list").find(".room[data-roomname='" + data.roomname + "']").remove();
-					if(room === data.roomname) {
-						socket.emit("leave", { "room" : data.roomname, "username" : username, "displayName" : displayName });
+					$("#room-list").find(".room[data-roomname='" + data.originalName + "']").remove();
+					if(room === data.originalName) {
+						socket.emit("leave", { "room" : data.originalName, "usernameFull" : usernameFull, "displayName" : displayName });
 						room = "door";
 					}
 				};
 				if(data.operation === "update") {
 					console.log("update room", data);
 
-					$("#room-list").find(".room[data-roomname='" + data.roomname + "']").attr({
+					$("#room-list").find(".room[data-roomname='" + data.originalName + "']").attr({
 						"data-roomname": data.roomname,
 						"data-topic": data.topic
 					}).find(".name").text(data.roomname);
@@ -253,17 +253,22 @@ String.prototype.multiply = function(times) {
 						"data-roomname": data.roomname,
 						"data-topic": data.topic,
 						"class": "room block parent"
-					}).html( $("<span>").addClass("name").text(data.roomname) ) );
+					}).html( $("<span>").addClass("name").text(data.roomname) ).append("<ul>") );
 				};
 			},
 			updateUsers: function() {
 				if(data.operation === "remove") {
-					$("#room-list").find(".room .user[data-username='" + data.username + "']").remove();
+					$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").remove();
+					window.location.href = "/banned/account";
 				};
 				if(data.operation === "update") {
-					$("#room-list").find(".room .user[data-username='" + data.username + "']").attr({
-						"data-username": data.username
-					}).text(data.username);
+					$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").attr({
+						"data-usernameFull": data.newName
+					});
+					if(data.usernameFull === usernameFull) {
+						alert("your username has been changed. You browser must now be refreshed.");
+						window.location.reload(true);
+					}
 				};
 			}
 		};
@@ -322,7 +327,7 @@ String.prototype.multiply = function(times) {
 
 	//chat message submission
 	$('#chat-form').submit(function(){
-		socket.emit("chat message", { "msg" : $("#chat-val").val(), "displayName" : displayName, "color" : myColor, "level" : myLevel });
+		socket.emit("chat message", { "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
 		$("#chat-val").val("");
 		$("#chat-form button").removeClass("full");
 		$("#chat-val button").removeClass("full");
@@ -343,7 +348,7 @@ String.prototype.multiply = function(times) {
 	///////////////////////////
 	$("body").append("<ul id='new-context-menu'></ul>");
 	var roomOpts = ["Join", "Leave"];
-	var userOpts = ["Mention", "Message", "Mute"];
+	var userOpts = ["Mention", "Message", "Mute", "Unmute"];
 
 	function populateContext(arr) {
 		if(arr) {
@@ -354,7 +359,7 @@ String.prototype.multiply = function(times) {
 		}
 	};
 
-	var click = false, current, contextRoomname, contextUsername;
+	var click = false, current, contextRoomname, contextUsername, contextUserdisp;
 	$("#room-list").on("mousedown", ".room .name", function(e) {
 		if(e.buttons === 2) {
 			document.oncontextmenu = function() {
@@ -394,6 +399,7 @@ String.prototype.multiply = function(times) {
 				return false;
 			};
 			contextUsername = $(this).data("username");
+			contextUserdisp = $(this).data("displayname");
 			populateContext(userOpts);
 			console.log("user right clicked", this);
 
@@ -405,8 +411,8 @@ String.prototype.multiply = function(times) {
 			click = true;
 		} else {
 			var val = $("#chat-val").val();
-			var user = $(this).data("username");
-			$("#chat-val").val( val + "@" + user + " ");
+			var userDisp = $(this).data("displayname");
+			$("#chat-val").val( val + "@" + userDisp + " ");
 		}
 	});
 
@@ -415,7 +421,8 @@ String.prototype.multiply = function(times) {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			contextRoomname = $(this).data("username");
+			contextUsername = $(this).data("username");
+			contextUsername = $(this).data("displayname");
 			populateContext(userOpts);
 			console.log("user right clicked", this);
 
@@ -427,8 +434,8 @@ String.prototype.multiply = function(times) {
 			click = true;
 		} else {
 			var val = $("#chat-val").val();
-			var user = $(this).data("username");
-			$("#chat-val").val( val + "@" + user + " ");
+			var userDisp = $(this).data("displayname");
+			$("#chat-val").val( val + "@" + userDisp + " ");
 		}
 	});
 
@@ -452,6 +459,9 @@ String.prototype.multiply = function(times) {
 			},
 			mute: function() {
 				myMutes.push(contextUsername);
+			},
+			unmute: function() {
+				myMutes.splice( (myMutes.indexOf(contextUsername)), 1 );
 			}
 		};
 

@@ -17,7 +17,7 @@ module.exports = function(io, db) {
 				if(!obj.room) {
 					thisRoom = obj.room;
 					io.to(socket.id).emit("update", {
-						"msg": "Welcome, " + obj.username + ", to the Guide Cyberclub chat! Please select one of our available rooms to begin chatting."
+						"msg": "Welcome, " + obj.usernameFull + ", to the Guide Cyberclub chat! Please select one of our available rooms to begin chatting."
 					});
 
 					User.update({ "usernameFull" : obj.usernameFull }, { "$set" : { "socket" : socket.id } });
@@ -59,7 +59,7 @@ module.exports = function(io, db) {
 
 				socket.leave(obj.room);
 
-				Room.update({}, { "$pull" :{ "users" : { "usernameFull" : obj.usernameFull} } });
+				Room.update({}, { "$pull" : { "users" : { "username" : obj.usernameFull.toLowerCase() } } }, { "multi" : true });
 
 				io.to(socket.id).emit("update", {
 					"msg": "You have left the room " + obj.room
@@ -81,9 +81,9 @@ module.exports = function(io, db) {
 
 					if(obj.msg.match(/^(\/me)/gi)) {
 						obj.msg = obj.msg.replace(/^(\/me)/gi, "")
-						io.in(thisRoom).emit("chat me response", { "msg" : obj.msg, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
+						io.in(thisRoom).emit("chat me response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					} else {
-						io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
+						io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					}
 				}
 			})
@@ -96,10 +96,10 @@ module.exports = function(io, db) {
 						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "word" : obj.word });
 					},
 					updateRooms: function() {
-						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "roomname" : obj.roomname, "topic" : obj.topic });
+						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "roomname" : obj.roomname, "originalName" : obj.originalName, "topic" : obj.topic });
 					},
 					updateUsers: function() {
-						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "username" : obj.username, "newName" : obj.newName });
+						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "usernameFull" : obj.username, "newName" : obj.newName });
 					}
 				};
 				callbacks[obj.callback]();
@@ -124,7 +124,7 @@ module.exports = function(io, db) {
 							"room": null
 						});
 
-						Room.update({}, { "$pull" :{ "users" : { "usernameFull" : userQDoc.usernameFull} } });
+						Room.update({}, { "$pull" :{ "users" : { "username" : userQDoc.username} } }, { "multi" : true } );
 					}
 				});
 			});

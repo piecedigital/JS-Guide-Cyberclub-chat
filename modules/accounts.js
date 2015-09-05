@@ -284,7 +284,7 @@ module.exports = function(db) {
         User.update({ "username" : originalName }, { "$set" : { "username" : (newUsername.toLowerCase()), "usernameFull" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
           if(userQErr) throw userQErr;
 
-          if(userQDoc && userQDoc.result.ok) { 
+          if(userQDoc && userQDoc.result.ok) {
             res.status(200).send({
               "msg": "success",
               "action": "callback",

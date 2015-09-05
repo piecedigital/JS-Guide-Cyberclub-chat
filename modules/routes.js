@@ -220,88 +220,92 @@ db.open(function(err, db) {
 			            if(err2) throw err2;
 
 			            if(userQDoc) {
-			            	// key variables needed before rendering the page
-			            	var keyVars = {
-			            		"rooms": null,
-			            		"users": null,
-			            		"bannedWords": null,
-			            		"bannedAddrs": null
-			            	};
-			            	// options for handling chat
-			            	var chatOptions = [{
-			            		"wordBans": true,
-			            		"name": "Banned Words"
-			            	},
-			            	{
-			            		"addresses": true,
-			            		"name": "Banned IP Addresses"
-			            	}];
-			            	// check a given object of variables
-			            	var checkVars = function(obj) {
-			            		var clear = true;
-			            		for(var key in obj) {
-			            			if(!keyVars[key]) {
-			            				clear = false;
-			            				//console.log(obj);
-			            			}
-			            		}
-			            		if(clear) {
-			            			//console.log(obj);
-			            			var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
+			            	if(!userQDoc.banned) {
+				            	// key variables needed before rendering the page
+				            	var keyVars = {
+				            		"rooms": null,
+				            		"users": null,
+				            		"bannedWords": null,
+				            		"bannedAddrs": null
+				            	};
+				            	// options for handling chat
+				            	var chatOptions = [{
+				            		"wordBans": true,
+				            		"name": "Banned Words"
+				            	},
+				            	{
+				            		"addresses": true,
+				            		"name": "Banned IP Addresses"
+				            	}];
+				            	// check a given object of variables
+				            	var checkVars = function(obj) {
+				            		var clear = true;
+				            		for(var key in obj) {
+				            			if(!keyVars[key]) {
+				            				clear = false;
+				            				//console.log(obj);
+				            			}
+				            		}
+				            		if(clear) {
+				            			//console.log(obj);
+				            			var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
 
-			            			//console.log(keyVars);
+				            			//console.log(keyVars);
 
-				  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "chatOptions" : chatOptions });
-			            		}
+					  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "chatOptions" : chatOptions });
+				            		}
+				            	}
+
+				            	Room.find({}).toArray(function(roomQErr, roomQDoc) {
+				            		if(roomQErr) throw roomQErr;
+
+				            		if(roomQDoc) {
+				            			keyVars.rooms = roomQDoc;
+				            			checkVars(keyVars);
+				            		} else {
+				            			keyVars.rooms = [];
+				            			checkVars(keyVars);
+				            		}
+				            	});
+				            	User.find({ "accessLevel" : { "$in" : [ "regular", "teen mod", "junior mod", "moderator" ] } }).toArray(function(userQErr, userQDoc) {
+				            		if(userQErr) throw userQErr;
+
+				            		if(userQDoc) {
+				            			keyVars.users = userQDoc;
+				            			checkVars(keyVars);
+				            		} else {
+				            			keyVars.users = [];
+				            			checkVars(keyVars);
+				            		}
+				            	});
+				            	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
+				            		if(chatQErr) throw chatQErr;
+
+				            		//console.log(chatQDoc)
+				            		if(chatQDoc) {
+				            			keyVars.bannedWords = chatQDoc.list;
+				            			checkVars(keyVars);
+				            		} else {
+				            			keyVars.bannedWords = [];
+				            			checkVars(keyVars);
+				            		}
+				            	});
+				            	Chat.findOne({ "optionName" : "bannedAddrs" }, function(chatQErr, chatQDoc) {
+				            		if(chatQErr) throw chatQErr;
+
+				            		//console.log(chatQDoc)
+				            		if(chatQDoc) {
+				            			keyVars.bannedAddrs = chatQDoc.list;
+				            			checkVars(keyVars);
+				            		} else {
+				            			keyVars.bannedAddrs = [];
+				            			checkVars(keyVars);
+				            		}
+				            	});
+			            	} else {
+			            		res.clearCookie("sessId");
+			        				res.redirect("/banned/account");
 			            	}
-
-			            	Room.find({}).toArray(function(roomQErr, roomQDoc) {
-			            		if(roomQErr) throw roomQErr;
-
-			            		if(roomQDoc) {
-			            			keyVars.rooms = roomQDoc;
-			            			checkVars(keyVars);
-			            		} else {
-			            			keyVars.rooms = [];
-			            			checkVars(keyVars);
-			            		}
-			            	});
-			            	User.find({ "accessLevel" : { "$in" : [ "regular", "teen mod", "junior mod", "moderator" ] } }).toArray(function(userQErr, userQDoc) {
-			            		if(userQErr) throw userQErr;
-
-			            		if(userQDoc) {
-			            			keyVars.users = userQDoc;
-			            			checkVars(keyVars);
-			            		} else {
-			            			keyVars.users = [];
-			            			checkVars(keyVars);
-			            		}
-			            	});
-			            	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
-			            		if(chatQErr) throw chatQErr;
-
-			            		//console.log(chatQDoc)
-			            		if(chatQDoc) {
-			            			keyVars.bannedWords = chatQDoc.list;
-			            			checkVars(keyVars);
-			            		} else {
-			            			keyVars.bannedWords = [];
-			            			checkVars(keyVars);
-			            		}
-			            	});
-			            	Chat.findOne({ "optionName" : "bannedAddrs" }, function(chatQErr, chatQDoc) {
-			            		if(chatQErr) throw chatQErr;
-
-			            		//console.log(chatQDoc)
-			            		if(chatQDoc) {
-			            			keyVars.bannedAddrs = chatQDoc.list;
-			            			checkVars(keyVars);
-			            		} else {
-			            			keyVars.bannedAddrs = [];
-			            			checkVars(keyVars);
-			            		}
-			            	});
-
 			            } else {
 			        			res.redirect("/signup");
 			            }
@@ -336,157 +340,162 @@ db.open(function(err, db) {
 			            if(userQErr) throw userQErr;
 
 			            if(userQDoc) {
-			            	// key variables needed before rendering the page
-			            	var keyVars = {
-			            		"rooms": null,
-			            		"users": null,
-			            		"bannedWords": null,
-			            		"bannedAddrs": null
-			            	};
-			            	// options for handling chat
-			            	var chatOptions = [{
-			            		"wordBans": true,
-			            		"name": "Banned Words"
-			            	},
-			            	{
-			            		"addresses": true,
-			            		"name": "Banned IP Addresses"
-			            	}];
-			            	// check a given object of variables
-			            	var checkVars = function(obj) {
-			            		var clear = true;
-			            		for(var key in obj) {
-			            			if(!keyVars[key]) {
-			            				clear = false;
-			            				//console.log(obj);
-			            			}
-			            		}
-			            		if(clear) {
-			            			//console.log(obj);
-			            			var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
+			            	if(!userQDoc.banned){ 
 
-				  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "chatOptions" : chatOptions });
-			            		}
-			            	}
+				            	// key variables needed before rendering the page
+				            	var keyVars = {
+				            		"rooms": null,
+				            		"users": null,
+				            		"bannedWords": null,
+				            		"bannedAddrs": null
+				            	};
+				            	// options for handling chat
+				            	var chatOptions = [{
+				            		"wordBans": true,
+				            		"name": "Banned Words"
+				            	},
+				            	{
+				            		"addresses": true,
+				            		"name": "Banned IP Addresses"
+				            	}];
+				            	// check a given object of variables
+				            	var checkVars = function(obj) {
+				            		var clear = true;
+				            		for(var key in obj) {
+				            			if(!keyVars[key]) {
+				            				clear = false;
+				            				//console.log(obj);
+				            			}
+				            		}
+				            		if(clear) {
+				            			//console.log(obj);
+				            			var dest = (userQDoc.accessLevel === "admin") ? "admin-chat" : "chat";
 
-			            	Room.find({}).toArray(function(roomQErr, roomQDoc) {
-			            		if(roomQErr) throw roomQErr;
+					  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "chatOptions" : chatOptions });
+				            		}
+				            	}
 
-			            		if(roomQDoc) {
-			            			keyVars.rooms = roomQDoc;
-			            			checkVars(keyVars);
-			            		} else {
-			            			keyVars.rooms = [];
-			            			checkVars(keyVars);
-			            		}
-			            	});
-			            	User.find({ "accessLevel" : { "$in" : [ "regular", "teen mod", "junior mod", "moderator" ] } }).toArray(function(userQErr, userQDoc) {
-			            		if(userQErr) throw userQErr;
+				            	Room.find({}).toArray(function(roomQErr, roomQDoc) {
+				            		if(roomQErr) throw roomQErr;
 
-			            		if(userQDoc) {
-			            			keyVars.users = userQDoc;
-			            			checkVars(keyVars);
-			            		} else {
-			            			keyVars.users = [];
-			            			checkVars(keyVars);
-			            		}
-			            	});
-			            	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
-			            		if(chatQErr) throw chatQErr;
+				            		if(roomQDoc) {
+				            			keyVars.rooms = roomQDoc;
+				            			checkVars(keyVars);
+				            		} else {
+				            			keyVars.rooms = [];
+				            			checkVars(keyVars);
+				            		}
+				            	});
+				            	User.find({ "accessLevel" : { "$in" : [ "regular", "teen mod", "junior mod", "moderator" ] } }).toArray(function(userQErr, userQDoc) {
+				            		if(userQErr) throw userQErr;
 
-			            		//console.log(chatQDoc)
-			            		if(chatQDoc) {
-			            			keyVars.bannedWords = chatQDoc.list;
-			            			checkVars(keyVars);
-			            		} else {
-			            			keyVars.bannedWords = [];
-			            			checkVars(keyVars);
-			            		}
-			            	});
-			            	Chat.findOne({ "optionName" : "bannedAddrs" }, function(chatQErr, chatQDoc) {
-			            		if(chatQErr) throw chatQErr;
+				            		if(userQDoc) {
+				            			keyVars.users = userQDoc;
+				            			checkVars(keyVars);
+				            		} else {
+				            			keyVars.users = [];
+				            			checkVars(keyVars);
+				            		}
+				            	});
+				            	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
+				            		if(chatQErr) throw chatQErr;
 
-			            		//console.log(chatQDoc)
-			            		if(chatQDoc) {
-			            			keyVars.bannedAddrs = chatQDoc.list;
-			            			checkVars(keyVars);
-			            		} else {
-			            			keyVars.bannedAddrs = [];
-			            			checkVars(keyVars);
-			            		}
-			            	});
-			            	/*
-			            	var rooms = {
-			            		"lobby": {
-			            			"roomName": "Lobby",
-			            			"minMods": 1,
-			            			"topic": "Nothing",
-			            			"users": [{
-			            				"username": "user1"
-			            			},
-			            			{
-			            				"username": "user2"
-			            			},
-			            			{
-			            				"username": "user3"
-			            			}]
-			            		},
-			            		"main": {
-			            			"roomName": "Main",
-			            			"minMods": 2,
-			            			"topic": "Nothing",
-			            			"users": [{
-			            				"username": "user"
-			            			}]
-			            		}
-			            	}
-			            	*/
+				            		//console.log(chatQDoc)
+				            		if(chatQDoc) {
+				            			keyVars.bannedWords = chatQDoc.list;
+				            			checkVars(keyVars);
+				            		} else {
+				            			keyVars.bannedWords = [];
+				            			checkVars(keyVars);
+				            		}
+				            	});
+				            	Chat.findOne({ "optionName" : "bannedAddrs" }, function(chatQErr, chatQDoc) {
+				            		if(chatQErr) throw chatQErr;
 
-			            	/*
-			            	var chatOptions = [{
-			            		"emoticons": true,
-			            		"name": "Emoticons",
-			            		"items": [{
-			            			"name": "smile",
-			            			"path": "/",
-			            			"stringMatch": [":)", ":smile:"]
-			            		},
-			            		{
-			            			"name": "frown",
-			            			"path": "/",
-			            			"stringMatch": [":(", ":frown:"]
-			            		}]
-			            	},
-			            	{
-			            		"bannedWords": true,
-			            		"name": "Banned Words",
-			            		"items": ["fuck", "fucker", "fucking", "shitter", "shitting", "shit", "damnit", "damn it", "dammit", "cunt", "nig", "nigger", "asshole"]
-			            	}];
-										*/
-										/*
-										var chatOptions = [{
-			            		"bannedWords": true,
-			            		"name": "Banned Words"
-			            	}];
-										*/
-										/*
-			            	var users = [{
-			            		"username": "user1",
-			            		"color": "red",
-			            		"accessLevel": "regular"
-			            	},
-			            	{
-			            		"username": "user2",
-			            		"color": "blue",
-			            		"accessLevel": "regular"
-			            	},
-			            	{
-			            		"username": "user3",
-			            		"color": "green",
-			            		"accessLevel": "regular"
-			            	}]
-										*/
+				            		//console.log(chatQDoc)
+				            		if(chatQDoc) {
+				            			keyVars.bannedAddrs = chatQDoc.list;
+				            			checkVars(keyVars);
+				            		} else {
+				            			keyVars.bannedAddrs = [];
+				            			checkVars(keyVars);
+				            		}
+				            	});
+				            	/*
+				            	var rooms = {
+				            		"lobby": {
+				            			"roomName": "Lobby",
+				            			"minMods": 1,
+				            			"topic": "Nothing",
+				            			"users": [{
+				            				"username": "user1"
+				            			},
+				            			{
+				            				"username": "user2"
+				            			},
+				            			{
+				            				"username": "user3"
+				            			}]
+				            		},
+				            		"main": {
+				            			"roomName": "Main",
+				            			"minMods": 2,
+				            			"topic": "Nothing",
+				            			"users": [{
+				            				"username": "user"
+				            			}]
+				            		}
+				            	}
+				            	*/
 
+				            	/*
+				            	var chatOptions = [{
+				            		"emoticons": true,
+				            		"name": "Emoticons",
+				            		"items": [{
+				            			"name": "smile",
+				            			"path": "/",
+				            			"stringMatch": [":)", ":smile:"]
+				            		},
+				            		{
+				            			"name": "frown",
+				            			"path": "/",
+				            			"stringMatch": [":(", ":frown:"]
+				            		}]
+				            	},
+				            	{
+				            		"bannedWords": true,
+				            		"name": "Banned Words",
+				            		"items": ["fuck", "fucker", "fucking", "shitter", "shitting", "shit", "damnit", "damn it", "dammit", "cunt", "nig", "nigger", "asshole"]
+				            	}];
+											*/
+											/*
+											var chatOptions = [{
+				            		"bannedWords": true,
+				            		"name": "Banned Words"
+				            	}];
+											*/
+											/*
+				            	var users = [{
+				            		"username": "user1",
+				            		"color": "red",
+				            		"accessLevel": "regular"
+				            	},
+				            	{
+				            		"username": "user2",
+				            		"color": "blue",
+				            		"accessLevel": "regular"
+				            	},
+				            	{
+				            		"username": "user3",
+				            		"color": "green",
+				            		"accessLevel": "regular"
+				            	}]
+											*/
+										} else {
+											res.clearCookie("sessId");
+			        				res.redirect("/banned/account");
+										}
 			            } else {
 			        			res.clearCookie("sessId");
 			        			res.redirect("/signup");

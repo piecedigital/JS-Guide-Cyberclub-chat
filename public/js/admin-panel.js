@@ -32,11 +32,12 @@
 		functions.ajax("/update-ips", "POST", "json", { "ip" : addr, "op" : "$pull" });
 	});
 	// rooms panel
-	panels.rooms.find("#item-list .item").on("click", ".name", function() {
+	panels.rooms.find("#item-list").on("click", ".item .name", function() {
 		// variables
 		roomname = $(this).data("roomname");
 		var mods = parseInt($(this).data("mods"));
 		var topic = $(this).data("topic");
+		console.log($(this).data("roomname"))
 
 		// DOM manipulation
 		panels.rooms.find("#item-options").find(".title").text("Edit Room: " + roomname);
@@ -52,7 +53,7 @@
 		panels.rooms.find("#item-options").find(".hide").removeClass("hidden-force");
 	});
 	//(adding tab)
-	panels.rooms.find("#item-list .add").on("click", ".name", function() {
+	panels.rooms.find("#item-list").on("click", ".add .name", function() {
 		// variables
 		roomname = null;
 
@@ -65,7 +66,7 @@
 		
 		panels.rooms.find("#item-options").find("input[name='topic']").val("");
 		
-		panels.rooms.find("#item-options").find("input[type='checkbox']").vattr("checked", false);
+		panels.rooms.find("#item-options").find("input[type='checkbox']").attr("checked", false);
 
 		panels.rooms.find("#item-options").find(".hide").addClass("hidden-force");
 	});
@@ -194,7 +195,7 @@
 
 				panels.rooms.find("#item-list").find(".item .name[data-roomname='" + data.originalName + "']").parent().remove();
 				
-				socket.emit("live update", { "callback" : "updateRooms", "op" : "remove", "roomname" : data.roomname, "topic" : data.topic });
+				socket.emit("live update", { "callback" : "updateRooms", "op" : "remove", "roomname" : data.roomname, "originalName" : data.originalName, "topic" : data.topic });
 			} else {
 				console.log("updating");
 				
@@ -206,17 +207,17 @@
 					tag.attr({
 						"data-roomname": data.roomname,
 						"data-topic": data.topic,
-						"data-mods": data.mindMods
+						"data-mods": data.minMods
 					})
 					.html(data.roomname);
 
-					socket.emit("live update", { "callback" : "updateRooms", "op" : "update", "roomname" : data.roomname, "topic" : data.topic });
+					socket.emit("live update", { "callback" : "updateRooms", "op" : "update", "roomname" : data.roomname, "originalName" : data.originalName, "topic" : data.topic });
 				} else {
 					console.log("adding");
 
-					panels.rooms.find("#item-list").prepend("<li class='item parent'><span class='name' data-roomname='" + data.roomname + "' data-topic='" + data.topis + "' data-mods='" + data.mindMods + "'>" + data.roomname + "</span><span class='number'></span></li>");
+					panels.rooms.find("#item-list").prepend("<li class='item parent'><span class='name' data-roomname='" + data.roomname + "' data-topic='" + data.topic + "' data-mods='" + data.minMods + "'>" + data.roomname + "</span><span class='number'>0</span></li>");
 
-					socket.emit("live update", { "callback" : "updateRooms", "op" : "add", "roomname" : data.roomname, "topic" : data.topic });
+					socket.emit("live update", { "callback" : "updateRooms", "op" : "add", "roomname" : data.roomname, "originalName" : data.originalName, "topic" : data.topic });
 				}
 				roomname = data.roomname;
 			}
