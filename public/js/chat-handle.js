@@ -14,10 +14,11 @@ String.prototype.multiply = function(times) {
 	usernameFull = $("#user-data").data("username"),
 	username = usernameFull.toLowerCase(),
 	displayName = usernameFull,
-	userList = [],
+	//userList = [],
 	windowFocus = true,
 	unread = 0,
-	originalTitleMention = "&#x2589;" + $("title").html(),
+	originalTitleMention = "▉" + $("title").html(),
+	//originalTitleMention = "&#x2589;" + $("title").html(),
 	originalTitle = $("title").html(),
 	showTitle = originalTitle;
 	room = "door",
@@ -37,6 +38,7 @@ String.prototype.multiply = function(times) {
 		if(minutes < 10){ minutes = "0" + minutes;}
 		return hours + ":" + minutes + " " + period;
 	}
+	var autoScroll = true;
 	function scrollToBottom() {
 		$("#messages")[0].scrollTop = $("#messages")[0].scrollHeight;
 	}
@@ -55,6 +57,8 @@ String.prototype.multiply = function(times) {
 	}).blur(function() {
 		windowFocus = false;
 	});
+
+	/*
 	//get caret positon
 	function getCaretPos(input) {
   // Internet Explorer Caret Position (TextArea)
@@ -69,7 +73,9 @@ String.prototype.multiply = function(times) {
     }
     return caret_pos;
 	}
-
+	*/
+/* MENTINO SECTION/////////////////
+   Uncomment later if useable////////////
 	//mention
 	var caretPosition = 0, selection = 1, subStr, listLen;
 	//check for keyup events
@@ -147,7 +153,7 @@ String.prototype.multiply = function(times) {
 		$("#list-box").css({"display": "none"});
 		selection = 1;
 	}
-
+*/
 	//socket response on chat log
 	/*
 	socket.on("chat log", function(time, who, msg){
@@ -160,7 +166,7 @@ String.prototype.multiply = function(times) {
 	socket.on("chat response", function(data){
 		var matchedUser = checkMutes(data.usernameFull);
 		if(!matchedUser) {
-			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + " " + data.color + "' data-username='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.user) + "</p>" ) );
+			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + " " + data.color + "' data-username='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.displayName) + "</p>" ) );
 			scrollToBottom();
 		}
 		console.log(data)
@@ -170,7 +176,7 @@ String.prototype.multiply = function(times) {
 	socket.on("chat me response", function(data){
 		var matchedUser = checkMutes(data.usernameFull);
 		if(!matchedUser) {
-			$("#messages").append($("<li class='chat " + data.color + "'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.username + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.user) + "</p>" ) );
+			$("#messages").append($("<li class='chat " + data.color + "'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.username + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.displayName) + "</p>" ) );
 			scrollToBottom();
 		}
 		console.log(data)
@@ -188,10 +194,11 @@ String.prototype.multiply = function(times) {
 		scrollToBottom();
 	});
 */
-	
+	/*
 	//socket responses on room entry
 	socket.on("user list", function(data){
 	});
+	*/
 
 	//socket responses on room entry
 	socket.on("enter room", function(data){
@@ -277,14 +284,10 @@ String.prototype.multiply = function(times) {
 	});
 	//filter chat for links and emites
 	function regexFilter(filter, person){
-		regUser = new RegExp( displayName, "gi"),
 
 		//smiles
-		filter = filter.replace(/(http(s)?[:\/\/]*)([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig, "<a href='" +
-		 filter.match(/(http(s)?[:\/\/]*)([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig) +
-		  "' target='_blank'>" +
-		   filter.match(/(http(s)?[:\/\/]*)([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig) +
-		    "</a>");
+		filter = filter.replace(/((http(s)?[:\/\/]*))?([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig, "[deleted link]")
+			.replace(/[a-z]{1,}([._-]*)?[a-z]{1,}@[a-z]*.[a-z]*/ig, "[deleted email]");
 
 		//emoticons/////////////
 		var smileMatch = /(:[\-]?\)){1}/ig;
@@ -299,8 +302,9 @@ String.prototype.multiply = function(times) {
 		filter = filter.replace(indifMatch, "<span class='emote'><span>" + indifEmote[0] + "</span></span>");
 
 		//match mentions////////////
-		if(filter.match(regUser) && person.toLowerCase() !== displayName.toLowerCase() ){
-			filter = filter.replace(regUser, "<span class='mention'>@"+displayName+"</span>");
+		var regDisplayName = new RegExp("@" + displayName, "gi");
+		if(filter.match(regDisplayName) && person.toLowerCase() !== displayName.toLowerCase() ){
+			filter = filter.replace(regDisplayName, "<span class='mention'>@"+displayName+"</span>");
 			showTitle = originalTitleMention;
 			if(windowFocus) {
 				$("title").html(originalTitle);
@@ -320,7 +324,7 @@ String.prototype.multiply = function(times) {
 		}
 		//filter banned words
 		for(var i = 0; i < bannedArr.length; i++) {
-			filter = filter.replace( bannedArr[i], bannedArr[i][0] + ("*").multiply( (bannedArr[i].length-2) ) );
+			filter = filter.replace( bannedArr[i], ("*").multiply( (bannedArr[i].length-1) ) );
 		}
 		return filter;
 	}

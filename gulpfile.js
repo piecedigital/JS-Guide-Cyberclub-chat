@@ -25,7 +25,7 @@ function renderSass() {
 gulp.task("start", function() {
 	nodemon({
 		script: "app.js",
-		ext: "js",
+		ext: "",
 		env: { "NODE_ENV" : "devemopment" }
 	});
 });
