@@ -22,6 +22,7 @@ String.prototype.multiply = function(times) {
 	originalTitle = $("title").html(),
 	showTitle = originalTitle;
 	room = "door",
+	currentMods = 0,
 	myColor = "red",
 	myLevel = $("#user-data").data("access"),
 	myMutes = [];
@@ -213,10 +214,14 @@ String.prototype.multiply = function(times) {
 	socket.on("leave room", function(data){
 		$("#messages").append($("<li class='plain'>").html(data.msg) );
 		$("#room-list").find(".room").removeClass("inside");
-		$("#room-list").find(".room[data-roomname='" + data.room + "']").removeClass("inside");
 		$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", true);
 		room = data.room;
 		console.log(data, room);
+		scrollToBottom();
+	});
+	socket.on("kick", function(data){
+		console.log("kick", data, room);
+		socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
 		scrollToBottom();
 	});
 	socket.on("new entry", function(data){

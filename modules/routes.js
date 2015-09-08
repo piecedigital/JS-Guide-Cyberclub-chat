@@ -42,7 +42,7 @@ db.open(function(err, db) {
 	if(err) throw err;
 
 	// clears the users in rooms on server start
-	Room.update({}, { "$set" : { "users" : [], "currentMods" : 0 } }, { "multi" : true });
+	Room.update({}, { "$set" : { "users" : [] } }, { "multi" : true });
 	// GET requests
 	app
 		.get('/', function(req, res, next) {

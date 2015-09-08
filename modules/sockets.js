@@ -34,23 +34,11 @@ module.exports = function(io, db) {
 
 								var userObj = {
 									"username": obj.usernameFull.toLowerCase(),
-									"usernameFull" : obj.usernameFull
+									"usernameFull": obj.usernameFull,
+									"accessLevel": obj.accessLevel
 								};
 
-								Room.update({
-									"roomname": obj.room
-								},
-								{
-									"$push": {
-										"users": userObj
-									},
-									"$inc": {
-										"currentMods": 1
-									}
-								},
-								{
-									"multi": true
-								});
+								Room.update({ "roomname" : obj.room }, { "$push" : { "users" : userObj } }, { "multi" : true });
 								
 								io.to(socket.id).emit("enter room", {
 									"msg": "Joined " + obj.room,
@@ -64,15 +52,21 @@ module.exports = function(io, db) {
 								});
 							};
 
-        			if(roomQDoc.currentMods && roomQDoc.currentMods >= roomQDoc.minMods) {
+							var currentMods = 0;
+							userElem = roomQDoc.users;
+							for(var i = 0; i < userElem.length; i++) {
+								if(userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
+									currentMods++;
+								}
+							};
+        			if(currentMods && currentMods >= roomQDoc.minMods) {
         				joinUser();
         			} else {
 								if(obj.accessLevel === "moderator" || obj.accessLevel === "admin") {
 									joinUser();
 								} else {
-									var currMods = roomQDoc.currentMods || 0;
 									io.to(socket.id).emit("update", {
-										"msg": "There are not enough admins in this room for you to join. There must be at least " + roomQDoc.minMods + " adult mod" + ( (roomQDoc.minMods > 1) ? "s" : "" ) + " in the room. There are currently " + currMods + "."
+										"msg": "There are not enough admins in this room for you to join. There must be at least " + roomQDoc.minMods + " adult mod" + ( (roomQDoc.minMods > 1) ? "s" : "" ) + " in the room. There are currently " + currentMods + "."
 									});
 								}
         			}
@@ -88,9 +82,6 @@ module.exports = function(io, db) {
 
 				socket.leave(obj.room);
 
-				var dec = (obj.accessLevel === "moderator" || obj.accessLevel === "admin") ? 1 : 0;
-
-				Room.update({ "roomname" : obj.room }, { "$inc" : { "currentMods" : -dec } });
 				Room.update({}, { "$pull" : { "users" : { "username" : obj.usernameFull.toLowerCase() } } }, { "multi" : true });
 
 				io.to(socket.id).emit("leave room", {
@@ -103,6 +94,26 @@ module.exports = function(io, db) {
 					"usernameFull": obj.usernameFull,
 					"displayName": obj.displayName,
 					"room": null
+				});
+				Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
+					if(roomQErr) throw roomQErr;
+
+					if(roomQDoc) {
+						var currentMods = 0;
+						userElem = roomQDoc.users;
+						for(var i = 0; i < userElem.length; i++) {
+							if(userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
+								currentMods++;
+							}
+						};
+
+						if(currentMods < roomQDoc.minMods) {
+							io.to(socket.id).emit("update", {
+								"msg": "There are an insufficient number of mods in this room. You will now be moved out of this room."
+							});
+							io.in(obj.room).emit("kick", { "roomname" : obj.room });
+						}
+					}
 				});
 			})
 			.on("chat message", function(obj) {
