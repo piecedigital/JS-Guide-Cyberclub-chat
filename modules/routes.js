@@ -41,6 +41,8 @@ sass.render({
 db.open(function(err, db) {
 	if(err) throw err;
 
+	// clears the users in rooms on server start
+	Room.update({}, { "$set" : { "users" : [], "currentMods" : 0 } }, { "multi" : true });
 	// GET requests
 	app
 		.get('/', function(req, res, next) {
@@ -634,7 +636,7 @@ db.open(function(err, db) {
 					topic = req.body.topic || "nothing",
 					op = req.body.op || false;
 
-			if(roomname) {
+			if(roomname && !roomname.match(/^(door)$/i) && !roomname.match(/[\/\\ \-\9\0\[\]\\[\]\s`~!@#$%^&*=+\?<>,.]/gi)) {
 				var sendRes = function() {
 					res.status(200).send({
 						"msg": "success",
@@ -651,7 +653,7 @@ db.open(function(err, db) {
 				};
 				
 				if(!op) {
-					Room.update({ "roomnameHyph" : originalNameHyph }, { "roomname" : roomname, "roomnameHyph" : roomnameHyph, "minMods" : minMods, "topic" : topic }, { "upsert" : true }, function(roomQErr, roomQDoc) {
+					Room.update({ "roomnameHyph" : originalNameHyph }, { "$set" : { "roomname" : roomname, "roomnameHyph" : roomnameHyph, "minMods" : minMods, "topic" : topic } }, { "upsert" : true }, function(roomQErr, roomQDoc) {
 						if(err) throw err;
 
 						if(roomQDoc && roomQDoc.result.ok) {

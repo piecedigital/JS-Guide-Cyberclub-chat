@@ -1,8 +1,8 @@
 ~(function(){
 	var socket = io();
 
-	var username,
-			roomname;
+	var thusUsername,
+			thusRoomname;
 
 	// PANEL functions
 	var panels = {
@@ -12,7 +12,7 @@
 	}
 	// chat options panel
 	panels.chatOpt.find("#item-list .item").on("click", ".name", function() {
-		var itemOptions = $(this).data("ind");
+		var itemOptions = $(this).attr("data-ind");
 		console.log(itemOptions);
 
 		// DOM manipulation
@@ -34,15 +34,15 @@
 	// rooms panel
 	panels.rooms.find("#item-list").on("click", ".item .name", function() {
 		// variables
-		roomname = $(this).data("roomname");
-		var mods = parseInt($(this).data("mods"));
-		var topic = $(this).data("topic");
-		console.log($(this).data("roomname"))
+		thisRoomname = $(this).attr("data-roomname");
+		var mods = parseInt($(this).attr("data-mods"));
+		var topic = $(this).attr("data-topic");
+		console.log($(this).data("roomname"), thisRoomname)
 
 		// DOM manipulation
-		panels.rooms.find("#item-options").find(".title").text("Edit Room: " + roomname);
+		panels.rooms.find("#item-options").find(".title").text("Edit Room: " + thisRoomname);
 
-		panels.rooms.find("#item-options").find("input[name='roomname']").val(roomname);
+		panels.rooms.find("#item-options").find("input[name='roomname']").val(thisRoomname);
 		
 		panels.rooms.find("#item-options").find("select").find("option[data-ind='" + (mods) + "']").attr("selected", true);
 		
@@ -55,7 +55,7 @@
 	//(adding tab)
 	panels.rooms.find("#item-list").on("click", ".add .name", function() {
 		// variables
-		roomname = null;
+		thisRoomname = null;
 
 		// DOM manipulation
 		panels.rooms.find("#item-options").find(".title").text("Add Room");
@@ -73,11 +73,11 @@
 	// users panel
 	panels.users.find("#item-list .item").on("click", ".name", function() {
 		// variables
-		username = $(this).data("username");
+		thisUsername = $(this).attr("data-usernameFull");
 
 		// DOM manipulation
 		panels.users.find("#item-options").removeClass("invisible");
-		panels.users.find(".add-window").find("input[name='newUsername']").val(username);
+		panels.users.find(".add-window").find("input[name='newUsername']").val(thisUsername);
 		panels.users.find(".add-window").find("input[name='ban']").attr("checked", false);
 	});
 
@@ -87,15 +87,15 @@
 
 		var dataObj = functions.parseForm(formData);
 		if(dataObj.newUsername) {
-			dataObj.originalName = username || dataObj.username;
+			dataObj.originalName = thisUsername || dataObj.usernameFull;
 		}
 		if(dataObj.roomname) {
-			dataObj.originalName = roomname || dataObj.roomname;
+			dataObj.originalName = thisRoomname || dataObj.roomname;
 		}
 		var action = functions.parseAction(e);
 
 		if(dataObj.ban) {
-			var conf = confirm("Are you sure you want to ban " + username + "?");
+			var conf = confirm("Are you sure you want to ban " + thisUsername + "?");
 			if(conf) {
 				functions.ajax(action, "POST", "json", dataObj);
 			}
@@ -219,7 +219,7 @@
 
 					socket.emit("live update", { "callback" : "updateRooms", "op" : "add", "roomname" : data.roomname, "originalName" : data.originalName, "topic" : data.topic });
 				}
-				roomname = data.roomname;
+				thisRoomname = data.roomname;
 			}
 		},
 		updateUsers: function(data, operation) {
@@ -227,24 +227,24 @@
 			if(operation) {
 				console.log("removing");
 
-				var tag = panels.users.find("#item-list").find(".item .name[data-username='" + data.username + "']").parent();
+				var tag = panels.users.find("#item-list").find(".item .name[data-usernameFull='" + data.usernameFull + "']").parent();
 
 				tag.find(".number").addClass("banned-true");
-				tag.find(".name").attr("data-username", data.newName).html(data.newName);
-				username = data.newName;
+				tag.find(".name").attr("data-usernameFull", data.newName).html(data.newName);
+				thisUsername = data.newName;
 
-				socket.emit("live update", { "callback" : "updateUsers", "op" : "remove", "username" : data.username, "newName" : data.newName });
+				socket.emit("live update", { "callback" : "updateUsers", "op" : "remove", "usernameFull" : data.usernameFull, "newName" : data.newName });
 				
 			} else {
 				console.log("updating");
 
-				var tag = panels.users.find("#item-list").find(".item .name[data-username='" + data.username + "']").parent()
+				var tag = panels.users.find("#item-list").find(".item .name[data-usernameFull='" + data.usernameFull + "']").parent()
 				
 				tag.find(".number").removeClass("banned-, banned-true");
-				tag.find(".name").attr("data-username", data.newName).html(data.newName);
-				username = data.newName;
+				tag.find(".name").attr("data-usernameFull", data.newName).html(data.newName);
+				thisUsername = data.newName;
 
-				socket.emit("live update", { "callback" : "updateUsers", "op" : "update", "username" : data.username, "newName" : data.newName });
+				socket.emit("live update", { "callback" : "updateUsers", "op" : "update", "usernameFull" : data.usernameFull, "newName" : data.newName });
 			}
 		}
 	}

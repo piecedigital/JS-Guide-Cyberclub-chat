@@ -277,11 +277,11 @@ module.exports = function(db) {
       console.log("update user function");
       console.log(req.body);
       var newUsername = req.body.newUsername || "",
-          originalName = req.body.originalName || "",
+          usernameFull = req.body.originalName || "",
           accessLevel = req.body.accessLevel || "",
           ban = req.body.ban || "";
       if(!ban) {
-        User.update({ "username" : originalName }, { "$set" : { "username" : (newUsername.toLowerCase()), "usernameFull" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
+        User.update({ "usernameFull" : usernameFull }, { "$set" : { "username" : (newUsername.toLowerCase()), "usernameFull" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
           if(userQErr) throw userQErr;
 
           if(userQDoc && userQDoc.result.ok) {
@@ -290,7 +290,7 @@ module.exports = function(db) {
               "action": "callback",
               "callback": "updateUsers",
               "data": {
-                "username": originalName,
+                "usernameFull": usernameFull,
                 "newName": newUsername
               },
               "op": ban
@@ -300,7 +300,7 @@ module.exports = function(db) {
 
       } else {
         if(ban === "ACC") {
-          User.update({ "username" : originalName }, { "$set" : { "banned" : true } }, function(userQErr, userQDoc) {
+          User.update({ "usernameFull" : usernameFull }, { "$set" : { "banned" : true } }, function(userQErr, userQDoc) {
             if(userQErr) throw userQErr;
 
             if(userQDoc && userQDoc.result.ok) { 
@@ -309,7 +309,7 @@ module.exports = function(db) {
                 "action": "callback",
                 "callback": "updateUsers",
                 "data": {
-                  "username": originalName,
+                  "usernameFull": usernameFull,
                   "newName": newUsername
                 },
                 "op": ban
@@ -318,12 +318,12 @@ module.exports = function(db) {
           });
         }
         if(ban === "IP") {
-          User.findOne({ "username" : originalName }, function(userQErr, userQDoc) {
+          User.findOne({ "usernameFull" : usernameFull }, function(userQErr, userQDoc) {
             if(userQErr) throw userQErr;
 
             if(userQDoc) {
-              User.update({ "username" : originalName }, { "$set" : { "banned" : true } });
-              Sess.remove({ "user" : originalName });
+              User.update({ "username" : usernameFull }, { "$set" : { "banned" : true } });
+              Sess.remove({ "user" : usernameFull });
               Chat.update({ "optionName" : "bannedAddrs" }, { "$push" : { "list" : userQDoc.currentIp } }, { "upsert" : true }, function(chatQErr, chatQDoc) {
                 if(chatQErr) throw chatQErr;
 
@@ -333,7 +333,7 @@ module.exports = function(db) {
                     "action": "callback",
                     "callback": ["updateUsers", "updateBannedAddrs"],
                     "data": [{
-                      "username": originalName,
+                      "usernameFull": usernameFull,
                       "newName": newUsername
                     },
                     userQDoc.currentIp],

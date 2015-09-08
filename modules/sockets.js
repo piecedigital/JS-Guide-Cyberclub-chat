@@ -22,31 +22,60 @@ module.exports = function(io, db) {
 
 					User.update({ "usernameFull" : obj.usernameFull }, { "$set" : { "socket" : socket.id } });
 				} else {
-					Room.findOne({ "roomname" : obj.room }, { "_id" : 0, "roomname" : 1, "minMods" : 1, "topic" : 1 }, function(roomQErr, roomQDoc) {
+					// joins a user to the room
+					Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
         		if(roomQErr) throw roomQErr;
 
         		if(roomQDoc) {
-							socket.join(obj.room);
-        			thisRoom = obj.room;
-							console.log(obj.room, thisRoom);
+							var joinUser = function() {
+								socket.join(obj.room);
+			    			thisRoom = obj.room;
+								console.log(obj.room, thisRoom);
 
-							var userObj = {
-								"username": obj.usernameFull.toLowerCase(),
-								"usernameFull" : obj.usernameFull
+								var userObj = {
+									"username": obj.usernameFull.toLowerCase(),
+									"usernameFull" : obj.usernameFull
+								};
+
+								Room.update({
+									"roomname": obj.room
+								},
+								{
+									"$push": {
+										"users": userObj
+									},
+									"$inc": {
+										"currentMods": 1
+									}
+								},
+								{
+									"multi": true
+								});
+								
+								io.to(socket.id).emit("enter room", {
+									"msg": "Joined " + obj.room,
+									"room": obj.room
+								});
+								io.emit("new entry", {
+									"msg": obj.usernameFull + " has joined ",
+									"usernameFull": obj.usernameFull,
+									"displayName": obj.displayName,
+									"room": obj.room
+								});
 							};
 
-							Room.update({ "roomname" : obj.room }, { "$push" :{ "users" : userObj } });
-							
-							io.to(socket.id).emit("enter room", {
-								"msg": "Joined " + obj.room,
-								"room": obj.room
-							});
-							io.emit("new entry", {
-								"msg": obj.usernameFull + " has joined ",
-								"usernameFull": obj.usernameFull,
-								"displayName": obj.displayName,
-								"room": obj.room
-							});
+        			if(roomQDoc.currentMods && roomQDoc.currentMods >= roomQDoc.minMods) {
+        				joinUser();
+        			} else {
+								if(obj.accessLevel === "moderator" || obj.accessLevel === "admin") {
+									joinUser();
+								} else {
+									var currMods = roomQDoc.currentMods || 0;
+									io.to(socket.id).emit("update", {
+										"msg": "There are not enough admins in this room for you to join. There must be at least " + roomQDoc.minMods + " adult mod" + ( (roomQDoc.minMods > 1) ? "s" : "" ) + " in the room. There are currently " + currMods + "."
+									});
+								}
+        			}
         		} else {
         			io.to(socket.id).emit("command", { "msg" : "Room does not exist" });
         		}
@@ -59,14 +88,18 @@ module.exports = function(io, db) {
 
 				socket.leave(obj.room);
 
+				var dec = (obj.accessLevel === "moderator" || obj.accessLevel === "admin") ? 1 : 0;
+
+				Room.update({ "roomname" : obj.room }, { "$inc" : { "currentMods" : -dec } });
 				Room.update({}, { "$pull" : { "users" : { "username" : obj.usernameFull.toLowerCase() } } }, { "multi" : true });
 
-				io.to(socket.id).emit("update", {
-					"msg": "You have left the room " + obj.room
+				io.to(socket.id).emit("leave room", {
+					"msg": "Left " + obj.room,
+					"room": "door"
 				});
 
 				io.emit("new entry", {
-					"msg": obj.username + "has left ",
+					"msg": obj.usernameFull + " has left ",
 					"usernameFull": obj.usernameFull,
 					"displayName": obj.displayName,
 					"room": null
@@ -99,7 +132,7 @@ module.exports = function(io, db) {
 						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "roomname" : obj.roomname, "originalName" : obj.originalName, "topic" : obj.topic });
 					},
 					updateUsers: function() {
-						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "usernameFull" : obj.username, "newName" : obj.newName });
+						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "usernameFull" : obj.usernameFull, "newName" : obj.newName });
 					}
 				};
 				callbacks[obj.callback]();

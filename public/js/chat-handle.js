@@ -210,9 +210,18 @@ String.prototype.multiply = function(times) {
 		console.log(data, room);
 		scrollToBottom();
 	});
+	socket.on("leave room", function(data){
+		$("#messages").append($("<li class='plain'>").html(data.msg) );
+		$("#room-list").find(".room").removeClass("inside");
+		$("#room-list").find(".room[data-roomname='" + data.room + "']").removeClass("inside");
+		$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", true);
+		room = data.room;
+		console.log(data, room);
+		scrollToBottom();
+	});
 	socket.on("new entry", function(data){
-		$("#room-list .room ul").find(".user[data-usernameFull='" + data.usernameFull + "']").remove();
-		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-displayname='" + data.displayName + "'>" + data.displayName + "</li>");
+		$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").remove();
+		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.displayName + "'>" + data.displayName + "</li>");
 		console.log(data, room);
 		scrollToBottom();
 	});
@@ -364,6 +373,30 @@ String.prototype.multiply = function(times) {
 	};
 
 	var click = false, current, contextRoomname, contextUsername, contextUserdisp;
+	var options = {
+		join: function() {
+			socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
+		},
+		leave: function() {
+			socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
+		},
+		mention: function() {
+			var val = $("#chat-val").val();
+			$("#chat-val").val( val + "@" + contextUsername + " ");
+		},
+		message: function() {
+			if(myLevel !== "moderator" || myLevel !== "admin") {
+				alert("You do not have appropriate permission to send messages");
+			}
+		},
+		mute: function() {
+			myMutes.push(contextUsername);
+		},
+		unmute: function() {
+			myMutes.splice( (myMutes.indexOf(contextUsername)), 1 );
+		}
+	};
+
 	$("#room-list").on("mousedown", ".room .name", function(e) {
 		if(e.buttons === 2) {
 			document.oncontextmenu = function() {
@@ -384,7 +417,10 @@ String.prototype.multiply = function(times) {
 				current = null;
 				
 				contextRoomname = $(this).parent().data("roomname");
-				socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName });
+				if(room !== "door") {
+					options.leave();
+				}
+				options.join();
 			} else {
 				$(this).parent().toggleClass("open");
 				current = $(this).parent().data("roomname");
@@ -444,31 +480,6 @@ String.prototype.multiply = function(times) {
 	});
 
 	$("#new-context-menu").on("click", "li", function() {
-		var options = {
-			join: function() {
-				socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName });
-				socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName });
-			},
-			leave: function() {
-				socket.emit("leave", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName });
-			},
-			mention: function() {
-				var val = $("#chat-val").val();
-				$("#chat-val").val( val + "@" + contextUsername + " ");
-			},
-			message: function() {
-				if(myLevel !== "moderator" || myLevel !== "admin") {
-					alert("You do not have appropriate permission to send messages");
-				}
-			},
-			mute: function() {
-				myMutes.push(contextUsername);
-			},
-			unmute: function() {
-				myMutes.splice( (myMutes.indexOf(contextUsername)), 1 );
-			}
-		};
-
 		function muteUser(user) {
 			myMutes.push(user);
 		}
