@@ -807,7 +807,8 @@ db.open(function(err, db) {
 						"msg": "success",
 						"action": "callback",
 						"callback": "updateColors",
-						"data": updateObj
+						"data": colorsObj,
+						"op": "update"
 					});
 				}
 			});

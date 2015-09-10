@@ -242,15 +242,15 @@ String.prototype.multiply = function(times) {
 
 		var callbacks = {
 			updateBannedWords: function() {
-				if(data.operation === "$pull") {
+				if(data.op === "$pull") {
 					bannedArr.splice(bannedArr.indexOf(data.word), 1);
 				}
-				if(data.operation === "$push") {
+				if(data.op === "$push") {
 					bannedArr.push(data.word);
 				}
 			},
 			updateRooms: function() {
-				if(data.operation === "remove") {
+				if(data.op === "remove") {
 					console.log("remove room", data);
 
 					$("#room-list").find(".room[data-roomname='" + data.originalName + "']").remove();
@@ -259,7 +259,7 @@ String.prototype.multiply = function(times) {
 						room = "door";
 					}
 				};
-				if(data.operation === "update") {
+				if(data.op === "update") {
 					console.log("update room", data);
 
 					$("#room-list").find(".room[data-roomname='" + data.originalName + "']").attr({
@@ -267,7 +267,7 @@ String.prototype.multiply = function(times) {
 						"data-topic": data.topic
 					}).find(".name").text(data.roomname);
 				};
-				if(data.operation === "add") {
+				if(data.op === "add") {
 					console.log("add room", data);
 
 					$("#room-list > ul").append( $("<li>").attr({
@@ -278,11 +278,11 @@ String.prototype.multiply = function(times) {
 				};
 			},
 			updateUsers: function() {
-				if(data.operation === "remove") {
+				if(data.op === "remove") {
 					$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").remove();
 					window.location.href = "/banned/account";
 				};
-				if(data.operation === "update") {
+				if(data.op === "update") {
 					$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").attr({
 						"data-usernameFull": data.newName
 					});
@@ -291,6 +291,31 @@ String.prototype.multiply = function(times) {
 						window.location.reload(true);
 					}
 				};
+			},
+			updateColors: function() {
+				var css =
+				".regular {\n\r"+
+					"box-shadow: inset 0 -.4em 0 0 " + data.colorData.regular + ",\n\r"+
+					"inset 0 .4em 0 0 " + data.colorData.regular + " !important;\n\r"+
+				"}\n\r"+
+				".teen-mod {\n\r"+
+					"box-shadow: inset 0 -.4em 0 0 " + data.colorData.teenMod + ",\n\r"+
+					"inset 0 .4em 0 0 " + data.colorData.teenMod + " !important;\n\r"+
+				"}\n\r"+
+				".junior-mod {\n\r"+
+					"box-shadow: inset 0 -.4em 0 0 " + data.colorData.juniorMod + ",\n\r"+
+					"inset 0 .4em 0 0 " + data.colorData.juniorMod + " !important;\n\r"+
+				"}\n\r"+
+				".moderator {\n\r"+
+					"box-shadow: inset 0 -.4em 0 0 " + data.colorData.moderator + ",\n\r"+
+					"inset 0 .4em 0 0 " + data.colorData.moderator + " !important;\n\r"+
+				"}\n\r"+
+				".admin {\n\r"+
+					"box-shadow: inset 0 -.4em 0 0 " + data.colorData.admin + ",\n\r"+
+					"inset 0 .4em 0 0 " + data.colorData.admin + " !important;\n\r"+
+				"}";
+
+				$("#level-colors").text(css);
 			}
 		};
 

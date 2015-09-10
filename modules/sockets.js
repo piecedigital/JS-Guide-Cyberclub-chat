@@ -136,7 +136,7 @@ module.exports = function(io, db) {
 			.on("live update", function(obj) {
 				console.log("'live update' socket function");
 				console.log(obj);
-
+				/*
 				var callbacks = {
 					updateBannedWords: function() {
 						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "word" : obj.word });
@@ -146,9 +146,14 @@ module.exports = function(io, db) {
 					},
 					updateUsers: function() {
 						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "usernameFull" : obj.usernameFull, "newName" : obj.newName });
+					},
+					updateUsers: function() {
+						io.emit("real time update", { "callback" : obj.callback, "colorData" : data });
 					}
 				};
-				callbacks[obj.callback]();
+				*/
+				io.emit("real time update", obj);
+				//callbacks[obj.callback]();
 			})
 			.on("example", function(obj) {
 				console.log("'' socket function");

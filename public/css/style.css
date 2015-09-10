@@ -185,7 +185,7 @@ section {
 }
 
 .align-middle {
-  vertical-align: text-middle;
+  vertical-align: middle;
 }
 
 .align-bottom {
@@ -1628,6 +1628,26 @@ label[for="admin-tab"] {
   color: pink;
 }
 
+#chat-box > div #messages .chat > .regular, #chat-box > div #messages .update > .regular, #chat-box > div #messages .command > .regular, #chat-box > div #messages .plain > .regular {
+  background-color: grey;
+}
+
+#chat-box > div #messages .chat > .teen-mod, #chat-box > div #messages .update > .teen-mod, #chat-box > div #messages .command > .teen-mod, #chat-box > div #messages .plain > .teen-mod {
+  background-color: #00c800;
+}
+
+#chat-box > div #messages .chat > .junior-mod, #chat-box > div #messages .update > .junior-mod, #chat-box > div #messages .command > .junior-mod, #chat-box > div #messages .plain > .junior-mod {
+  background-color: orange;
+}
+
+#chat-box > div #messages .chat > .moderator, #chat-box > div #messages .update > .moderator, #chat-box > div #messages .command > .moderator, #chat-box > div #messages .plain > .moderator {
+  background-color: blue;
+}
+
+#chat-box > div #messages .chat > .admin, #chat-box > div #messages .update > .admin, #chat-box > div #messages .command > .admin, #chat-box > div #messages .plain > .admin {
+  background-color: red;
+}
+
 #chat-box > div #messages .chat:nth-of-type(odd) p {
   background-color: rgba(0, 150, 200, 0.2);
 }
@@ -2019,6 +2039,11 @@ label[for="admin-tab"] {
 
 #admin #mgmt #item-options form input[type="radio"], #admin #mgmt #item-options form select[type="radio"], #admin #mgmt #item-options form button[type="radio"] {
   width: auto;
+}
+
+#admin #mgmt #item-options form input[type="color"], #admin #mgmt #item-options form select[type="color"], #admin #mgmt #item-options form button[type="color"] {
+  width: 3em;
+  height: 3em;
 }
 
 #admin #mgmt #item-options form button {

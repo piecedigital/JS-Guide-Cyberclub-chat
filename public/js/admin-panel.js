@@ -113,7 +113,7 @@
 		// don't send the form so the page doesn't reload
 		return false;
 	});
-	
+
 	//////////////////////////////////////////////
 	// an object of functions to use externally //
 	//////////////////////////////////////////////
@@ -247,6 +247,10 @@
 
 				socket.emit("live update", { "callback" : "updateUsers", "op" : "update", "usernameFull" : data.usernameFull, "newName" : data.newName });
 			}
+		},
+		updateColors: function(data, operation) {
+			console.log(data, operation);
+			socket.emit("live update", { "callback" : "updateColors", "colorData" : data });
 		}
 	}
 }());

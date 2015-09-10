@@ -1,4 +1,4 @@
-console.log("required store module\r\n");
+console.log("required accounts module\r\n");
 
 var app = require('express')(),
     bcrypt = require("bcryptjs"),
@@ -352,3 +352,4 @@ module.exports = function(db) {
     }
   }
 }
+console.log(this)
