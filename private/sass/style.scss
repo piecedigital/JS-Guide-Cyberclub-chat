@@ -104,7 +104,7 @@ section {
 	vertical-align: top;
 }
 .align-middle {
-	vertical-align: text-middle;
+	vertical-align: middle;
 }
 .align-bottom {
 	vertical-align: bottom;
@@ -487,11 +487,11 @@ label[for="admin-tab"] {
 					&.orange { color: orange; }
 					&.pink { color: pink; }
 				}
-				//& > .regular { background-color: grey;}
-				//& > .teen-mod { background-color: rgba(0,200,0, 1);}
-				//& > .junior-mod { background-color: orange;}
-				//& > .moderator { background-color: blue;}
-				//& > .admin { background-color: red;}
+				///*& > .regular { background-color: grey;}*/
+				///*& > .teen-mod { background-color: rgba(0,200,0, 1);}*/
+				///*& > .junior-mod { background-color: orange;}*/
+				///*& > .moderator { background-color: blue;}*/
+				///*& > .admin { background-color: red;}*/
 			}
 			& .chat {
 				&:nth-of-type(odd) p {
@@ -832,6 +832,10 @@ label[for="admin-tab"] {
 					width: 100%;
 					&[type="radio"] {
 						width: auto;
+					}
+					&[type="color"] {
+						width: 3em;
+						height: 3em;
 					}
 				}
 				& button {
