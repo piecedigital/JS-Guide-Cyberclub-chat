@@ -113,6 +113,7 @@
 		// don't send the form so the page doesn't reload
 		return false;
 	});
+	
 	//////////////////////////////////////////////
 	// an object of functions to use externally //
 	//////////////////////////////////////////////

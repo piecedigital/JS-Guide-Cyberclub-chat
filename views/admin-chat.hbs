@@ -144,6 +144,49 @@
 											</ul>
 										</div>
 									{{/if}}
+									{{#if levelColors}}
+										<h1 class="title font-size-1_2">Manage Level Colors</h1>
+										<form class="add-window" action="/update-colors">
+											<!-- regular -->
+											<div class="col-2 left-justify">
+												<label>Regular: </label>
+											</div><!--
+											--><div class="col-2 right-justify">
+												<input type="color" name="regularColor" value="{{../../levelColors.regular}}"><br>
+											</div>
+											<!-- teen mod -->
+											<div class="col-2 left-justify">
+												<label>Teen Mod: </label>
+											</div><!--
+											--><div class="col-2 right-justify">
+												<input type="color" name="teenModColor" value="{{../../levelColors.teenMod}}"><br>
+											</div>
+											<!-- Junior Mod -->
+											<div class="col-2 left-justify">
+												<label>Junior Mod: </label>
+											</div><!--
+											--><div class="col-2 right-justify">
+												<input type="color" name="juniorModColor" value="{{../../levelColors.juniorMod}}"><br>
+											</div>
+											<!-- Moderator -->
+											<div class="col-2 left-justify">
+												<label>Moderator: </label>
+											</div><!--
+											--><div class="col-2 right-justify">
+												<input type="color" name="moderatorColor" value="{{../../levelColors.moderator}}"><br>
+											</div>
+											<!-- Admin -->
+											<div class="col-2 left-justify">
+												<label>Admin: </label>
+											</div><!--
+											--><div class="col-2 right-justify">
+												<input type="color" name="adminColor" value="{{../../levelColors.admin}}">{{levelColors.admin}}<br>
+											</div>
+											<div class="center-justify x-pad-3_9">
+												<button>Submit</button>
+											</div>
+										</form>
+									{{/if}}
 								</div>
 							{{/each}}
 						</div>
@@ -259,6 +302,28 @@
 		return elem;
 	});
 </script>
+<style type="text/css" id="">
+	.regular {
+		box-shadow: inset 0 -.4em 0 0 {{levelColors.regular}},
+		inset 0 .4em 0 0 {{levelColors.regular}} !important;
+	}
+	.teen-mod {
+		box-shadow: inset 0 -.4em 0 0 {{levelColors.teenMod}},
+		inset 0 .4em 0 0 {{levelColors.teenMod}} !important;
+	}
+	.junior-mod {
+		box-shadow: inset 0 -.4em 0 0 {{levelColors.juniorMod}},
+		inset 0 .4em 0 0 {{levelColors.juniorMod}} !important;
+	}
+	.moderator {
+		box-shadow: inset 0 -.4em 0 0 {{levelColors.moderator}},
+		inset 0 .4em 0 0 {{levelColors.moderator}} !important;
+	}
+	.admin {
+		box-shadow: inset 0 -.4em 0 0 {{levelColors.admin}},
+		inset 0 .4em 0 0 {{levelColors.admin}} !important;
+	}
+</style>
 <script type="text/javascript" src="/js/chat-handle.js"></script>
 <script type="text/javascript" src="/js/admin-panel.js"></script>
 <!-- <script type="text/javascript" src="/js/drag-n-drop.js"></script> -->

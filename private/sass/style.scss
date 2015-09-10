@@ -487,11 +487,11 @@ label[for="admin-tab"] {
 					&.orange { color: orange; }
 					&.pink { color: pink; }
 				}
-				& > .regular { background-color: grey;}
-				& > .teen-mod { background-color: rgba(0,200,0, 1);}
-				& > .junior-mod { background-color: orange;}
-				& > .moderator { background-color: blue;}
-				& > .admin { background-color: red;}
+				//& > .regular { background-color: grey;}
+				//& > .teen-mod { background-color: rgba(0,200,0, 1);}
+				//& > .junior-mod { background-color: orange;}
+				//& > .moderator { background-color: blue;}
+				//& > .admin { background-color: red;}
 			}
 			& .chat {
 				&:nth-of-type(odd) p {

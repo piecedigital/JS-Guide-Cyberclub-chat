@@ -59,14 +59,14 @@ module.exports = function(io, db) {
 									currentMods++;
 								}
 							};
-        			if(currentMods && currentMods >= roomQDoc.minMods) {
+        			if(currentMods >= roomQDoc.minMods) {
         				joinUser();
         			} else {
 								if(obj.accessLevel === "moderator" || obj.accessLevel === "admin") {
 									joinUser();
 								} else {
 									io.to(socket.id).emit("update", {
-										"msg": "There are not enough admins in this room for you to join. There must be at least " + roomQDoc.minMods + " adult mod" + ( (roomQDoc.minMods > 1) ? "s" : "" ) + " in the room. There are currently " + currentMods + "."
+										"msg": "There are not enough admins in this room for you to join. There must be at least " + roomQDoc.minMods + " adult mod" + ( (roomQDoc.minMods > 1 || roomQDoc.minMods === 0) ? "s" : "" ) + " in the room. There are currently " + currentMods + "."
 									});
 								}
         			}
@@ -95,26 +95,28 @@ module.exports = function(io, db) {
 					"displayName": obj.displayName,
 					"room": null
 				});
-				Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
-					if(roomQErr) throw roomQErr;
+				if(obj.accessLevel === "admin" || obj.accessLevel === "moderator") {
+					Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
+						if(roomQErr) throw roomQErr;
 
-					if(roomQDoc) {
-						var currentMods = 0;
-						userElem = roomQDoc.users;
-						for(var i = 0; i < userElem.length; i++) {
-							if(userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
-								currentMods++;
+						if(roomQDoc) {
+							var currentMods = 0;
+							userElem = roomQDoc.users;
+							for(var i = 0; i < userElem.length; i++) {
+								if(userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
+									currentMods++;
+								}
+							};
+
+							if(currentMods < roomQDoc.minMods) {
+								io.to(socket.id).emit("update", {
+									"msg": "There are an insufficient number of mods in this room. You will now be moved out of this room."
+								});
+								io.in(obj.room).emit("kick", { "roomname" : obj.room });
 							}
-						};
-
-						if(currentMods < roomQDoc.minMods) {
-							io.to(socket.id).emit("update", {
-								"msg": "There are an insufficient number of mods in this room. You will now be moved out of this room."
-							});
-							io.in(obj.room).emit("kick", { "roomname" : obj.room });
 						}
-					}
-				});
+					});
+				}
 			})
 			.on("chat message", function(obj) {
 				if(obj.msg) {
