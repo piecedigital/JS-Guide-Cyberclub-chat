@@ -4,6 +4,32 @@ module.exports = function(io, db) {
 	var User = db.collection("users"),
 		Room = db.collection("rooms"),
 		Chat = db.collection("chatOptions");
+		// pull data for banned words and phrases
+		var bannedWords = [];
+		var bannedEmotes = []
+  	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
+  		if(chatQErr) throw chatQErr;
+
+  		//console.log(chatQDoc)
+  		if(chatQDoc) {
+  			bannedWords = chatQDoc.list;
+  			console.log("found some")
+  		} else {
+  			bannedWords = [];
+  			console.log("found none")
+  		}
+  	});
+
+  	String.prototype.multiply = function(times) {
+			var arr = [];
+			var tick = 0;
+			while(tick < times) {
+				arr.push(this);
+				tick++;
+			}
+
+			return arr.join("")
+		};
 	return {
 		socketHandler: function(socket) {
 			console.log("socketHandler called");
@@ -125,6 +151,20 @@ module.exports = function(io, db) {
 					obj.msg = obj.msg.replace(/[<]/gi, "&lt;")
 						.replace(/[>]/gi, "&gt;");
 
+					// filter out banned words
+					for(var i = 0; i < bannedWords.length; i++) {
+						var banReg = new RegExp(bannedWords[i], "gi")
+						obj.msg = obj.msg.replace(banReg, "*".multiply(bannedWords[i].length));
+					}
+					// filter out banned emotes
+					var rpCode = ":".charCodeAt();
+					for(var i = 0; i < bannedEmotes.length; i++) {
+						var banReg = new RegExp(bannedEmotes[i], "gi")
+						var match = obj.msg.match(banReg);
+						obj.msg = obj.msg.replace(banReg, rpCode + bannedEmotes[i].length + rpCode);
+					}
+
+					// check if command or regular message
 					if(obj.msg.match(/^(\/me)/gi)) {
 						obj.msg = obj.msg.replace(/^(\/me)/gi, "")
 						io.in(thisRoom).emit("chat me response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
@@ -136,27 +176,39 @@ module.exports = function(io, db) {
 			.on("live update", function(obj) {
 				console.log("'live update' socket function");
 				console.log(obj);
-				/*
+				
 				var callbacks = {
 					updateBannedWords: function() {
-						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "word" : obj.word });
+						if(obj.op === "$push") {
+							bannedWords.push(obj.word);
+						}
+						if(obj.op === "$pull") {
+							bannedWords.splice(bannedWords.indexOf(obj.word), 1);
+						}
+					},
+					updateBannedEmotes: function() {
+						if(obj.op === "$push") {
+							bannedEmotes.push(obj.emote);
+						}
+						if(obj.op === "$pull") {
+							bannedEmotes.splice(bannedEmotes.indexOf(obj.emote), 1);
+						}
 					},
 					updateRooms: function() {
-						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "roomname" : obj.roomname, "originalName" : obj.originalName, "topic" : obj.topic });
+						io.emit("real time update", obj);
 					},
 					updateUsers: function() {
-						io.emit("real time update", { "callback" : obj.callback, "operation" : obj.op, "usernameFull" : obj.usernameFull, "newName" : obj.newName });
+						io.emit("real time update", obj);
 					},
-					updateUsers: function() {
-						io.emit("real time update", { "callback" : obj.callback, "colorData" : data });
+					updateColors: function() {
+						io.emit("real time update", obj);
+						io.emit("update", {
+							"msg": "The color user roles have been updated. Regular users: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.regular + "; border-radius: .5em; display: inline-block;'></span>, teen mod: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.teenMod + "; border-radius: .5em; display: inline-block;'></span>, junior mod: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.juniorMod + "; border-radius: .5em; display: inline-block;'></span>, adult moderator: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.moderator + "; border-radius: .5em; display: inline-block;'></span>, admin: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.admin + "; border-radius: .5em; display: inline-block;'></span>."
+						});
 					}
 				};
-				*/
-				io.emit("real time update", obj);
-				io.emit("update", {
-						"msg": "The color user roles have been updated. Regular users: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.regular + "; box-shadow: 0 0 0 .2em grey; display: inline-block;'></span>, teen mod: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.teenMod + "; box-shadow: 0 0 0 .2em grey; display: inline-block;'></span>, junior mod: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.juniorMod + "; box-shadow: 0 0 0 .2em grey; display: inline-block;'></span>, adult moderator: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.moderator + "; box-shadow: 0 0 0 .2em grey; display: inline-block;'></span>, admin: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.admin + "; box-shadow: 0 0 0 .2em grey; display: inline-block;'></span>."
-					});
-				//callbacks[obj.callback]();
+				
+				callbacks[obj.callback]();
 			})
 			.on("example", function(obj) {
 				console.log("'' socket function");

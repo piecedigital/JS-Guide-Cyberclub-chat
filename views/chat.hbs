@@ -42,12 +42,6 @@
 </section>
 <script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-<script type="text/javascript">
-	var bannedWords = "{{bannedWords}}";
-	var bannedArr = bannedWords.split(",").map(function(elem, ind) {
-		return elem;
-	});
-</script>
 <style type="text/css" id="level-colors">
 	.regular {
 		box-shadow: inset 0 -.4em 0 0 {{levelColors.regular}},

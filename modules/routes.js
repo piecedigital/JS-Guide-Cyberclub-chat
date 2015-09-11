@@ -209,8 +209,6 @@ db.open(function(err, db) {
 				            	// key variables needed before rendering the page
 				            	var keyVars = {
 				            		"rooms": null,
-				            		"bannedWords": null,
-				            		"bannedAddrs": null,
 				            		"levelColors": null
 				            	};
 				            	// options for handling chat
@@ -242,7 +240,7 @@ db.open(function(err, db) {
 						            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "admin-chat" : "chat";
 				            			//console.log(keyVars);
 
-					  							res.render(dest, { "title" : "Guide Cyberclub Chat", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "levelColors" : keyVars.levelColors });
+					  							res.render(dest, { "title" : "Guide Cyberclub Chat", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "disable" : "disabled", "rooms" : keyVars.rooms, "levelColors" : keyVars.levelColors });
 				            		}
 				            	}
 
@@ -258,6 +256,7 @@ db.open(function(err, db) {
 				            			checkVars(keyVars);
 				            		}
 				            	});
+				            	/*
 				            	// pull data for banned words and phrases
 				            	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
 				            		if(chatQErr) throw chatQErr;
@@ -284,6 +283,7 @@ db.open(function(err, db) {
 				            			checkVars(keyVars);
 				            		}
 				            	});
+				            	*/
 											// pull data for access level color indicators
 				            	Chat.findOne({ "optionName" : "levelColors" }, function(chatQErr, chatQDoc) {
 				            		if(chatQErr) throw chatQErr;
@@ -341,15 +341,19 @@ db.open(function(err, db) {
 				            	var keyVars = {
 				            		"rooms": null,
 				            		"users": null,
+				            		"bannedEmotes": null,
 				            		"bannedWords": null,
 				            		"bannedAddrs": null,
 				            		"levelColors": null
-
 				            	};
 				            	// options for handling chat
 				            	var chatOptions = [{
 				            		"wordBans": true,
 				            		"name": "Banned Words"
+				            	},
+				            	{
+				            		"emoteBans": true,
+				            		"name": "Banned Emotes"
 				            	},
 				            	{
 				            		"addresses": true,
@@ -374,7 +378,7 @@ db.open(function(err, db) {
 
 						            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "admin-chat" : "chat";
 
-					  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "levelColors" : keyVars.levelColors, "chatOptions" : chatOptions });
+					  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedEmotes" : keyVars.bannedEmotes, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "levelColors" : keyVars.levelColors, "chatOptions" : chatOptions });
 				            		}
 				            	}
 
@@ -399,6 +403,19 @@ db.open(function(err, db) {
 				            			checkVars(keyVars);
 				            		} else {
 				            			keyVars.users = [];
+				            			checkVars(keyVars);
+				            		}
+				            	});
+				            	// pull data for banned emotes
+				            	Chat.findOne({ "optionName" : "bannedEmotes" }, function(chatQErr, chatQDoc) {
+				            		if(chatQErr) throw chatQErr;
+
+				            		//console.log(chatQDoc)
+				            		if(chatQDoc) {
+				            			keyVars.bannedEmotes = chatQDoc.list;
+				            			checkVars(keyVars);
+				            		} else {
+				            			keyVars.bannedEmotes = [];
 				            			checkVars(keyVars);
 				            		}
 				            	});
@@ -687,6 +704,44 @@ db.open(function(err, db) {
 						}
 					});
 				}
+
+			} else {
+				res.status(417).send("Unacceptable room name");
+			}
+		})
+		.post("/update-emotes", function(req, res, next) {
+			console.log("update banned words function")
+			console.log(req.body);
+			
+			var emote = req.body.emote || "",
+					op = req.body.op || "$push";
+
+			if(emote) {
+				emote = emote.replace(/[:]/gi, "");
+				emote = ":" + emote + ":";
+
+				var updateObj = {
+					"$set": {
+						"optionName": "bannedWords"
+					}
+				};
+				updateObj[op] = { "list" : emote }
+
+
+
+				Chat.update({ "optionName" : "bannedEmotes" }, updateObj, { "upsert" : true }, function(chatQErr, chatQDoc) {
+					if(chatQErr) throw chatQErr;
+
+					if(chatQDoc && chatQDoc.result.ok) {
+						res.status(200).send({
+							"msg": "success",
+							"action": "callback",
+							"callback": "updateBannedEmotes",
+							"data": emote,
+							"op": op
+						});
+					}
+				});
 
 			} else {
 				res.status(417).send("Unacceptable room name");

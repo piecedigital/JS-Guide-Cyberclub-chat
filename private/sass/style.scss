@@ -809,11 +809,11 @@ label[for="admin-tab"] {
 			& .title {
 				margin: 0 0 1em;
 			}
-			& #option-box {
+			& .option-box {
 				& #banned-list {
 					padding: 0;
 					margin: 0;
-					& .word, .addr {
+					& .word, .addr, .emote {
 						list-style: none;
 						display: inline-block;
 						margin: .25em;

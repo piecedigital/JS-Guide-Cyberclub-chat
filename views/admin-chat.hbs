@@ -60,15 +60,15 @@
 						--><div id="item-options">
 							<h1 class="title font-size-1_5">Chat Options</h1>
 							{{#each chatOptions}}
-								<div id="option-box" data-section="{{@key}}" {{#if @key}} class="hidden" {{/if}}>
-									{{#if emoticons}}
+								<div class="option-box option-{{@key}}" data-section="{{name}}" {{#if @key}} class="hidden" {{/if}}>
+									{{#if emoteBans}}
 										<h1 class="title font-size-1_2">Add Banned Emoticon</h1>
-										<form class="add-window" action="/update-banned">
+										<form class="add-window" action="/update-emotes">
 											<div class="col-2 left-justify">
 												<label>Emote Keyword: </label>
 											</div><!--
 											--><div class="col-2 right-justify">
-												<input type="text" name="word" placeholder="Enter the word to ban"><br>
+												<input type="text" name="word" placeholder="Enter the emote keyword to ban"><br>
 											</div>
 											<div class="center-justify x-pad-3_9">
 												<button>Submit</button>
@@ -77,8 +77,8 @@
 										<div class="y-marg-1_0">
 											<ul id="banned-list">
 												<h1 class="title font-size-1_2">Current Bans</h1>
-												{{#each ../../bannedWords}}
-													<li class="word" data-word="{{this}}">{{this}}<div class="close">x</div></li>
+												{{#each ../../bannedEmotes}}
+													<li class="emote" data-emote="{{this}}">{{this}}<div class="close">x</div></li>
 												{{/each}}
 											</ul>
 										</div>
@@ -290,12 +290,6 @@
 </section>
 <script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-<script type="text/javascript">
-	var bannedWords = "{{bannedWords}}";
-	var bannedArr = bannedWords.split(",").map(function(elem, ind) {
-		return elem;
-	});
-</script>
 <style type="text/css" id="level-colors">
 	.regular {
 		box-shadow: inset 0 -.4em 0 0 {{levelColors.regular}},

@@ -16,19 +16,22 @@
 		console.log(itemOptions);
 
 		// DOM manipulation
-		panels.chatOpt.find("#item-options").find("#option-box[data-section='0']").addClass("hidden");
-		panels.chatOpt.find("#item-options").find("#option-box[data-section='1']").addClass("hidden");
-		panels.chatOpt.find("#item-options").find("#option-box[data-section='2']").addClass("hidden");
+		panels.chatOpt.find("#item-options").find(".option-box").addClass("hidden");
 		
-		panels.chatOpt.find("#item-options").find("#option-box[data-section='" + itemOptions + "']").removeClass("hidden");
+		panels.chatOpt.find("#item-options").find(".option-box.option-" + itemOptions + "").removeClass("hidden");
+	});
+	// banned emote deletion
+	panels.chatOpt.find("#item-options .option-box[data-section='Banned Emotes']").on("click", ".close", function() {
+		var emote = $(this).parent().data("emote");
+		functions.ajax("/update-emotes", "POST", "json", { "emote" : emote, "op" : "$pull" });
 	});
 	// banned word deletion
-	panels.chatOpt.find("#item-options #option-box[data-section='0']").on("click", ".close", function() {
+	panels.chatOpt.find("#item-options .option-box[data-section='Banned Words']").on("click", ".close", function() {
 		var word = $(this).parent().data("word");
 		functions.ajax("/update-banned", "POST", "json", { "word" : word, "op" : "$pull" });
 	});
 	// banned ip deletion
-	panels.chatOpt.find("#item-options #option-box[data-section='1']").on("click", ".close", function() {
+	panels.chatOpt.find("#item-options .option-box[data-section='Banned IP Addresses']").on("click", ".close", function() {
 		var addr = $(this).parent().data("addr");
 		functions.ajax("/update-ips", "POST", "json", { "ip" : addr, "op" : "$pull" });
 	});
@@ -159,19 +162,35 @@
 				}
 			});
 		},
-		updateBannedWords: function(data, operation) {
+		updateBannedEmotes: function(data, operation) {
 			console.log(data, operation);
 			if(operation === "$pull") {
 				console.log("removing");
 
-				panels.chatOpt.find("#item-options #option-box[data-section='0'] #banned-list").find(".word[data-word='" + data + "']").remove();
+				panels.chatOpt.find("#item-options .option-box[data-section='Banned Emotes'] #banned-list").find(".emote[data-emote='" + data + "']").remove();
 				
 			}
 			if(operation === "$push") {
 				console.log("adding");
 				console.log(data);
 
-				panels.chatOpt.find("#item-options #option-box[data-section='0'] #banned-list").append("<li class='word' data-word='" + data + "'>" + data + "<div class='close'>x</div></li>");
+				panels.chatOpt.find("#item-options .option-box[data-section='Banned Emotes'] #banned-list").append("<li class='emote' data-emote='" + data + "'>" + data + "<div class='close'>x</div></li>");
+			}
+			socket.emit("live update", { "callback" : "updateBannedEmotes", "op" : operation, "emote" : data });
+		},
+		updateBannedWords: function(data, operation) {
+			console.log(data, operation);
+			if(operation === "$pull") {
+				console.log("removing");
+
+				panels.chatOpt.find("#item-options .option-box[data-section='Banned Words'] #banned-list").find(".word[data-word='" + data + "']").remove();
+				
+			}
+			if(operation === "$push") {
+				console.log("adding");
+				console.log(data);
+
+				panels.chatOpt.find("#item-options .option-box[data-section='Banned Words'] #banned-list").append("<li class='word' data-word='" + data + "'>" + data + "<div class='close'>x</div></li>");
 			}
 			socket.emit("live update", { "callback" : "updateBannedWords", "op" : operation, "word" : data });
 		},
@@ -180,14 +199,14 @@
 			if(operation === "$pull") {
 				console.log("removing");
 
-				panels.chatOpt.find("#item-options #option-box[data-section='1'] #banned-list").find(".addr[data-addr='" + data + "']").remove();
+				panels.chatOpt.find("#item-options .option-box[data-section='Banned IP Addresses'] #banned-list").find(".addr[data-addr='" + data + "']").remove();
 				
 			}
 			if(operation === "$push") {
 				console.log("adding");
 				console.log(data);
 
-				panels.chatOpt.find("#item-options #option-box[data-section='1'] #banned-list").append("<li class='addr' data-addr='" + data + "'>" + data + "<div class='close'>x</div></li>");
+				panels.chatOpt.find("#item-options .option-box[data-section='Banned IP Addresses'] #banned-list").append("<li class='addr' data-addr='" + data + "'>" + data + "<div class='close'>x</div></li>");
 			}
 		},
 		updateRooms: function(data, operation) {
