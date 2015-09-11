@@ -43,8 +43,8 @@ app.disable("x-powered-by");
 app.use(helmet());
 app.use(helmet.contentSecurityPolicy({
   defaultSrc: ["'self'"],
-  scriptSrc: ["'self'", "'unsafe-inline'","*.stripe.com", "'unsafe-eval'"],
-  styleSrc: ["'self'", "'unsafe-inline'", "*.stripe.com"],
+  scriptSrc: ["'self'", "'unsafe-inline'","*.jsdelivr.net", "'unsafe-eval'"],
+  styleSrc: ["'self'", "'unsafe-inline'", "*.jsdelivr.net"],
   imgSrc: ["*"],
   connectSrc: ["*"],
   fontSrc: ["fonts.google.com"],

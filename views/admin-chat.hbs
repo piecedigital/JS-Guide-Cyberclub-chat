@@ -62,29 +62,23 @@
 							{{#each chatOptions}}
 								<div id="option-box" data-section="{{@key}}" {{#if @key}} class="hidden" {{/if}}>
 									{{#if emoticons}}
-										<h1 class="title font-size-1_2">Add Emote</h1>
-										<form class="add-window" action="/add-emote">
+										<h1 class="title font-size-1_2">Add Banned Emoticon</h1>
+										<form class="add-window" action="/update-banned">
 											<div class="col-2 left-justify">
-												<label>Emoticon Name: </label>
+												<label>Emote Keyword: </label>
 											</div><!--
 											--><div class="col-2 right-justify">
-												<input type="text" name="roomname" placeholder="Enter the room name..."><br>
-											</div><br>
-											<div class="col-2 left-justify">
-												<label>Emoticon Image: </label>
-											</div><!--
-											--><div class="col-2 right-justify">
-												<input type="file" name="roomname" placeholder="upload an image..."><br>
+												<input type="text" name="word" placeholder="Enter the word to ban"><br>
 											</div>
 											<div class="center-justify x-pad-3_9">
 												<button>Submit</button>
 											</div>
 										</form>
 										<div class="y-marg-1_0">
-											<h1 class="title font-size-1_2">Current Emotes</h1>
-											<ul class="emote-list">
-												{{#each items}}
-													<li class="emote"><img src="{{path}}" title="{{name}}" alt="{{name}}"></li>
+											<ul id="banned-list">
+												<h1 class="title font-size-1_2">Current Bans</h1>
+												{{#each ../../bannedWords}}
+													<li class="word" data-word="{{this}}">{{this}}<div class="close">x</div></li>
 												{{/each}}
 											</ul>
 										</div>
@@ -324,6 +318,7 @@
 		inset 0 .4em 0 0 {{levelColors.admin}} !important;
 	}
 </style>
+<script src="//cdn.jsdelivr.net/emojione/1.5.0/lib/js/emojione.min.js"></script>
 <script type="text/javascript" src="/js/chat-handle.js"></script>
 <script type="text/javascript" src="/js/admin-panel.js"></script>
 <!-- <script type="text/javascript" src="/js/drag-n-drop.js"></script> -->

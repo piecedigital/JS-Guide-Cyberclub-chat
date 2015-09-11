@@ -16,8 +16,9 @@
 		console.log(itemOptions);
 
 		// DOM manipulation
-		panels.chatOpt.find("#item-options").find("#option-box").addClass("hidden");
+		panels.chatOpt.find("#item-options").find("#option-box[data-section='0']").addClass("hidden");
 		panels.chatOpt.find("#item-options").find("#option-box[data-section='1']").addClass("hidden");
+		panels.chatOpt.find("#item-options").find("#option-box[data-section='2']").addClass("hidden");
 		
 		panels.chatOpt.find("#item-options").find("#option-box[data-section='" + itemOptions + "']").removeClass("hidden");
 	});

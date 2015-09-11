@@ -329,17 +329,23 @@ String.prototype.multiply = function(times) {
 			.replace(/[a-z]{1,}([._-]*)?[a-z]{1,}@[a-z]*.[a-z]*/ig, "[deleted email]");
 
 		//emoticons/////////////
-		var smileMatch = /(:[\-]?\)){1}/ig;
-		var indifMatch = /(\B(:[\-]?\/)\B){1}/ig;
+		function emojify(str) {
+			var emoteMatches = str.match(/[:][a-z\_]*[:]/gi) || [];
+			var str = emojione.toImage(str);
+			var emojioneHTML = document.createElement('span');
+			emojioneHTML.innerHTML = str;
+			emojioneMatches = $(emojioneHTML).find(".emojione");
+			//console.log($(d).find(".emojione"));
+			for(var i = 0; i < emojioneMatches.length; i++) {
+				//console.log("of match: ", emojioneMatches)
+				$(emojioneMatches[i]).attr("title", emoteMatches[i]);
+			}
+			var finalHTML = $(emojioneHTML).html();
+			console.log(finalHTML);
+			return finalHTML
+		}
 
-		//match smile emote
-		var smileEmote = filter.match(smileMatch) || [];
-		filter = filter.replace(smileMatch, "<span class='emote'><span>" + smileEmote[0] + "</span></span>");
-
-		//match indif emote
-		var indifEmote = filter.match(indifMatch) || [];
-		filter = filter.replace(indifMatch, "<span class='emote'><span>" + indifEmote[0] + "</span></span>");
-
+		filter = emojify(filter);
 		//match mentions////////////
 		var regDisplayName = new RegExp("@" + displayName, "gi");
 		if(filter.match(regDisplayName) && person.toLowerCase() !== displayName.toLowerCase() ){

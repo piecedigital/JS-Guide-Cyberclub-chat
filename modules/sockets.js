@@ -153,6 +153,9 @@ module.exports = function(io, db) {
 				};
 				*/
 				io.emit("real time update", obj);
+				io.emit("update", {
+						"msg": "The color user roles have been updated. Regular users: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.regular + "; box-shadow: 0 0 0 .2em grey; display: inline-block;'></span>, teen mod: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.teenMod + "; box-shadow: 0 0 0 .2em grey; display: inline-block;'></span>, junior mod: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.juniorMod + "; box-shadow: 0 0 0 .2em grey; display: inline-block;'></span>, adult moderator: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.moderator + "; box-shadow: 0 0 0 .2em grey; display: inline-block;'></span>, admin: <span class='color-box' style='width: 1em; height: 1em; background-color: " + obj.colorData.admin + "; box-shadow: 0 0 0 .2em grey; display: inline-block;'></span>."
+					});
 				//callbacks[obj.callback]();
 			})
 			.on("example", function(obj) {
