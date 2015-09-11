@@ -1,24 +1,13 @@
 console.log("required game-sockets module\r\n");
 
+var bannedWords = [];
+var bannedEmotes = [];
 module.exports = function(io, db) {
 	var User = db.collection("users"),
 		Room = db.collection("rooms"),
 		Chat = db.collection("chatOptions");
 		// pull data for banned words and phrases
-		var bannedWords = [];
-		var bannedEmotes = []
-  	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
-  		if(chatQErr) throw chatQErr;
-
-  		//console.log(chatQDoc)
-  		if(chatQDoc) {
-  			bannedWords = chatQDoc.list;
-  			console.log("found some")
-  		} else {
-  			bannedWords = [];
-  			console.log("found none")
-  		}
-  	});
+		//console.log(bannedWords, bannedEmotes);
 
   	String.prototype.multiply = function(times) {
 			var arr = [];
@@ -32,13 +21,13 @@ module.exports = function(io, db) {
 		};
 	return {
 		socketHandler: function(socket) {
-			console.log("socketHandler called");
+			//console.log("socketHandler called");
 			var thisRoom;
 
 			socket// continued "on" events
 			.on("join", function(obj) {
-				console.log("'join' socket function");
-				console.log(obj);
+				//console.log("'join' socket function");
+				//console.log(obj);
 
 				if(!obj.room) {
 					thisRoom = obj.room;
@@ -56,7 +45,7 @@ module.exports = function(io, db) {
 							var joinUser = function() {
 								socket.join(obj.room);
 			    			thisRoom = obj.room;
-								console.log(obj.room, thisRoom);
+								//console.log(obj.room, thisRoom);
 
 								var userObj = {
 									"username": obj.usernameFull.toLowerCase(),
@@ -103,8 +92,8 @@ module.exports = function(io, db) {
 				}
 			})
 			.on("leave", function(obj) {
-				console.log("'leave' socket function");
-				console.log(obj);
+				//console.log("'leave' socket function");
+				//console.log(obj);
 
 				socket.leave(obj.room);
 
@@ -146,22 +135,24 @@ module.exports = function(io, db) {
 			})
 			.on("chat message", function(obj) {
 				if(obj.msg) {
-					console.log("'chat message' socket function");
-					console.log(obj);
+					//console.log("'chat message' socket function");
+					//console.log(obj);
 					obj.msg = obj.msg.replace(/[<]/gi, "&lt;")
 						.replace(/[>]/gi, "&gt;");
 
+					////console.log("banned stuff - ", bannedWords, bannedEmotes)
 					// filter out banned words
 					for(var i = 0; i < bannedWords.length; i++) {
 						var banReg = new RegExp(bannedWords[i], "gi")
 						obj.msg = obj.msg.replace(banReg, "*".multiply(bannedWords[i].length));
 					}
 					// filter out banned emotes
-					var rpCode = ":".charCodeAt();
+					var rpCode =  "&#58;";
 					for(var i = 0; i < bannedEmotes.length; i++) {
-						var banReg = new RegExp(bannedEmotes[i], "gi")
-						var match = obj.msg.match(banReg);
-						obj.msg = obj.msg.replace(banReg, rpCode + bannedEmotes[i].length + rpCode);
+						var banReg = new RegExp(bannedEmotes[i], "gi");
+						var match = obj.msg.match(banReg) || [];
+						match = (match[0]) ? match[0].replace(/[:]/gi, rpCode) : match;
+						obj.msg = obj.msg.replace(banReg, match);
 					}
 
 					// check if command or regular message
@@ -174,8 +165,8 @@ module.exports = function(io, db) {
 				}
 			})
 			.on("live update", function(obj) {
-				console.log("'live update' socket function");
-				console.log(obj);
+				//console.log("'live update' socket function");
+				//console.log(obj);
 				
 				var callbacks = {
 					updateBannedWords: function() {
@@ -211,17 +202,17 @@ module.exports = function(io, db) {
 				callbacks[obj.callback]();
 			})
 			.on("example", function(obj) {
-				console.log("'' socket function");
-				console.log(obj);
+				//console.log("'' socket function");
+				//console.log(obj);
 			})
 			.on("disconnect", function() {
-				console.log("disconnected", socket.id);
+				//console.log("disconnected", socket.id);
 
 				User.findOne({ "socket" : socket.id }, function(userQErr, userQDoc) {
 					if(userQErr) throw userQErr;
 
 					if(userQDoc) {
-						console.log(userQDoc);
+						//console.log(userQDoc);
 
 						io.emit("new entry", {
 							"msg": userQDoc.username + " has left",
@@ -234,6 +225,38 @@ module.exports = function(io, db) {
 					}
 				});
 			});
+		},
+		populateBans: function(n) {
+			//console.log("populate bans called");
+
+			Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
+	  		if(chatQErr) throw chatQErr;
+
+	  		//console.log("searching words...");
+	  		////console.log(chatQDoc)
+	  		if(chatQDoc) {
+	  			bannedWords = chatQDoc.list;
+	  			//console.log("found some")
+	  		} else {
+	  			bannedWords = [];
+	  			//console.log("found none")
+	  		}
+	  		//console.log("bannedWords", bannedWords);
+	  	});
+	  	Chat.findOne({ "optionName" : "bannedEmotes" }, function(chatQErr, chatQDoc) {
+	  		if(chatQErr) throw chatQErr;
+
+	  		//console.log("searching emotes...");
+	  		////console.log(chatQDoc)
+	  		if(chatQDoc) {
+	  			bannedEmotes = chatQDoc.list;
+	  			//console.log("found some")
+	  		} else {
+	  			bannedEmotes = [];
+	  			//console.log("found none")
+	  		}
+	  		//console.log("bannedEmotes", bannedEmotes);
+	  	});
 		}
 	}
 }

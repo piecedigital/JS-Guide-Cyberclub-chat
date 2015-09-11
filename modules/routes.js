@@ -29,11 +29,11 @@ sass.render({
 }, function(err, result) {
 	if(err) throw err;
 
-	//console.log(result.css.toString());
+	////console.log(result.css.toString());
 	fs.writeFile('./public/css/style.css', result.css.toString(), function (err) {
 	  if (err) throw err;
 
-	  console.log('CSS rendered and saved');
+	  //console.log('CSS rendered and saved');
 	});
 });
 
@@ -140,7 +140,7 @@ db.open(function(err, db) {
 			            if(err2) throw err2;
 
 			            if(userQDoc) {
-			            	console.log(userQDoc);
+			            	//console.log(userQDoc);
 			            	if(!userQDoc.banned) {
 				            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "/admin-chat" : "/chat";
 
@@ -160,6 +160,49 @@ db.open(function(err, db) {
 			      });
 					} else {
 						res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
+					}
+				} else {
+					res.redirect("/banned/ip");
+				}
+			});
+		})
+		.get("/admin-signup", function(req, res, next) {
+			var session = req.cookies["sessId"] || "";
+			var IP = getIP.getIP2();
+			
+			Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
+				if(chatQErr) throw chatQErr;
+
+				if(!chatQDoc) {
+					if(session) {
+			      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
+			        if(sessQErr) throw sessQErr;
+
+			        if(sessQDoc) {
+								User.findOne({ "username" : sessQDoc.user }, function(err2, userQDoc) {
+			            if(err2) throw err2;
+
+			            if(userQDoc) {
+			            	//console.log(userQDoc);
+			            	if(!userQDoc.banned) {
+				            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "/admin-chat" : "/chat";
+
+					  					res.redirect(dest);
+			            	} else {
+			            		res.redirect("/banned/account")
+			            	}
+			            } else {
+			            	res.clearCookie("sessId");
+			        			res.redirect("/signup");
+			            }
+			          });
+			        } else {
+			        	res.clearCookie("sessId");
+								res.render("admin-signup", { "title" : "Admin Sign Up", "msg" :"" });
+			        }
+			      });
+					} else {
+						res.render("admin-signup", { "title" : "Admin Sign Up", "msg" :"" });
 					}
 				} else {
 					res.redirect("/banned/ip");
@@ -194,7 +237,7 @@ db.open(function(err, db) {
 				if(chatQErr) throw chatQErr;
 
 				if(!chatQDoc) {
-					console.log("ip is not banned");
+					//console.log("ip is not banned");
 
 					if(session) {
 			      Sess.findOne({ "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
@@ -230,15 +273,15 @@ db.open(function(err, db) {
 				            		for(var key in obj) {
 				            			if(!keyVars[key]) {
 				            				clear = false;
-				            				//console.log(obj);
+				            				////console.log(obj);
 				            			}
 				            		}
 				            		if(clear) {
-				            			//console.log(obj);
-				            			console.log(userQDoc);
+				            			////console.log(obj);
+				            			//console.log(userQDoc);
 
 						            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "admin-chat" : "chat";
-				            			//console.log(keyVars);
+				            			////console.log(keyVars);
 
 					  							res.render(dest, { "title" : "Guide Cyberclub Chat", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "disable" : "disabled", "rooms" : keyVars.rooms, "levelColors" : keyVars.levelColors });
 				            		}
@@ -261,7 +304,7 @@ db.open(function(err, db) {
 				            	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
 				            		if(chatQErr) throw chatQErr;
 
-				            		//console.log(chatQDoc)
+				            		////console.log(chatQDoc)
 				            		if(chatQDoc) {
 				            			keyVars.bannedWords = chatQDoc.list;
 				            			checkVars(keyVars);
@@ -274,7 +317,7 @@ db.open(function(err, db) {
 				            	Chat.findOne({ "optionName" : "bannedAddrs" }, function(chatQErr, chatQDoc) {
 				            		if(chatQErr) throw chatQErr;
 
-				            		console.log(chatQDoc)
+				            		//console.log(chatQDoc)
 				            		if(chatQDoc) {
 				            			keyVars.bannedAddrs = chatQDoc.list;
 				            			checkVars(keyVars);
@@ -288,7 +331,7 @@ db.open(function(err, db) {
 				            	Chat.findOne({ "optionName" : "levelColors" }, function(chatQErr, chatQDoc) {
 				            		if(chatQErr) throw chatQErr;
 
-				            		//console.log(chatQDoc)
+				            		////console.log(chatQDoc)
 				            		if(chatQDoc) {
 				            			keyVars.levelColors = chatQDoc.list;
 				            			checkVars(keyVars);
@@ -369,12 +412,12 @@ db.open(function(err, db) {
 				            		for(var key in obj) {
 				            			if(!keyVars[key]) {
 				            				clear = false;
-				            				//console.log(obj);
+				            				////console.log(obj);
 				            			}
 				            		}
 				            		if(clear) {
-				            			//console.log(obj);
-				            			console.log(userQDoc);
+				            			////console.log(obj);
+				            			//console.log(userQDoc);
 
 						            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "admin-chat" : "chat";
 
@@ -410,7 +453,7 @@ db.open(function(err, db) {
 				            	Chat.findOne({ "optionName" : "bannedEmotes" }, function(chatQErr, chatQDoc) {
 				            		if(chatQErr) throw chatQErr;
 
-				            		//console.log(chatQDoc)
+				            		////console.log(chatQDoc)
 				            		if(chatQDoc) {
 				            			keyVars.bannedEmotes = chatQDoc.list;
 				            			checkVars(keyVars);
@@ -423,7 +466,7 @@ db.open(function(err, db) {
 				            	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
 				            		if(chatQErr) throw chatQErr;
 
-				            		//console.log(chatQDoc)
+				            		////console.log(chatQDoc)
 				            		if(chatQDoc) {
 				            			keyVars.bannedWords = chatQDoc.list;
 				            			checkVars(keyVars);
@@ -436,7 +479,7 @@ db.open(function(err, db) {
 				            	Chat.findOne({ "optionName" : "bannedAddrs" }, function(chatQErr, chatQDoc) {
 				            		if(chatQErr) throw chatQErr;
 
-				            		//console.log(chatQDoc)
+				            		////console.log(chatQDoc)
 				            		if(chatQDoc) {
 				            			keyVars.bannedAddrs = chatQDoc.list;
 				            			checkVars(keyVars);
@@ -449,7 +492,7 @@ db.open(function(err, db) {
 				            	Chat.findOne({ "optionName" : "levelColors" }, function(chatQErr, chatQDoc) {
 				            		if(chatQErr) throw chatQErr;
 
-				            		//console.log(chatQDoc)
+				            		////console.log(chatQDoc)
 				            		if(chatQDoc) {
 				            			keyVars.levelColors = chatQDoc.list;
 				            			checkVars(keyVars);
@@ -553,7 +596,7 @@ db.open(function(err, db) {
 		})
 		.get('/validate', function(req, res, next) {
 			var key = req.query.key;
-			console.log(key)
+			//console.log(key)
 
 			if(key) {
 	      Pending.findOne({ "validationId" : key }, function(pendQErr, pendQDoc) {
@@ -624,7 +667,7 @@ db.open(function(err, db) {
 		.get("*", function(req, res, next) {
 			res.send("Error 404: page not found");
 			var IP = getIP.getIP2();
-			//console.log(IP, typeof IP);
+			////console.log(IP, typeof IP);
 			var session = req.cookies["sessId"] || "";
 			
 			if(session) {
@@ -639,15 +682,15 @@ db.open(function(err, db) {
 	            	User.update({ "username" : userQDoc.username }, { "$set" : { "currentIp" : IP } });
 
 	            } else {
-	            	console.log("user not present. no file write");
+	            	//console.log("user not present. no file write");
 	            }
 	          });
 	        } else {
-	        	console.log("sessiion not present. no file write");
+	        	//console.log("sessiion not present. no file write");
 	        }
 	      });
 			} else {
-				console.log("session cookie not present. no file write");
+				//console.log("session cookie not present. no file write");
 			}
 		});
 
@@ -660,8 +703,8 @@ db.open(function(err, db) {
 		//POST requests for admin panel
 		.post("/adjust-user", account(db).updateUser)
 		.post("/update-rooms", function(req, res, next) {
-			console.log("update rooms function")
-			console.log(req.body);
+			//console.log("update rooms function")
+			//console.log(req.body);
 			
 			var roomname = req.body.roomname || "",
 					roomnameHyph = req.body.roomname.replace(/\s/g, "-").toLowerCase(),
@@ -710,20 +753,17 @@ db.open(function(err, db) {
 			}
 		})
 		.post("/update-emotes", function(req, res, next) {
-			console.log("update banned words function")
-			console.log(req.body);
+			//console.log("update banned words function")
+			//console.log(req.body);
 			
 			var emote = req.body.emote || "",
 					op = req.body.op || "$push";
 
 			if(emote) {
 				emote = emote.replace(/[:]/gi, "");
-				emote = ":" + emote + ":";
+				emote = "&$#58;" + emote + "&#58;";
 
 				var updateObj = {
-					"$set": {
-						"optionName": "bannedWords"
-					}
 				};
 				updateObj[op] = { "list" : emote }
 
@@ -744,21 +784,18 @@ db.open(function(err, db) {
 				});
 
 			} else {
-				res.status(417).send("Unacceptable room name");
+				res.status(417).send("Unacceptable emote keyword");
 			}
 		})
 		.post("/update-banned", function(req, res, next) {
-			console.log("update banned words function")
-			console.log(req.body);
+			//console.log("update banned words function")
+			//console.log(req.body);
 			
 			var word = req.body.word || "",
 					op = req.body.op || "$push";
 
 			if(word) {
 				var updateObj = {
-					"$set": {
-						"optionName": "bannedWords"
-					}
 				};
 				updateObj[op] = { "list" : word }
 
@@ -783,18 +820,18 @@ db.open(function(err, db) {
 			}
 		})
 		.post("/update-ips", function(req, res, next) {
-			console.log("update banned IPs function")
-			console.log(req.body);
+			//console.log("update banned IPs function")
+			//console.log(req.body);
 
 			var ip = req.body.ip || [],
 					op = req.body.op || "$push";
 
-			console.log(ip, typeof ip);
+			//console.log(ip, typeof ip);
 			if(typeof ip === "object") {
 				for(var key in req.body) {
 					if(key.match(/addr[1-4]/)) {
 						if(!req.body[key]) {
-							console.log("issue", req.body[key]);
+							//console.log("issue", req.body[key]);
 							ip = "";
 							return;
 						} else
@@ -803,12 +840,9 @@ db.open(function(err, db) {
 				}
 				ip = ip.join(".");
 			}
-			console.log("IP address: ", ip, typeof ip);
+			//console.log("IP address: ", ip, typeof ip);
 			if(ip) {
 				var updateObj = {
-					"$set" :{
-						"optionName": "bannedAddrs"
-					}
 				};
 				updateObj[op] = { "list" : ip } 
 
@@ -832,8 +866,8 @@ db.open(function(err, db) {
 			}
 		})
 		.post("/update-colors", function(req, res, next) {
-			console.log("update user colors function")
-			console.log(req.body);
+			//console.log("update user colors function")
+			//console.log(req.body);
 
 			var regCol = req.body.regularColor || "grey",
 					teenCol = req.body.teenModColor || "#00c800",

@@ -74,12 +74,18 @@ var routes = require("./modules/routes");
 app.use(routes);
 // sockets module
 var sockets = require("./modules/sockets");
+app.use(sockets);
+
 io.on("connection", sockets(io, db).socketHandler);
-io.emit("some event", {for: "everyone"});
 
 db.open(function(err, dbase) {
   if(err) throw err;
   
+  // initiation stuff
+  if(true) {
+    sockets(io, db).populateBans("null");
+  }
+
   server.listen(port)
   console.log("listening on port " + port);
 });

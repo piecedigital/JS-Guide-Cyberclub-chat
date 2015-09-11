@@ -6,9 +6,7 @@
 			<input id="signup-tab" type="radio" name="options" class="hidden" {{sign-checked}}>
 			<label for="signup-tab">Signup</label><!--
 			--><input id="login-tab" type="radio" name="options" class="hidden" {{log-checked}}><!--
-			--><label for="login-tab">Login</label><!--
-			--><input id="admin-tab" type="radio" name="options" class="hidden"><!--
-			--><label for="admin-tab">Admin</label>
+			--><label for="login-tab">Login</label>
 			<div id="sign-up-in" class="border-radius-0_5">
 				<div id="signup">
 					<form action="/signup" method="POST" class="x-pad-0_5 y-pad-0_5">
@@ -24,17 +22,6 @@
 					<form action="/login" method="POST" class="x-pad-0_5">
 						<input type="text" name="username" placeholder="username">
 						<input type="password" name="password">
-						<button>Submit</button>
-					</form>
-				</div>
-				<div id="admin-signup">
-					<form action="/signup" method="POST" class="x-pad-0_5 y-pad-0_5">
-						<input type="text" name="email" placeholder="email" value="piecedigitalstudios@gmail.com">
-						<input type="text" name="username" placeholder="username" value="user">
-						<input type="password" name="password" value="pass">
-						<input type="password" name="passwordconfirm" value="pass">
-						<input type="hidden" name="formtype" value="admin">
-						<span>This signup is meant for approved admins. If you have not been directed here by an admin, please use the other signup</span>
 						<button>Submit</button>
 					</form>
 				</div>
