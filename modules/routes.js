@@ -915,10 +915,12 @@ db.open(function(err, db) {
 							if(userQErr) throw userQErr;
 
 							if(userQDoc) {
-								if(userQDoc.usernameFull === req.params.initiator) {
-									res.render("pmsg", { "room" : room, "init" : req.params.initiator, "reci" : req.params.receiver, "alert" : true });
+								if(userQDoc.usernameFull === req.params.initiator
+									||
+									userQDoc.usernameFull === req.params.receiver) {
+									res.render("pmsg", { "room" : room, "usernameFull" : userQDoc.usernameFull, "username" : userQDoc.username, "alert" : true });
 								} else {
-									res.render("pmsg", { "room" : room, "init" : req.params.initiator, "reci" : req.params.receiver, "alert" : false });
+									res.status(404).send("incorrect room");
 								}
 							} else {
 								res.status(404).send("user not found");

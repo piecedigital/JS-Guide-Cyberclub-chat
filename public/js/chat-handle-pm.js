@@ -9,6 +9,27 @@ String.prototype.multiply = function(times) {
 	return arr.join("");
 };
 
+var generatePM = function(initName, reciName) {
+	var frameName = reciName + "-frame";
+
+	var theCloser = $("<div>").addClass("closer").html("&#2716;"),
+			theForm = $("<form>").attr({
+				"id": frameName,
+				"target": frameName,
+				"action": "/pm/" + initName + "/" + reciName,
+				"method": "post"
+			}).html( $("<input>").attr({ "type": "hidden" }) ),
+			theIFrame = $("<iframe>").attr({
+				"name": frameName,
+				"frameborder": 0,
+				"width": "100%",
+				"height": "100%"
+			}),
+			theScript = $("<script>").html("$(#" + frameName + ").submit()");
+
+	$("body").append("<div>").attr("id", "pm-box").append( theCloser, theFrame, theForm, theScript )
+};
+
 ~(function () {
 	var socket = io(),
 	usernameFull = $("#user-data").data("username"),
@@ -426,9 +447,9 @@ String.prototype.multiply = function(times) {
 			$("#chat-val").val( val + "@" + contextUsername + " ");
 		},
 		message: function() {
-			if(myLevel !== "moderator" || myLevel !== "admin") {
-				alert("You do not have appropriate permission to send messages");
-			}
+			socket.emit("private message", { "form" : contextUsername, "from" : usernameFull });
+
+
 		},
 		mute: function() {
 			myMutes.push(contextUsername);
