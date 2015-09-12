@@ -1,0 +1,47 @@
+<section>
+	<div id="user-data" class="hidden" data-username="{{username}}" data-access="{{accessLevel}}"></div>
+	<div id="room" class="hidden" data-room="{{room}}"></div>
+	<div class="page-wrap">
+		<div class="x-pad-1_0 y-pad-1_0">
+			<div id="chat-box" class="pm">
+				<div class="parent fillout">
+					<div id="messages"></div>
+					<form id="chat-form">
+						<div class="fillout parent">
+							<input id="chat-val" type="text" name="msg" placeholder="Enter chat message..." disabled>
+							<button type="submit" disabled>SEND</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<style type="text/css" id="level-colors">
+	.regular {
+		box-shadow: inset 0 -.4em 0 0 {{levelColors.regular}},
+		inset 0 .4em 0 0 {{levelColors.regular}} !important;
+	}
+	.teen-mod {
+		box-shadow: inset 0 -.4em 0 0 {{levelColors.teenMod}},
+		inset 0 .4em 0 0 {{levelColors.teenMod}} !important;
+	}
+	.junior-mod {
+		box-shadow: inset 0 -.4em 0 0 {{levelColors.juniorMod}},
+		inset 0 .4em 0 0 {{levelColors.juniorMod}} !important;
+	}
+	.moderator {
+		box-shadow: inset 0 -.4em 0 0 {{levelColors.moderator}},
+		inset 0 .4em 0 0 {{levelColors.moderator}} !important;
+	}
+	.admin {
+		box-shadow: inset 0 -.4em 0 0 {{levelColors.admin}},
+		inset 0 .4em 0 0 {{levelColors.admin}} !important;
+	}
+</style>
+<script type="text/javascript" src="/js/chat-handle_pm.js"></script>
+<script src="//cdn.jsdelivr.net/emojione/1.5.0/lib/js/emojione.min.js"></script>
+<!-- <script type="text/javascript" src="/js/drag-n-drop.js"></script> -->
+<!-- <script type="text/javascript">dragNdrop("#room-list ul", ".room", ".room");</script> -->

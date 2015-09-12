@@ -902,6 +902,34 @@ db.open(function(err, db) {
 				}
 			});
 		})
+		.post("/pm/:initiator/:receiver", function(req, res, next) {
+			var room = req.params.initiator + "_" + req.params.receiver;
+			var session = req.cookies["sessId"] || "";
+
+			if(session) {
+				Sess.findOne({ "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
+					if(sessQErr) throw sessQErr;
+
+					if(sessQDoc) {
+						User.findOne({ "username" : sessQDoc.user }, function(userQErr, userQDoc) {
+							if(userQErr) throw userQErr;
+
+							if(userQDoc) {
+								if(userQDoc.usernameFull === req.params.initiator) {
+									res.render("pmsg", { "room" : room, "init" : req.params.initiator, "reci" : req.params.receiver, "alert" : true });
+								} else {
+									res.render("pmsg", { "room" : room, "init" : req.params.initiator, "reci" : req.params.receiver, "alert" : false });
+								}
+							} else {
+								res.status(404).send("user not found");
+							}
+						});
+					} else {
+						res.status(404).send("not allowed");
+					}
+				});
+			}
+		})
 		;
 });	
 module.exports = app;

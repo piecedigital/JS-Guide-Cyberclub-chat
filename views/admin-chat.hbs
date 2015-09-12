@@ -60,7 +60,7 @@
 						--><div id="item-options">
 							<h1 class="title font-size-1_5">Chat Options</h1>
 							{{#each chatOptions}}
-								<div class="option-box option-{{@key}}" data-section="{{name}}" {{#if @key}} class="hidden" {{/if}}>
+								<div class="option-box option-{{@key}} {{#if @key}}hidden{{else}}{{/if}}" data-section="{{name}}" >
 									{{#if emoteBans}}
 										<h1 class="title font-size-1_2">Add Banned Emoticon</h1>
 										<form class="add-window" action="/update-emotes">
