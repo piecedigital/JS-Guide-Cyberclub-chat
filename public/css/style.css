@@ -2107,6 +2107,14 @@ label[for="admin-tab"] {
   background-color: #00a2eb;
 }
 
+.pm-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 25em;
+  height: 20em;
+}
+
 /* footer ----------------------------*/
 /* hover events ----------------------------*/
 /*///////////////////////// responsive styling /////////////////////////*/

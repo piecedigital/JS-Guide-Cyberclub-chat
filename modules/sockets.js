@@ -34,9 +34,14 @@ module.exports = function(io, db) {
 					io.to(socket.id).emit("update", {
 						"msg": "Welcome, " + obj.usernameFull + ", to the Guide Cyberclub chat! Please select one of our available rooms to begin chatting."
 					});
+				} else {
+					if(obj.pm) {
+						socket.join(obj.room);
+						return;
+					}
 
 					User.update({ "usernameFull" : obj.usernameFull }, { "$set" : { "socket" : socket.id } });
-				} else {
+
 					// joins a user to the room
 					Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
         		if(roomQErr) throw roomQErr;
@@ -158,9 +163,9 @@ module.exports = function(io, db) {
 					// check if command or regular message
 					if(obj.msg.match(/^(\/me)/gi)) {
 						obj.msg = obj.msg.replace(/^(\/me)/gi, "")
-						io.in(thisRoom).emit("chat me response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
+						io.in(obj.room).emit("chat me response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					} else {
-						io.in(thisRoom).emit("chat response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
+						io.in(obj.room).emit("chat response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					}
 				}
 			})
@@ -201,6 +206,9 @@ module.exports = function(io, db) {
 				
 				callbacks[obj.callback]();
 			})
+			.on("private message", function(obj) {
+				io.emit("generate pm", obj)
+			})
 			.on("example", function(obj) {
 				//console.log("'' socket function");
 				//console.log(obj);
@@ -221,7 +229,7 @@ module.exports = function(io, db) {
 							"room": null
 						});
 
-						Room.update({}, { "$pull" :{ "users" : { "username" : userQDoc.username} } }, { "multi" : true } );
+						Room.update({ "users" : { "$elemMatch" : { "username" : userQDoc.username } } }, { "$pull" : { "users" : { "username" : userQDoc.username} } }, { "multi" : true } );
 					}
 				});
 			});

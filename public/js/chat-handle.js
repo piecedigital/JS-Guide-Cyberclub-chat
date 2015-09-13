@@ -9,9 +9,35 @@ String.prototype.multiply = function(times) {
 	return arr.join("");
 };
 
+// generate private message window
+var generatePM = function(initName, reciName) {
+	var frameName = reciName + "-frame";
+
+	$("#" + frameName).remove();
+
+	var theCloser = $("<div>").addClass("tool closer").html("&#x2716;"),
+			theMover = $("<div>").addClass("tool mover").html("&#x2630;"),
+			theMover = $("<div>").addClass("tool spinner").html("loading..."),
+			theFrame = $("<iframe>").attr({
+				"name": frameName,
+				"frameborder": 0,
+				"width": "100%",
+				"height": "100%"
+			}),
+			theForm = $("<form>").attr({
+				"id": frameName,
+				"target": frameName,
+				"action": "/pm/" + initName + "/" + reciName,
+				"method": "post"
+			}).html( $("<input>").attr({ "type": "hidden" }) ),
+			theScript = $("<script>").html("$('#" + frameName + "').submit()");
+
+	$("body").append( $("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).append( theCloser, theFrame, theForm, theScript ) );
+};
+
 ~(function () {
 	var socket = io(),
-	usernameFull = $("#user-data").data("username"),
+	usernameFull = $("#user-data").data("usernamefull"),
 	username = usernameFull.toLowerCase(),
 	displayName = usernameFull,
 	//userList = [],
@@ -22,7 +48,6 @@ String.prototype.multiply = function(times) {
 	originalTitle = $("title").html(),
 	showTitle = originalTitle;
 	room = "door",
-	currentMods = 0,
 	myColor = "red",
 	myLevel = $("#user-data").data("access"),
 	myMutes = [];
@@ -103,11 +128,12 @@ String.prototype.multiply = function(times) {
 		$("#list-box li:nth-child(" + selection + ")").addClass("selected");
 	});
 	//check for keydown events
+	*/
 	$("#chat-val").keydown(function(k){
 		if( $("#chat-val").val() ) {
 			$("#chat-form button").addClass("full");
 		}
-
+		/*
 		listLen = $("#list-box .matched-user").size();
 		//check for enter key
 		if (k.keyCode === 13){
@@ -130,7 +156,9 @@ String.prototype.multiply = function(times) {
 			$("#list-box li").removeClass("selected");
 			return false;
 		}
+		*/
 	});
+	/*
 	//mouse hover over user mention
 	$(document).on({
 		mouseenter: function(){
@@ -230,6 +258,11 @@ String.prototype.multiply = function(times) {
 		console.log(data, room);
 		scrollToBottom();
 	});
+	socket.on("generate pm", function(data) {
+		if(data.to === usernameFull) {
+			generatePM(data.from, data.to);
+		}
+	});
 //////////////////////////////////
 //////////////////////////////////
 // jQuery testing area
@@ -241,14 +274,6 @@ String.prototype.multiply = function(times) {
 		console.log(data);
 
 		var callbacks = {
-			/*updateBannedWords: function() {
-				if(data.op === "$pull") {
-					bannedArr.splice(bannedArr.indexOf(data.word), 1);
-				}
-				if(data.op === "$push") {
-					bannedArr.push(data.word);
-				}
-			},*/
 			updateRooms: function() {
 				if(data.op === "remove") {
 					console.log("remove room", data);
@@ -370,18 +395,13 @@ String.prototype.multiply = function(times) {
 				$("title").text("(" + unread + ") " + showTitle);
 			}
 		}
-		/*
-		//filter banned words
-		for(var i = 0; i < bannedArr.length; i++) {
-			filter = filter.replace( bannedArr[i], ("*").multiply( (bannedArr[i].length) ) );
-		}
-		*/
+
 		return filter;
 	}
 
 	//chat message submission
 	$('#chat-form').submit(function(){
-		socket.emit("chat message", { "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
+		socket.emit("chat message", { "room" : room, "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
 		$("#chat-val").val("");
 		$("#chat-form button").removeClass("full");
 		$("#chat-val button").removeClass("full");
@@ -426,9 +446,8 @@ String.prototype.multiply = function(times) {
 			$("#chat-val").val( val + "@" + contextUsername + " ");
 		},
 		message: function() {
-			if(myLevel !== "moderator" || myLevel !== "admin") {
-				alert("You do not have appropriate permission to send messages");
-			}
+			socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
+			generatePM(usernameFull, contextUsername);
 		},
 		mute: function() {
 			myMutes.push(contextUsername);
@@ -479,7 +498,7 @@ String.prototype.multiply = function(times) {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			contextUsername = $(this).data("usernameFull");
+			contextUsername = $(this).data("usernamefull");
 			contextUserdisp = $(this).data("displayname");
 			populateContext(userOpts);
 			console.log("user right clicked", this);
@@ -502,8 +521,8 @@ String.prototype.multiply = function(times) {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			contextUsername = $(this).data("username");
-			contextUsername = $(this).data("displayname");
+			contextUsername = $(this).data("usernamefull");
+			contextUserdisp = $(this).data("displayname");
 			populateContext(userOpts);
 			console.log("user right clicked", this);
 

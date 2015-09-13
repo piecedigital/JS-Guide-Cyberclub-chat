@@ -9,30 +9,9 @@ String.prototype.multiply = function(times) {
 	return arr.join("");
 };
 
-var generatePM = function(initName, reciName) {
-	var frameName = reciName + "-frame";
-
-	var theCloser = $("<div>").addClass("closer").html("&#2716;"),
-			theForm = $("<form>").attr({
-				"id": frameName,
-				"target": frameName,
-				"action": "/pm/" + initName + "/" + reciName,
-				"method": "post"
-			}).html( $("<input>").attr({ "type": "hidden" }) ),
-			theIFrame = $("<iframe>").attr({
-				"name": frameName,
-				"frameborder": 0,
-				"width": "100%",
-				"height": "100%"
-			}),
-			theScript = $("<script>").html("$(#" + frameName + ").submit()");
-
-	$("body").append("<div>").attr("id", "pm-box").append( theCloser, theFrame, theForm, theScript )
-};
-
 ~(function () {
 	var socket = io(),
-	usernameFull = $("#user-data").data("username"),
+	usernameFull = $("#user-data").data("usernamefull"),
 	username = usernameFull.toLowerCase(),
 	displayName = usernameFull,
 	//userList = [],
@@ -42,11 +21,9 @@ var generatePM = function(initName, reciName) {
 	//originalTitleMention = "&#x2589;" + $("title").html(),
 	originalTitle = $("title").html(),
 	showTitle = originalTitle;
-	room = "door",
-	currentMods = 0,
+	room = $("#room").data("room"),
 	myColor = "red",
-	myLevel = $("#user-data").data("access"),
-	myMutes = [];
+	myLevel = $("#user-data").data("access");
 
 	//get relative of chat log for new users
 	function logDate(time){
@@ -65,7 +42,7 @@ var generatePM = function(initName, reciName) {
 		$("#messages")[0].scrollTop = $("#messages")[0].scrollHeight;
 	}
 
-	socket.emit("join", { "usernameFull" : usernameFull});
+	socket.emit("join", { "room" : room, "usernameFull" : usernameFull, "pm" : true });
 
 	socket.on("illegal", function(res){
 		alert(res);
@@ -79,128 +56,24 @@ var generatePM = function(initName, reciName) {
 	}).blur(function() {
 		windowFocus = false;
 	});
-
-	/*
-	//get caret positon
-	function getCaretPos(input) {
-  // Internet Explorer Caret Position (TextArea)
-    if (document.selection && document.selection.createRange) {
-        var range = document.selection.createRange();
-        var bookmark = range.getBookmark();
-        var caret_pos = bookmark.charCodeAt(2) - 2;
-    } else {
-        // Firefox Caret Position (TextArea)
-        if (input.setSelectionRange)
-          var caret_pos = input.selectionStart;
-    }
-    return caret_pos;
-	}
-	*/
-/* MENTINO SECTION/////////////////
-   Uncomment later if useable////////////
-	//mention
-	var caretPosition = 0, selection = 1, subStr, listLen;
-	//check for keyup events
-	$("#chat-val").on("keyup", function(){
-		if ( $(this).val().charAt( getCaretPos(this) - 1).match(/[@]/gi) ){
-			//show list box
-			console.log("prep mention");
-			$("#list-box").css({"display": "inline-block"});
-			caretPosition = getCaretPos(this) - 1;
-		}
-		if ( $(this).val().charAt( getCaretPos(this) - 1).match(/[\s]/gi) || $(this).val().charAt( getCaretPos(this) - 1) === "" ){
-			//hide list box
-			$("#list-box").css({"display": "none"});
-		}
-		subStr = $(this).val().split("").slice(caretPosition+1).join("");
-		var matchedUser = new RegExp("\b(" + subStr + ")", "gi");
-		$("#list-box").html("");
-		userList.map(function(elem, index){
-			if (elem.match(matchedUser) && $("#list-box").attr("style") === "display: inline-block;") {
-				var match = elem.replace(matchedUser, "<span class='match-box-str'>"+subStr+"</span>");
-				$("#list-box").append("<li class='matched-user' data-index='" + (index+1) + "' data-name='" + elem + "'>" + match + "</li>");
-			}
-		});
-		$("#list-box li:nth-child(" + selection + ")").addClass("selected");
-	});
-	//check for keydown events
+	
 	$("#chat-val").keydown(function(k){
 		if( $("#chat-val").val() ) {
 			$("#chat-form button").addClass("full");
 		}
-
-		listLen = $("#list-box .matched-user").size();
-		//check for enter key
-		if (k.keyCode === 13){
-			if ( $("#list-box").attr("style") === "display: inline-block;" ) {
-				selectMention();
-				return false;
-			}
-		}
-		//check for up key
-		if (k.keyCode === 38) {
-			selection--;
-			if (selection < 1){ selection = listLen}
-			$("#list-box li").removeClass("selected");
-			return false;
-		}
-		//check for down key
-		if (k.keyCode === 40) {
-			selection++;
-			if (selection > listLen){ selection = 1}
-			$("#list-box li").removeClass("selected");
-			return false;
-		}
-	});
-	//mouse hover over user mention
-	$(document).on({
-		mouseenter: function(){
-			$(".matched-user").removeClass("selected");
-			selection = $(this).data("index");
-			$(this).addClass("selected");
-		}
-	}, ".matched-user");
-	//mouse press on user mention
-	$(document).on("click", ".matched-user",function(){
-		selectMention();
 	});
 
-	function selectMention(){
-		//re-enable the submit button
-		$("#chat-box button[type='submit']").prop("disabled", false);
-		//attach the full user names to the input value
-		$("#chat-val").val( $("#chat-val").val() + $("#list-box li:nth-child(" + selection +
-		 ")").data("name").split("").slice(subStr.length).join("") );
-		//hide list box
-		$("#list-box").css({"display": "none"});
-		selection = 1;
-	}
-*/
-	//socket response on chat log
-	/*
-	socket.on("chat log", function(time, who, msg){
-		$("#messages").append($("<li class='chat'>").html("[<span class='log'>" + logDate(time) + "</span>] <span class='user'> " + who + "</span>: " + "<p class='chat-text'>" + regexFilter(msg, who) + "</p>" ) );
-		$("#messages")[0].scrollTop = $("#messages")[0].scrollHeight;
-	});
-	*/
-	
 	//socket response on chat response
 	socket.on("chat response", function(data){
-		var matchedUser = checkMutes(data.usernameFull);
-		if(!matchedUser) {
-			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + " " + data.color + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.displayName) + "</p>" ) );
+		$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + " " + data.color + "' data-displayname='" + data.displayName + "' data-usernamefull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.displayName) + "</p>" ) );
 			scrollToBottom();
-		}
 		console.log(data)
 	});
 
 	//socket response on chat me response
 	socket.on("chat me response", function(data){
-		var matchedUser = checkMutes(data.usernameFull);
-		if(!matchedUser) {
-			$("#messages").append($("<li class='chat " + data.color + "'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.displayName) + "</p>" ) );
+		$("#messages").append($("<li class='chat " + data.color + "'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernamefull='" + data.usernameFull + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.displayName) + "</p>" ) );
 			scrollToBottom();
-		}
 		console.log(data)
 	});
 	//socket response on update
@@ -208,49 +81,9 @@ var generatePM = function(initName, reciName) {
 		$("#messages").append($("<li class='update'>").html("[UPDATE] " + data.msg) );
 		scrollToBottom();
 	});
-	
-/*
-	//socket response on command
-	socket.on("command", function(msg){
-		$("#messages").append($("<li class='command'>").html("[COMMAND] " + msg) );
-		scrollToBottom();
-	});
-*/
-	/*
-	//socket responses on room entry
-	socket.on("user list", function(data){
-	});
-	*/
 
-	//socket responses on room entry
-	socket.on("enter room", function(data){
-		$("#messages").append($("<li class='plain'>").html(data.msg) );
-		$("#room-list").find(".room").removeClass("inside");
-		$("#room-list").find(".room[data-roomname='" + data.room + "']").addClass("inside");
-		$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", false);
-		room = data.room;
-		console.log(data, room);
-		scrollToBottom();
-	});
-	socket.on("leave room", function(data){
-		$("#messages").append($("<li class='plain'>").html(data.msg) );
-		$("#room-list").find(".room").removeClass("inside");
-		$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", true);
-		room = data.room;
-		console.log(data, room);
-		scrollToBottom();
-	});
-	socket.on("kick", function(data){
-		console.log("kick", data, room);
-		socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
-		scrollToBottom();
-	});
-	socket.on("new entry", function(data){
-		$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").remove();
-		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.displayName + "'>" + data.displayName + "</li>");
-		console.log(data, room);
-		scrollToBottom();
-	});
+
+
 //////////////////////////////////
 //////////////////////////////////
 // jQuery testing area
@@ -262,42 +95,6 @@ var generatePM = function(initName, reciName) {
 		console.log(data);
 
 		var callbacks = {
-			/*updateBannedWords: function() {
-				if(data.op === "$pull") {
-					bannedArr.splice(bannedArr.indexOf(data.word), 1);
-				}
-				if(data.op === "$push") {
-					bannedArr.push(data.word);
-				}
-			},*/
-			updateRooms: function() {
-				if(data.op === "remove") {
-					console.log("remove room", data);
-
-					$("#room-list").find(".room[data-roomname='" + data.originalName + "']").remove();
-					if(room === data.originalName) {
-						socket.emit("leave", { "room" : data.originalName, "usernameFull" : usernameFull, "displayName" : displayName });
-						room = "door";
-					}
-				};
-				if(data.op === "update") {
-					console.log("update room", data);
-
-					$("#room-list").find(".room[data-roomname='" + data.originalName + "']").attr({
-						"data-roomname": data.roomname,
-						"data-topic": data.topic
-					}).find(".name").text(data.roomname);
-				};
-				if(data.op === "add") {
-					console.log("add room", data);
-
-					$("#room-list > ul").append( $("<li>").attr({
-						"data-roomname": data.roomname,
-						"data-topic": data.topic,
-						"class": "room block parent"
-					}).html( $("<span>").addClass("name").text(data.roomname) ).append("<ul>") );
-				};
-			},
 			updateUsers: function() {
 				if(data.op === "remove") {
 					$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").remove();
@@ -391,18 +188,13 @@ var generatePM = function(initName, reciName) {
 				$("title").text("(" + unread + ") " + showTitle);
 			}
 		}
-		/*
-		//filter banned words
-		for(var i = 0; i < bannedArr.length; i++) {
-			filter = filter.replace( bannedArr[i], ("*").multiply( (bannedArr[i].length) ) );
-		}
-		*/
+
 		return filter;
 	}
 
 	//chat message submission
 	$('#chat-form').submit(function(){
-		socket.emit("chat message", { "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
+		socket.emit("chat message", { "room" : room, "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
 		$("#chat-val").val("");
 		$("#chat-form button").removeClass("full");
 		$("#chat-val button").removeClass("full");
@@ -418,154 +210,4 @@ var generatePM = function(initName, reciName) {
 
 	$("#chat-val").focus();
 
-	///////////////////////////
-	// interface interactions//
-	///////////////////////////
-	$("body").append("<ul id='new-context-menu'></ul>");
-	var roomOpts = ["Join", "Leave"];
-	var userOpts = ["Mention", "Message", "Mute", "Unmute"];
-
-	function populateContext(arr) {
-		if(arr) {
-			$("#new-context-menu").html("");
-			for(var i = 0; i < arr.length; i++) {
-				$("#new-context-menu").append("<li data-option='" + arr[i].toLowerCase() + "'>" + arr[i] + "</li>");
-			};
-		}
-	};
-
-	var click = false, current, contextRoomname, contextUsername, contextUserdisp;
-	var options = {
-		join: function() {
-			socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
-		},
-		leave: function() {
-			socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
-		},
-		mention: function() {
-			var val = $("#chat-val").val();
-			$("#chat-val").val( val + "@" + contextUsername + " ");
-		},
-		message: function() {
-			socket.emit("private message", { "form" : contextUsername, "from" : usernameFull });
-
-
-		},
-		mute: function() {
-			myMutes.push(contextUsername);
-		},
-		unmute: function() {
-			myMutes.splice( (myMutes.indexOf(contextUsername)), 1 );
-		}
-	};
-
-	$("#room-list").on("mousedown", ".room .name", function(e) {
-		if(e.buttons === 2) {
-			document.oncontextmenu = function() {
-				return false;
-			};
-			contextRoomname = $(this).parent().data("roomname");
-			populateContext(roomOpts);
-
-			$("#new-context-menu").css({
-				"top": e.clientY,
-				"left": e.clientX,
-				"display": "block"
-			});
-			click = true;
-		} else {
-			if(current === $(this).parent().data("roomname")) {
-				console.log("current: ", current);
-				current = null;
-				
-				contextRoomname = $(this).parent().data("roomname");
-				if(room !== "door") {
-					options.leave();
-				}
-				options.join();
-			} else {
-				$(this).parent().toggleClass("open");
-				current = $(this).parent().data("roomname");
-				
-				setTimeout(function() {
-					current = null;
-					console.log("current: ", current);
-				}, 250);
-			}
-		}
-	});
-
-	$("#room-list").on("mousedown", ".user", function(e) {
-		if(e.buttons === 2) {
-			document.oncontextmenu = function() {
-				return false;
-			};
-			contextUsername = $(this).data("usernameFull");
-			contextUserdisp = $(this).data("displayname");
-			populateContext(userOpts);
-			console.log("user right clicked", this);
-
-			$("#new-context-menu").css({
-				"top": e.clientY,
-				"left": e.clientX,
-				"display": "block"
-			});
-			click = true;
-		} else {
-			var val = $("#chat-val").val();
-			var userDisp = $(this).data("displayname");
-			$("#chat-val").val( val + "@" + userDisp + " ");
-		}
-	});
-
-	$("#messages").on("mousedown", ".user", function(e) {
-		if(e.buttons === 2) {
-			document.oncontextmenu = function() {
-				return false;
-			};
-			contextUsername = $(this).data("username");
-			contextUsername = $(this).data("displayname");
-			populateContext(userOpts);
-			console.log("user right clicked", this);
-
-			$("#new-context-menu").css({
-				"top": e.clientY,
-				"left": e.clientX,
-				"display": "block"
-			});
-			click = true;
-		} else {
-			var val = $("#chat-val").val();
-			var userDisp = $(this).data("displayname");
-			$("#chat-val").val( val + "@" + userDisp + " ");
-		}
-	});
-
-	$("#new-context-menu").on("click", "li", function() {
-		function muteUser(user) {
-			myMutes.push(user);
-		}
-
-		var opt = $(this).data("option");
-		console.log(opt);
-
-		options[opt.toLowerCase()]();
-	});
-
-
-	$(document).on("click", function(e) {
-		$("#new-context-menu").css({
-			"display": "none"
-		}).html("");
-		document.oncontextmenu = null;
-	});
 }());
-
-function checkMutes(user) {	
-	var userReg = new RegExp(user, "gi");
-	for(var i = 0; i < myMutes.length; i++) {
-		if(myMutes[i].match(userReg)) {
-			return true;
-		}
-	}
-}

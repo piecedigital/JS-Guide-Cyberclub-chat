@@ -903,7 +903,7 @@ db.open(function(err, db) {
 			});
 		})
 		.post("/pm/:initiator/:receiver", function(req, res, next) {
-			var room = req.params.initiator + "_" + req.params.receiver;
+			var room = req.params.initiator + req.params.receiver;
 			var session = req.cookies["sessId"] || "";
 
 			if(session) {
@@ -918,7 +918,9 @@ db.open(function(err, db) {
 								if(userQDoc.usernameFull === req.params.initiator
 									||
 									userQDoc.usernameFull === req.params.receiver) {
-									res.render("pmsg", { "room" : room, "usernameFull" : userQDoc.usernameFull, "username" : userQDoc.username, "alert" : true });
+									var name = (userQDoc.usernameFull === req.params.initiator) ? req.params.receiver : req.params.initiator;
+
+									res.render("pmsg", { "title" : "Chat w/ " + name, "room" : room, "usernameFull" : userQDoc.usernameFull, "username" : userQDoc.username, "alert" : true });
 								} else {
 									res.status(404).send("incorrect room");
 								}

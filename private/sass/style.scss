@@ -427,6 +427,9 @@ label[for="admin-tab"] {
 	background-color: $midBlue;
 	border-radius: .5em;
 	box-shadow: 0 0 0 .2em $darkBlue;
+	&.no-time .time-code {
+		display: none;
+	}
 	& > div {
 		padding: 0 13em 3.54em 0;
 		& #messages {
@@ -651,6 +654,13 @@ label[for="admin-tab"] {
 					}
 				}
 			}
+		}
+	}
+	/*private message box styling*/
+	&.pm > div {
+		padding: 0 0em 1.54em 0;
+		& #messages {
+			border-radius: .5em .5em 0 0;
 		}
 	}
 }
@@ -900,6 +910,23 @@ label[for="admin-tab"] {
 	}
 }
 
+.pm-box {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 25em;
+	height: 20em;
+	border-radius: .5em;
+  box-shadow: 0 0 0 .2em @darkBlue;
+  background-color: #lightBlue
+  & .tool {
+  	display: inline-block;
+  	margin: 0 .1em 0 0;
+  	background-color: #midBlue;
+  	box-shadow: 0 0 0 .1em #darkBlue;
+  	cursor: pointer;
+  }
+}
 /* footer ----------------------------*/
 /* hover events ----------------------------*/
 

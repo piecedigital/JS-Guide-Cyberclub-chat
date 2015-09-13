@@ -1,15 +1,15 @@
 <section>
-	<div id="user-data" class="hidden" data-init="{{init}}" data-reci="{{reci}}"></div>
+	<div id="user-data" class="hidden" data-usernamefull="{{usernameFull}}" data-access="{{accessLevel}}"></div>
 	<div id="room" class="hidden" data-room="{{room}}"></div>
 	<div class="page-wrap">
 		<div class="x-pad-1_0 y-pad-1_0">
-			<div id="chat-box" class="pm">
+			<div id="chat-box" class="pm no-time">
 				<div class="parent fillout">
 					<div id="messages"></div>
 					<form id="chat-form">
 						<div class="fillout parent">
-							<input id="chat-val" type="text" name="msg" placeholder="Enter chat message..." disabled>
-							<button type="submit" disabled>SEND</button>
+							<input id="chat-val" type="text" name="msg" placeholder="Enter chat message...">
+							<button type="submit" >SEND</button>
 						</div>
 					</form>
 				</div>
@@ -41,7 +41,7 @@
 		inset 0 .4em 0 0 {{levelColors.admin}} !important;
 	}
 </style>
-<script type="text/javascript" src="/js/chat-handle_pm.js"></script>
+<script type="text/javascript" src="/js/chat-handle-pm.js"></script>
 <script src="//cdn.jsdelivr.net/emojione/1.5.0/lib/js/emojione.min.js"></script>
 <!-- <script type="text/javascript" src="/js/drag-n-drop.js"></script> -->
 <!-- <script type="text/javascript">dragNdrop("#room-list ul", ".room", ".room");</script> -->
