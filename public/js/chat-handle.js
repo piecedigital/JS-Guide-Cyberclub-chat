@@ -322,7 +322,9 @@ $(document).on("click", ".pm-box .closer", function() {
 			updateUsers: function() {
 				if(data.op === "remove") {
 					$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").remove();
-					window.location.href = "/banned/account";
+					if(usernameFull === data.usernameFull) {
+						window.location.href = "/banned/account";
+					}
 				};
 				if(data.op === "update") {
 					$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").attr({
