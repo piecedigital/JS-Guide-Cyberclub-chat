@@ -13,7 +13,7 @@ String.prototype.multiply = function(times) {
 var generatePM = function(initName, reciName) {
 	var frameName = reciName + "-frame";
 
-	$("#" + frameName).remove();
+	$(".pm-box[data-id='" + frameName + "']").remove();
 
 	var theCloser = $("<div>").addClass("tool closer").html("&#x2716;"),
 			theMover = $("<div>").addClass("tool mover").html("&#x2630;"),
@@ -47,6 +47,10 @@ var generatePM = function(initName, reciName) {
 			)
 		);
 };
+
+$(document).on("click", ".pm-box .closer", function() {
+	$(this).parent().parent().remove();
+})
 
 ~(function () {
 	var socket = io(),
@@ -208,7 +212,7 @@ var generatePM = function(initName, reciName) {
 	socket.on("chat response", function(data){
 		var matchedUser = checkMutes(data.usernameFull);
 		if(!matchedUser) {
-			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + " " + data.color + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text'>" + regexFilter(data.msg, data.displayName) + "</p>" ) );
+			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text' style='color:" + data.color + "'>" + regexFilter(data.msg, data.displayName) + "</p>" ) );
 			scrollToBottom();
 		}
 		console.log(data)
@@ -218,7 +222,7 @@ var generatePM = function(initName, reciName) {
 	socket.on("chat me response", function(data){
 		var matchedUser = checkMutes(data.usernameFull);
 		if(!matchedUser) {
-			$("#messages").append($("<li class='chat " + data.color + "'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.displayName) + "</p>" ) );
+			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text' style='color: " + data.color + "'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.displayName) + "</p>" ) );
 			scrollToBottom();
 		}
 		console.log(data)
@@ -459,8 +463,12 @@ var generatePM = function(initName, reciName) {
 			$("#chat-val").val( val + "@" + contextUsername + " ");
 		},
 		message: function() {
-			socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
-			generatePM(usernameFull, contextUsername);
+			if(myLevel === "admin" || myLevel === "moderator") {
+				socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
+				generatePM(usernameFull, contextUsername);
+			} else {
+				$("#messages").append($("<li class='plain'>").html("You do not have appropriate authority to send private messages.") );
+			}
 		},
 		mute: function() {
 			myMutes.push(contextUsername);

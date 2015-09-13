@@ -660,7 +660,7 @@ label[for="admin-tab"] {
 	&.pm > div {
 		padding: 0 0em 1.54em 0;
 		& #messages {
-			border-radius: .5em .5em 0 0;
+			border-radius: 0;
 		}
 	}
 }
@@ -922,6 +922,8 @@ label[for="admin-tab"] {
   box-shadow: 0 0 0 .2em $darkBlue;
   background-color: $lightBlue;
   & .tool {
+  	position: relative;
+  	z-index: 3;
   	display: inline-block;
   	margin: 0 .1em 0 0;
   	background-color: $midBlue;
@@ -956,6 +958,9 @@ label[for="admin-tab"] {
   }
 }
 .pm {
+	& #messages {
+		border-radius: 0 0 .5em .5em;
+	}
   #chat-box {
   	height: 100%;
 	  & button {

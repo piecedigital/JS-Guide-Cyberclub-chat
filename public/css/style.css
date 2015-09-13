@@ -1839,7 +1839,7 @@ label[for="admin-tab"] {
 }
 
 #chat-box.pm > div #messages {
-  border-radius: 0.5em 0.5em 0 0;
+  border-radius: 0;
 }
 
 /*admin chat*/
@@ -2134,6 +2134,8 @@ label[for="admin-tab"] {
 }
 
 .pm-box .tool {
+  position: relative;
+  z-index: 3;
   display: inline-block;
   margin: 0 0.1em 0 0;
   background-color: #00a2eb;
@@ -2172,7 +2174,11 @@ label[for="admin-tab"] {
   margin: .1em 0 0;
   position: relative;
   z-index: 2;
-  border-radius: .5em;
+  border-radius: 0 0 0.5em 0.5em;
+}
+
+.pm #messages {
+  border-radius: 0 0 0.5em 0.5em;
 }
 
 .pm #chat-box {
