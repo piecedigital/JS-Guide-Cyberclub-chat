@@ -910,21 +910,57 @@ label[for="admin-tab"] {
 	}
 }
 
+/* private messaging box*/
 .pm-box {
+	transition: all 0s;
 	position: fixed;
 	top: 50%;
 	left: 50%;
 	width: 25em;
 	height: 20em;
 	border-radius: .5em;
-  box-shadow: 0 0 0 .2em @darkBlue;
-  background-color: #lightBlue
+  box-shadow: 0 0 0 .2em $darkBlue;
+  background-color: $lightBlue;
   & .tool {
   	display: inline-block;
   	margin: 0 .1em 0 0;
-  	background-color: #midBlue;
-  	box-shadow: 0 0 0 .1em #darkBlue;
-  	cursor: pointer;
+  	background-color: $midBlue;
+  	box-shadow: 0 0 0 .1em $darkBlue;
+  	&.closer {
+  		border-radius: .5em 0 0 0;
+			cursor: pointer;
+  	}
+  	&.mover {
+  		border-radius: 0 0 .5em 0;
+  	}
+  	&.mover {
+  		cursor: move;
+  	}
+  }
+  & .spinner {
+  	position: absolute;
+  	top: 50%;
+  	left: 50%;
+  	@include transformT(-50%, -50%);
+  	width: 2em;
+  	height: 2em;
+  	border-radius: 100%;
+  	border: .2em solid $darkBlue;
+  	border-color: $darkBlue transparent transparent transparent;
+  }
+  & iframe {
+  	margin: .1em 0 0;
+  	position: relative;
+  	z-index: 2;
+  	border-radius: 0 0 .5em .5em;
+  }
+}
+.pm {
+  #chat-box {
+  	height: 100%;
+	  & button {
+	  	border-radius: 0 0 .5em 0;
+	  }
   }
 }
 /* footer ----------------------------*/
@@ -976,4 +1012,17 @@ label[for="admin-tab"] {
 	/* body ----------------------------*/
 	/* footer ----------------------------*/
 	/* hover events ----------------------------*/
+}
+
+/*///////////////////////// animations /////////////////////////*/
+.spinner {
+	@include animation(spin, .3s, infinite);
+}
+@include keyframes(spin) {
+	0% {
+		@include transformR(0deg);
+	}
+	100% {
+		@include transformR(360deg);
+	}
 }

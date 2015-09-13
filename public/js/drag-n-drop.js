@@ -1,77 +1,32 @@
-function dragNdrop(parent, item, dragTab) {
-  var x, y, mx, my, lastItem;
-  
-  //click event
-  $(document).on("mousedown", item, function(mouse) {
-    mx = mouse.clientX;
-    my = mouse.clientY;
-    x = mx - $(this).offset().left;
-    y = my - $(this).offset().top;
-    
-    var width = $(this).width();
-    var height = $(this).height();
-    lastItem = $(item + ":last").offset().top;
-    
-    $(this).css({ "width" : width, "height" : height });
-    $(this).after("<li id='place-holder'></li>");
-    $("#place-holder").css({ "height" : $(this).height() });
-    $(this).addClass("draggable");
-  });
-  //drag event
-  $(document).on("mousemove", function(mouse) {
-    var holdPlace = $("#place-holder");
-    //if($(item).hasClass("draggable")) {}
-    mx = mouse.clientX;
-    my = mouse.clientY;
-    
-    var item = $(item);
-    for(i = item.length - 1; i >= 0; i--) {
-      console.log($(item[i]).find("span").html());
-      if(!$(item[i]).hasClass("draggable")) {
-      //if(true) {
-        var dragTop = $(".draggable").offset().top;
-        var noDrag = $(item[i]).offset().top;
-        
-        //console.log(lastItem);
-        if(dragTop > lastItem) {
-          //console.log($(item[i]).html());
-          $("#place-holder").remove();
-          $(parent).append(holdPlace);
-        }
-        if(dragTop < noDrag) {
-          //console.log($(item[i]).html());
-          $("#place-holder").remove();
-          $(item[i]).before(holdPlace);
-          console.log(noDrag);
-        }
-      }
-    }
-    $(".draggable").css({ "top" : my - y});//, "left" : mx - x });
+$(document).ready(function() {
+  function dragNdrop(dragTab) {
+    console.log("calling dragNdrop");
+
+    var x, y, mx, my;
+    $(document).on("mousedown", dragTab, function(mouse) {
+      console.log(this)
+      mx = mouse.clientX;
+      my = mouse.clientY;
+      x = mx - $(this).parent().parent().offset().left;
+      y = my - $(this).parent().parent().offset().top;
       
-  });
-  //mouse release event
-  $(document).on("mouseup", function() {
-    if($(item).hasClass("draggable")) {
-      deselect();
-    }
-    var toPlace = $(".draggable");
-    $(".draggable").remove();
-    //console.log(toPlace);
-    $(document).find("#place-holder").after(toPlace).remove();
-    $(item).attr("style", "").removeClass("draggable");
-    console.log($(item));
-  });
-  function deselect() {
-    if (window.getSelection) {
-      if (window.getSelection().empty) {  // Chrome
-        window.getSelection().empty();
-      } else
-      if (window.getSelection().removeAllRanges) {  // Firefox
-        window.getSelection().removeAllRanges();
+      $(this).parent().parent().addClass("draggable");
+    });
+    $(document).on("mouseup", function() {
+      $(dragTab).parent().parent().removeClass("draggable");
+    });
+    $(document).on("mousemove", function(mouse) {
+      if($(dragTab).parent().parent().hasClass("draggable")) {
+        var mx = mouse.clientX;
+        var my = mouse.clientY;
+        //console.log(mx - x);
+        //console.log(my - y);
+        //console.log(mx);
+        //console.log(my);
+        //console.log(e);
+        $(".draggable").css({ "top" : my - y, "left" : mx - x });
       }
-    } else
-    if (document.selection) {  // IE?
-      document.selection.empty();
-    }
+    });
   }
-}
+  dragNdrop(dragTab);
+});

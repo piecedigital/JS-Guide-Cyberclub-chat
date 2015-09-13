@@ -17,7 +17,7 @@ var generatePM = function(initName, reciName) {
 
 	var theCloser = $("<div>").addClass("tool closer").html("&#x2716;"),
 			theMover = $("<div>").addClass("tool mover").html("&#x2630;"),
-			theMover = $("<div>").addClass("tool spinner").html("loading..."),
+			theSpinner = $("<div>").addClass("spinner"),
 			theFrame = $("<iframe>").attr({
 				"name": frameName,
 				"frameborder": 0,
@@ -32,7 +32,20 @@ var generatePM = function(initName, reciName) {
 			}).html( $("<input>").attr({ "type": "hidden" }) ),
 			theScript = $("<script>").html("$('#" + frameName + "').submit()");
 
-	$("body").append( $("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).append( theCloser, theFrame, theForm, theScript ) );
+	$("body").append(
+		$("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).html(
+			$("<div>").addClass("parent").attr({
+				"style": "width: 100%; height: 100%; padding: 0 0 1.4em"
+			}).append(
+				theCloser,
+				theMover,
+				theSpinner,
+				theFrame,
+				theForm,
+				theScript
+				)
+			)
+		);
 };
 
 ~(function () {

@@ -1532,6 +1532,11 @@ label[for="admin-tab"] {
   background-color: #00a2eb;
   border-radius: .5em;
   box-shadow: 0 0 0 0.2em #004B6E;
+  /*private message box styling*/
+}
+
+#chat-box.no-time .time-code {
+  display: none;
 }
 
 #chat-box > div {
@@ -1829,6 +1834,14 @@ label[for="admin-tab"] {
   color: black;
 }
 
+#chat-box.pm > div {
+  padding: 0 0em 1.54em 0;
+}
+
+#chat-box.pm > div #messages {
+  border-radius: 0.5em 0.5em 0 0;
+}
+
 /*admin chat*/
 #admin {
   position: fixed;
@@ -2107,12 +2120,67 @@ label[for="admin-tab"] {
   background-color: #00a2eb;
 }
 
+/* private messaging box*/
 .pm-box {
+  transition: all 0s;
   position: fixed;
   top: 50%;
   left: 50%;
   width: 25em;
   height: 20em;
+  border-radius: .5em;
+  box-shadow: 0 0 0 0.2em #004B6E;
+  background-color: #9be0ff;
+}
+
+.pm-box .tool {
+  display: inline-block;
+  margin: 0 0.1em 0 0;
+  background-color: #00a2eb;
+  box-shadow: 0 0 0 0.1em #004B6E;
+}
+
+.pm-box .tool.closer {
+  border-radius: .5em 0 0 0;
+  cursor: pointer;
+}
+
+.pm-box .tool.mover {
+  border-radius: 0 0 0.5em 0;
+}
+
+.pm-box .tool.mover {
+  cursor: move;
+}
+
+.pm-box .spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: 2em;
+  height: 2em;
+  border-radius: 100%;
+  border: 0.2em solid #004B6E;
+  border-color: #004B6E transparent transparent transparent;
+}
+
+.pm-box iframe {
+  margin: .1em 0 0;
+  position: relative;
+  z-index: 2;
+  border-radius: .5em;
+}
+
+.pm #chat-box {
+  height: 100%;
+}
+
+.pm #chat-box button {
+  border-radius: 0 0 0.5em 0;
 }
 
 /* footer ----------------------------*/
@@ -2164,4 +2232,60 @@ label[for="admin-tab"] {
   /* body ----------------------------*/
   /* footer ----------------------------*/
   /* hover events ----------------------------*/
+}
+
+/*///////////////////////// animations /////////////////////////*/
+.spinner {
+  /*moz*/
+  -moz-animation: spin 0.3s linear 0s infinite normal running;
+  /*webkit*/
+  -webkit-animation: spin 0.3s linear 0s infinite normal running;
+  /*standard*/
+  animation: spin 0.3s linear 0s infinite normal running;
+}
+
+/*---- media query for $val ----*/
+@-moz-keyframes spin {
+  0% {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
