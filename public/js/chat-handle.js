@@ -271,7 +271,7 @@ $(document).on("click", ".pm-box .closer", function() {
 	});
 	socket.on("new entry", function(data){
 		$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").remove();
-		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.displayName + "'>" + data.displayName + "</li>");
+		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.displayName + "'><span class='icon " + data.accessLevel + "'></span>" + data.displayName + "</li>");
 		console.log(data, room);
 		scrollToBottom();
 	});
@@ -303,11 +303,16 @@ $(document).on("click", ".pm-box .closer", function() {
 				};
 				if(data.op === "update") {
 					console.log("update room", data);
+					var currTopic = $("#room-list").find(".room[data-roomname='" + data.originalName + "']").attr("data-topic");
 
 					$("#room-list").find(".room[data-roomname='" + data.originalName + "']").attr({
 						"data-roomname": data.roomname,
 						"data-topic": data.topic
 					}).find(".name").text(data.roomname);
+					if(room === data.roomname) {
+						$("#messages").append($("<li class='update'>").html("[UPDATE] The room topic is now: <span class='bold'>" + data.topic + "</span>") );
+						scrollToBottom();
+					}
 				};
 				if(data.op === "add") {
 					console.log("add room", data);
@@ -357,6 +362,22 @@ $(document).on("click", ".pm-box .closer", function() {
 				".admin {\n\r"+
 					"box-shadow: inset 0 -.4em 0 0 " + data.colorData.admin + ",\n\r"+
 					"inset 0 .4em 0 0 " + data.colorData.admin + " !important;\n\r"+
+				"}"+
+				"/*room list icon*/"+
+				".icon.regular {"+
+					"background: " + data.colorData.regular + ";"+
+				"}"+
+				".icon.teen-mod {"+
+					"background: " + data.colorData.teenMod + ";"+
+				"}"+
+				".icon.junior-mod {"+
+					"background: " + data.colorData.juniorMod + ";"+
+				"}"+
+				".icon.moderator {"+
+					"background: " + data.colorData.moderator + ";"+
+				"}"+
+				".icon.admin {"+
+					"background: " + data.colorData.admin + ";"+
 				"}";
 
 				$("#level-colors").text(css);
@@ -470,6 +491,7 @@ $(document).on("click", ".pm-box .closer", function() {
 				generatePM(usernameFull, contextUsername);
 			} else {
 				$("#messages").append($("<li class='plain'>").html("You do not have appropriate authority to send private messages.") );
+				scrollToBottom();
 			}
 		},
 		mute: function() {

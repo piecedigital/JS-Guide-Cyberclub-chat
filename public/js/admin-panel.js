@@ -131,7 +131,7 @@
 			return obj;
 		},
 		parseAction: function(e) {
-			return e.target.action.split(/(http(s)?[:\/\/a-z]*[.:][a-z0-9]*)/i).pop();
+			return e.target.action.split(/(http(s)?[:\/\/][a-z]*[.:][a-z0-9]*)/i).pop();
 		},
 		ajax: function(url, method, dType, dataObj) {
 			$.ajax({

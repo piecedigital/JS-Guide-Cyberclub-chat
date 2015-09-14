@@ -18,7 +18,7 @@
 										<span class="name">{{roomname}}</span>
 										<ul>
 											{{#each users}}
-											<li class="user parent" data-usernamefull="{{usernameFull}}" data-username="{{username}}" data-displayname="{{usernameFull}}">{{usernameFull}}</li>
+											<li class="user parent" data-usernamefull="{{usernameFull}}" data-username="{{username}}" data-displayname="{{usernameFull}}"><span class="icon {{accessLevel}}"></span>{{usernameFull}}</li>
 											{{/each}}
 										</ul>
 									</li>
@@ -68,5 +68,21 @@ var dragTab = ".mover";
 	.chat > .admin {
 		box-shadow: inset 0 -.4em 0 0 {{levelColors.admin}},
 		inset 0 .4em 0 0 {{levelColors.admin}} !important;
+	}
+	/*room list icon*/
+	.icon.regular {
+		background: {{levelColors.regular}};
+	}
+	.icon.teen-mod {
+		background: {{levelColors.teenMod}};
+	}
+	.icon.junior-mod {
+		background: {{levelColors.juniorMod}};
+	}
+	.icon.moderator {
+		background: {{levelColors.moderator}};
+	}
+	.icon.admin {
+		background: {{levelColors.admin}};
 	}
 </style>

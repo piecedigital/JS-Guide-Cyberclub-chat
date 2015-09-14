@@ -68,6 +68,7 @@ module.exports = function(io, db) {
 									"msg": obj.usernameFull + " has joined ",
 									"usernameFull": obj.usernameFull,
 									"displayName": obj.displayName,
+									"accessLevel": obj.accessLevel,
 									"room": obj.room
 								});
 							};
@@ -162,8 +163,20 @@ module.exports = function(io, db) {
 
 					// check if command or regular message
 					if(obj.msg.match(/^(\/me)/gi)) {
-						obj.msg = obj.msg.replace(/^(\/me)/gi, "")
+						obj.msg = obj.msg.replace(/^(\/me)(\s)?/gi, "");
+
 						io.in(obj.room).emit("chat me response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
+					} else
+					if(obj.msg.match(/^(\/topic)/gi)) {
+						Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
+							if(roomQErr) throw roomQErr;
+
+							if(roomQDoc) {
+								obj.msg = obj.msg.replace(/^(\/topic)(\s)?/gi, "");
+								io.in(obj.room).emit("update", { "msg" : "The topic for " + roomQDoc.roomname + " is <span class='bold'>" + roomQDoc.topic + "</span>" });
+							}
+						});
+
 					} else {
 						io.in(obj.room).emit("chat response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					}

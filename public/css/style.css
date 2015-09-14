@@ -1764,6 +1764,13 @@ label[for="admin-tab"] {
   margin: 0 0.2em 0 0;
 }
 
+#chat-box > div #side-bar > div #room-list .room ul .user .icon {
+  width: 1em;
+  height: 1em;
+  border-radius: 100%;
+  display: inline-block;
+}
+
 #chat-box > div #side-bar > div #room-list .room.open ul {
   display: block;
 }

@@ -589,6 +589,12 @@ label[for="admin-tab"] {
 									content: "\2517";
 									margin: 0 .2em 0 0;
 								}
+								& .icon {
+									width: 1em;
+									height: 1em;
+									border-radius: 100%;
+									display: inline-block;
+								}
 							}
 						}
 						&.open {
