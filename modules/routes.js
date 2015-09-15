@@ -664,8 +664,12 @@ db.open(function(err, db) {
 
 			res.status(404).send("Your " + type + " has been banned. Contact the administrator directly to resolve this issue.");
 		})
+		.get('/test/:img', function(req, res) {
+			//res.status(200).send("http://" + req.headers.host + "/img.png")
+		})
 		.get("*", function(req, res, next) {
 			res.send("Error 404: page not found");
+
 			var IP = getIP.getIP2();
 			////console.log(IP, typeof IP);
 			var session = req.cookies["sessId"] || "";
@@ -933,6 +937,9 @@ db.open(function(err, db) {
 					}
 				});
 			}
+		})
+		.post("*", function(req, res) {
+			console.log(req.headers);
 		})
 		;
 });	

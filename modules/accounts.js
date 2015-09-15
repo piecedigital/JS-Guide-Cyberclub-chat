@@ -17,7 +17,7 @@ module.exports = function(db) {
       IPA = db.collection("bannedIPs"),
       Chat = db.collection("chatOptions");
 
-  var generateKey = function(Save, dbObj, email, usernameFull, msgToUser, res) {
+  var generateKey = function(host, Save, dbObj, email, usernameFull, msgToUser, res) {
     //console.log("creating match ID...");
 
     // creates a library of characters to crea a key from
@@ -52,7 +52,7 @@ module.exports = function(db) {
           tries++; 
           makeKey("re");
         } else {
-          saveAccount(Save, dbObj, email, usernameFull, msgToUser, res, key);
+          saveAccount(host, Save, dbObj, email, usernameFull, msgToUser, res, key);
         }
       });
 
@@ -61,7 +61,7 @@ module.exports = function(db) {
     makeKey();
   }// end generateId
 
-  var saveAccount = function(Save, dbObj, email, usernameFull, msgToUser, res, validationId) {
+  var saveAccount = function(host, Save, dbObj, email, usernameFull, msgToUser, res, validationId) {
     dbObj.validationId = validationId;
 
     Pending.insert(dbObj, function(insertErr, insertedDoc) {
@@ -69,8 +69,8 @@ module.exports = function(db) {
 
       if(insertedDoc) {
         //console.log("account created \n\r");
-
-        mailer("Confirm admin profile", email, usernameFull, "A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://localhost:8081/validate?key=" + validationId + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://localhost:8081/cancel?key=" + validationId).mailPost();
+        console.log(host);
+        mailer("Confirm admin profile", email, usernameFull, "<img width=1 height=1 src='http://localhost:8081/test/img.png'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://localhost:8081/validate?key=" + validationId + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://localhost:8081/cancel?key=" + validationId).mailPost();
 
         res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked" });
       }
@@ -136,7 +136,7 @@ module.exports = function(db) {
                       if(Save === "admin") {
                         dbObj.accessLevel = "admin";
                         msgToUser = "Your admin account has been created. You account is now awaiting approval";
-                        generateKey(Save, dbObj, email, usernameFull, msgToUser, res);
+                        generateKey(req.headers.host, Save, dbObj, email, usernameFull, msgToUser, res);
                       } else {
                         User.insert(dbObj, function(insertErr, insertedDoc) {
                           if(insertErr) throw insertErr;
