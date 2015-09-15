@@ -422,7 +422,7 @@ label[for="admin-tab"] {
 	width: 100%;
 	height: 100%;
 	@include transformT(-50%, -50%);
-	padding-bottom: 6em;
+	padding-bottom: 4em;
 }
 #chat-box {
 	position: relative;
@@ -432,7 +432,7 @@ label[for="admin-tab"] {
 	//@include transformT(-50%, -50%);
 	display: block;
 	width: 100%;
-	height: 90%;
+	height: 100%;
 	max-width: 40em;
 	background-color: $midBlue;
 	border-radius: .5em;
@@ -442,6 +442,7 @@ label[for="admin-tab"] {
 	}
 	& > div {
 		padding: 0 13em 3.54em 0;
+		overflow: hidden;
 		& #messages {
 			display: block;
 			border-radius: .5em 0 0 0 ;
@@ -990,6 +991,12 @@ label[for="admin-tab"] {
   }
 }
 /* footer ----------------------------*/
+footer {
+	position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
 /* hover events ----------------------------*/
 
 /*///////////////////////// responsive styling /////////////////////////*/
@@ -1050,7 +1057,7 @@ label[for="admin-tab"] {
 				display: inline-block;
 				position: absolute;
 				top: 2em;
-				right: -1.1em;
+				right: -.1em;
 				width: 1.4em;
 				height: 1.4em;
 
@@ -1074,9 +1081,9 @@ label[for="admin-tab"] {
 				}
 			}
 			& #side-bar {
-				right: -14em;
+				right: -13em;
 			}
-			& #message {
+			& #messages {
 				border-radius: .5em .5em 0 0;
 			}
 			#chat-form {
@@ -1090,17 +1097,14 @@ label[for="admin-tab"] {
 		&.open-side {
 			& > div {
 				& .tab {
-					right: 12.9;
+					right: 12.9em;
 					&:after {
 					}
 				}
 				& #side-bar {
 					right: 0em;
-					padding: 0 0 1.6em;
+					padding: 0 0 1.6em .2em;
 					overflow-y: auto;
-				}
-				& #message {
-					border-radius: .5em 0 0 0;
 				}
 			}
 		}
