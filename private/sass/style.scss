@@ -464,6 +464,12 @@ label[for="admin-tab"] {
 					border-radius: .5em;
 					word-break: break-word;
 					background-color: $evenChat;
+					& .mention {
+						background-color: $veryLightBlue;
+						color: $darkBlue;
+						border-radius: .5em;
+						box-shadow: 0 .05em 0 .2em $veryLightBlue;
+					}
 					& .emote {
 						display: inline-block;
 						position: relative;
@@ -569,7 +575,7 @@ label[for="admin-tab"] {
 								display: inline-block;
 								width: 100%;
 								background-color: $dimBlue;
-								padding: .1em 1.5em;
+								padding: .4em 1.5em;
 							}
 							&:not(:last-child) {
 								margin: 0 0 .1em;
@@ -1082,6 +1088,8 @@ footer {
 			}
 			& #side-bar {
 				right: -13em;
+				padding: 0 0 1.6em .2em;
+				overflow-y: auto;
 			}
 			& #messages {
 				border-radius: .5em .5em 0 0;
@@ -1103,8 +1111,6 @@ footer {
 				}
 				& #side-bar {
 					right: 0em;
-					padding: 0 0 1.6em .2em;
-					overflow-y: auto;
 				}
 			}
 		}

@@ -1241,6 +1241,11 @@ label[for="admin-tab"] {
           border-radius: .5em;
           word-break: break-word;
           background-color: rgba(0, 200, 255, 0.2); }
+          #chat-box > div #messages .chat p .mention, #chat-box > div #messages .update p .mention, #chat-box > div #messages .command p .mention, #chat-box > div #messages .plain p .mention {
+            background-color: #e8f8ff;
+            color: #004B6E;
+            border-radius: .5em;
+            box-shadow: 0 0.05em 0 0.2em #e8f8ff; }
           #chat-box > div #messages .chat p .emote, #chat-box > div #messages .update p .emote, #chat-box > div #messages .command p .emote, #chat-box > div #messages .plain p .emote {
             display: inline-block;
             position: relative;
@@ -1333,7 +1338,7 @@ label[for="admin-tab"] {
             display: inline-block;
             width: 100%;
             background-color: #017ab1;
-            padding: 0.1em 1.5em; }
+            padding: 0.4em 1.5em; }
           #chat-box > div #side-bar .parent .parent #room-list .room:not(:last-child) {
             margin: 0 0 0.1em; }
           #chat-box > div #side-bar .parent .parent #room-list .room:before {
@@ -1743,7 +1748,9 @@ footer {
         box-shadow: 0.2em -0.2em 0 0 #004B6E;
         border-radius: 0 0.5em 0; }
     #chat-box > div #side-bar {
-      right: -13em; }
+      right: -13em;
+      padding: 0 0 1.6em 0.2em;
+      overflow-y: auto; }
     #chat-box > div #messages {
       border-radius: 0.5em 0.5em 0 0; }
     #chat-box > div #chat-form .fillout button {
@@ -1751,9 +1758,7 @@ footer {
   #chat-box.open-side > div .tab {
     right: 12.9em; }
   #chat-box.open-side > div #side-bar {
-    right: 0em;
-    padding: 0 0 1.6em 0.2em;
-    overflow-y: auto; }
+    right: 0em; }
   /* footer ----------------------------*/
   /* hover events ----------------------------*/ }
 

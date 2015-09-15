@@ -596,7 +596,7 @@ $(document).on("click", ".pm-box .closer", function() {
 	});
 
 
-	$(document).on("click", function(e) {
+	$(document).on("click, scroll", function(e) {
 		$("#new-context-menu").css({
 			"display": "none"
 		}).html("");
