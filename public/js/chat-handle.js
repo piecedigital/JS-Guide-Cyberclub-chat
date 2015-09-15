@@ -9,6 +9,15 @@ String.prototype.multiply = function(times) {
 	return arr.join("");
 };
 
+function checkMutes(myMutes, user) {	
+	var userReg = new RegExp(user, "gi");
+	for(var i = 0; i < myMutes.length; i++) {
+		if(myMutes[i].match(userReg)) {
+			return true;
+		}
+	}
+}
+
 // generate private message window
 var generatePM = function(initName, reciName) {
 	var frameName = reciName + "-frame";
@@ -210,7 +219,7 @@ $(document).on("click", ".pm-box .closer", function() {
 	
 	//socket response on chat response
 	socket.on("chat response", function(data){
-		var matchedUser = checkMutes(data.usernameFull);
+		var matchedUser = checkMutes(myMutes, data.usernameFull);
 		if(!matchedUser) {
 			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text' style='color:" + data.color + "'>" + regexFilter(data.msg, data.displayName) + "</p>" ) );
 			scrollToBottom();
@@ -220,7 +229,7 @@ $(document).on("click", ".pm-box .closer", function() {
 
 	//socket response on chat me response
 	socket.on("chat me response", function(data){
-		var matchedUser = checkMutes(data.usernameFull);
+		var matchedUser = checkMutes(myMutes, data.usernameFull);
 		if(!matchedUser) {
 			$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text' style='color: " + data.color + "'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.displayName) + "</p>" ) );
 			scrollToBottom();
@@ -473,7 +482,7 @@ $(document).on("click", ".pm-box .closer", function() {
 		}
 	};
 
-	var click = false, current, contextRoomname, contextUsername, contextUserdisp;
+	var click = false, cancel = true, currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
 	var options = {
 		join: function() {
 			socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
@@ -484,6 +493,7 @@ $(document).on("click", ".pm-box .closer", function() {
 		mention: function() {
 			var val = $("#chat-val").val();
 			$("#chat-val").val( val + "@" + contextUsername + " ");
+			contextUsername = null;
 		},
 		message: function() {
 			if(myLevel === "admin" || myLevel === "moderator") {
@@ -495,12 +505,42 @@ $(document).on("click", ".pm-box .closer", function() {
 			}
 		},
 		mute: function() {
-			myMutes.push(contextUsername);
+			if(contextUsername.toLowerCase() !== username) {
+				myMutes.push(contextUsername);
+			}
+			contextUsername = null;
 		},
 		unmute: function() {
 			myMutes.splice( (myMutes.indexOf(contextUsername)), 1 );
+			contextUsername = null;
 		}
 	};
+
+	$(document).on({
+		mousedown:  function(e) {
+			console.log("cancel", cancel)
+			if(cancel) {
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
+				document.oncontextmenu = null;
+			}
+		},
+		scroll:  function(e) {
+			$("#new-context-menu").css({
+				"display": "none"
+			}).html("");
+			document.oncontextmenu = null;
+		},
+		mouseup: function() {
+			click = false;
+			console.log("up");
+			setTimeout(function() {
+				currentRoom = null;
+				console.log("current: ", currentRoom);
+			}, 250);
+		}
+	});
 
 	$("#room-list").on("mousedown", ".room .name", function(e) {
 		if(e.buttons === 2) {
@@ -509,110 +549,114 @@ $(document).on("click", ".pm-box .closer", function() {
 			};
 			contextRoomname = $(this).parent().data("roomname");
 			populateContext(roomOpts);
-
+			
 			$("#new-context-menu").css({
 				"top": e.clientY,
 				"left": e.clientX,
 				"display": "block"
 			});
 			click = true;
+			cancel = false;
+			setTimeout(function() {
+				cancel = true;
+			}, 10);
 		} else {
-			if(current === $(this).parent().data("roomname")) {
-				console.log("current: ", current);
-				current = null;
+			if(currentRoom === $(this).parent().data("roomname")) {
+				console.log("current: ", currentRoom);
+				currentRoom = null;
 				
 				contextRoomname = $(this).parent().data("roomname");
 				if(room !== "door") {
 					options.leave();
 				}
 				options.join();
+				cancel = true;
 			} else {
 				$(this).parent().toggleClass("open");
-				current = $(this).parent().data("roomname");
-				
+				currentRoom = $(this).parent().data("roomname");
+				fingerPos.x = e.clientX;
+				fingerPos.y = e.clientY;
+				click = true;
+				cancel = false;
 				setTimeout(function() {
-					current = null;
-					console.log("current: ", current);
-				}, 250);
+					if(
+						e.clientX >= fingerPos.x-5 && e.clientX <= fingerPos.x+5
+						&&
+						e.clientY >= fingerPos.y-5 && e.clientY <= fingerPos.y+5
+						&&
+						click
+						) {
+						document.oncontextmenu = function() {
+							return false;
+						};
+						contextRoomname = currentRoom;
+						currentRoom = null;
+						populateContext(roomOpts);
+						
+						$("#new-context-menu").css({
+							"top": e.clientY,
+							"left": e.clientX,
+							"display": "block"
+						});
+						click = false;
+					}
+					cancel = true;
+					console.log("current: ", currentRoom);
+				}, 300);
 			}
 		}
 	});
 
 	$("#room-list").on("mousedown", ".user", function(e) {
-		if(e.buttons === 2) {
-			document.oncontextmenu = function() {
-				return false;
-			};
-			contextUsername = $(this).data("usernamefull");
-			contextUserdisp = $(this).data("displayname");
-			populateContext(userOpts);
-			console.log("user right clicked", this);
+		document.oncontextmenu = function() {
+			return false;
+		};
+		contextUsername = $(this).data("usernamefull");
+		contextUserdisp = $(this).data("displayname");
+		populateContext(userOpts);
+		console.log("user right clicked", this);
 
-			$("#new-context-menu").css({
-				"top": e.clientY,
-				"left": e.clientX,
-				"display": "block"
-			});
-			click = true;
-		} else {
-			var val = $("#chat-val").val();
-			var userDisp = $(this).data("displayname");
-			$("#chat-val").val( val + "@" + userDisp + " ");
-		}
+		$("#new-context-menu").css({
+			"top": e.clientY,
+			"left": e.clientX,
+			"display": "block"
+		});
+		click = true;
+		cancel = false;
+		setTimeout(function() {
+			cancel = true;
+		}, 10);
 	});
 
 	$("#messages").on("mousedown", ".user", function(e) {
-		if(e.buttons === 2) {
-			document.oncontextmenu = function() {
-				return false;
-			};
-			contextUsername = $(this).data("usernamefull");
-			contextUserdisp = $(this).data("displayname");
-			populateContext(userOpts);
-			console.log("user right clicked", this);
+		document.oncontextmenu = function() {
+			return false;
+		};
+		contextUsername = $(this).data("usernamefull");
+		contextUserdisp = $(this).data("displayname");
+		populateContext(userOpts);
+		console.log("user right clicked", this);
 
-			$("#new-context-menu").css({
-				"top": e.clientY,
-				"left": e.clientX,
-				"display": "block"
-			});
-			click = true;
-		} else {
-			var val = $("#chat-val").val();
-			var userDisp = $(this).data("displayname");
-			$("#chat-val").val( val + "@" + userDisp + " ");
-		}
+		$("#new-context-menu").css({
+			"top": e.clientY,
+			"left": e.clientX,
+			"display": "block"
+		});
+		click = true;
+		cancel = false;
+		setTimeout(function() {
+			cancel = true;
+		}, 10);
 	});
 
-	$("#new-context-menu").on("click", "li", function() {
-		function muteUser(user) {
-			myMutes.push(user);
-		}
-
+	$("#new-context-menu").on("mousedown", "li", function() {
 		var opt = $(this).data("option");
 		console.log(opt);
 
 		options[opt.toLowerCase()]();
 	});
 
-
-	$(document).on("click, scroll", function(e) {
-		$("#new-context-menu").css({
-			"display": "none"
-		}).html("");
-		document.oncontextmenu = null;
-	});
-
 	$("#chat-box .tab").on("click", function() {
 		$("#chat-box").toggleClass("open-side");
 	});
 }());
-
-function checkMutes(user) {	
-	var userReg = new RegExp(user, "gi");
-	for(var i = 0; i < myMutes.length; i++) {
-		if(myMutes[i].match(userReg)) {
-			return true;
-		}
-	}
-}
