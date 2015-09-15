@@ -8,7 +8,7 @@ var fs = require("fs");
 function renderSass() {
 	sass.render({
 	  file: "./private/sass/style.scss",
-	  outputStyle: "expanded",
+	  outputStyle: "nested",
 	  outFile: "./public/css/styl.css"
 	}, function(err, result) {
 		if(err) throw err;

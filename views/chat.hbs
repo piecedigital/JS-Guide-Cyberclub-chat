@@ -2,28 +2,31 @@
 	<div id="user-data" class="hidden" data-usernamefull="{{username}}" data-access="{{accessLevel}}"></div>
 	<div id="room" class="hidden" data-room="{{room}}"></div>
 	<div class="page-wrap">
-		<div class="x-pad-1_0 y-pad-1_0">
+		<div id="app" class="x-pad-1_0 y-pad-1_0">
 			<div id="chat-box">
 				<div class="parent fillout">
 					<div id="messages"></div>
+					<div class="tab"><div class="parent">&#x2630;</div></div>
 					<div id="side-bar">
-						<div class="parent fillout">
-							<form id="logout" action="/logout">
-								<button>Logout</button>
-							</form>
-							<div id="room-list">
-								<ul>
-									{{#each rooms}}
-									<li data-roomname="{{roomname}}" data-topic="{{topic}}" class="room block parent">
-										<span class="name">{{roomname}}</span>
-										<ul>
-											{{#each users}}
-											<li class="user parent" data-usernamefull="{{usernameFull}}" data-username="{{username}}" data-displayname="{{usernameFull}}"><span class="icon {{accessLevel}}"></span>{{usernameFull}}</li>
-											{{/each}}
-										</ul>
-									</li>
-									{{/each}}
-								</ul>
+						<div class="parent">
+							<div class="parent fillout">
+								<form id="logout" action="/logout">
+									<button>Logout</button>
+								</form>
+								<div id="room-list">
+									<ul>
+										{{#each rooms}}
+										<li data-roomname="{{roomname}}" data-topic="{{topic}}" class="room block parent">
+											<span class="name">{{roomname}}</span>
+											<ul>
+												{{#each users}}
+												<li class="user parent" data-usernamefull="{{usernameFull}}" data-username="{{username}}" data-displayname="{{usernameFull}}"><span class="icon {{accessLevel}}"></span>{{usernameFull}}</li>
+												{{/each}}
+											</ul>
+										</li>
+										{{/each}}
+									</ul>
+								</div>
 							</div>
 						</div>
 					</div>

@@ -2,7 +2,7 @@
 	<div id="user-data" class="hidden" data-usernamefull="{{username}}" data-access="{{accessLevel}}"></div>
 	<div id="room" class="hidden" data-room="{{room}}"></div>
 	<div class="page-wrap">
-		<div class="x-pad-1_0 y-pad-1_0">
+		<div id="add" class="x-pad-1_0 y-pad-1_0">
 			<div id="admin">
 				<input type="radio" name="tabs" id="chat" class="hidden" checked><!--
 				--><label for="chat" class="tab">Chat</label><!--
@@ -16,24 +16,27 @@
 					<div id="chat-box">
 						<div class="parent fillout">
 							<div id="messages"></div>
+							<div class="tab"><div class="parent">&#x2630;</div></div>
 							<div id="side-bar">
-								<div class="parent fillout">
-									<form id="logout" action="/logout">
-										<button>Logout</button>
-									</form>
-									<div id="room-list">
-										<ul>
-											{{#each rooms}}
-											<li data-roomname="{{roomname}}" data-topic="{{topic}}" class="room block parent">
-												<span class="name">{{roomname}}</span>
-												<ul>
-													{{#each users}}
-													<li class="user parent" data-usernamefull="{{usernameFull}}" data-username="{{username}}" data-displayname="{{usernameFull}}"><span class="icon {{accessLevel}}"></span>{{usernameFull}}</li>
-													{{/each}}
-												</ul>
-											</li>
-											{{/each}}
-										</ul>
+								<div class="parent">
+									<div class="parent fillout">
+										<form id="logout" action="/logout">
+											<button>Logout</button>
+										</form>
+										<div id="room-list">
+											<ul>
+												{{#each rooms}}
+												<li data-roomname="{{roomname}}" data-topic="{{topic}}" class="room block parent">
+													<span class="name">{{roomname}}</span>
+													<ul>
+														{{#each users}}
+														<li class="user parent" data-usernamefull="{{usernameFull}}" data-username="{{username}}" data-displayname="{{usernameFull}}"><span class="icon {{accessLevel}}"></span>{{usernameFull}}</li>
+														{{/each}}
+													</ul>
+												</li>
+												{{/each}}
+											</ul>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -41,8 +44,8 @@
 							<form id="chat-form">
 								<div class="fillout parent">
 									<div id="list-box"></div>
-									<input id="chat-val" type="text" name="msg" placeholder="Enter chat message..." {{disable}}>
-									<button type="submit" {{disable}}>SEND</button>
+									<input id="chat-val" type="text" name="msg" placeholder="Enter chat message..." disabled>
+									<button type="submit" disabled>SEND</button>
 								</div>
 							</form>
 						</div>

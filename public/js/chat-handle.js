@@ -602,6 +602,10 @@ $(document).on("click", ".pm-box .closer", function() {
 		}).html("");
 		document.oncontextmenu = null;
 	});
+
+	$("#chat-box .tab").on("click", function() {
+		$("#chat-box").toggleClass("open-side");
+	});
 }());
 
 function checkMutes(user) {	

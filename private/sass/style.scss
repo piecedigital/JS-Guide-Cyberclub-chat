@@ -415,11 +415,21 @@ label[for="admin-tab"] {
 	padding: .2em;
 	background: rgba(0, 255, 10, 1);
 }
-#chat-box {
+#app {
 	position: fixed;
 	top: 50%;
 	left: 50%;
+	width: 100%;
+	height: 100%;
 	@include transformT(-50%, -50%);
+	padding-bottom: 6em;
+}
+#chat-box {
+	position: relative;
+	margin: 0 auto;
+	top: 0%;
+	left: 0%;
+	//@include transformT(-50%, -50%);
 	display: block;
 	width: 100%;
 	height: 90%;
@@ -513,6 +523,9 @@ label[for="admin-tab"] {
 				height: 1em;
 			}
 		}
+		& .tab {
+			display: none;
+		}
 		& #side-bar {
 			position: absolute;
 			top: 0;
@@ -522,95 +535,97 @@ label[for="admin-tab"] {
 			background-color: $darkBlue;
 			padding: 0 0 0 .2em;
 			box-shadow: inset .2em 0 0 0 $darkBlue;
-			& > div {
-				text-align: right;
-				& #logout {
-					box-shadow: 0 .2em 0 0 $darkBlue,
-											0 .4em 0 0 $lightBlue;
-					& button {
-						border: none;
-						padding: .2em .5em;
-						background-color: $lightBlue;
-						color: $darkBlue;
-						border-radius: 0 .5em  0 0;
-						&:hover {
-							background-color: $dimBlue;
-						}
-						&:active {
+			& .parent {
+				& .parent {
+					& #logout {
+						text-align: right;
+						box-shadow: 0 .2em 0 0 $darkBlue,
+												0 .4em 0 0 $lightBlue;
+						& button {
+							border: none;
+							padding: .2em .5em;
 							background-color: $lightBlue;
-						}
-					}
-				}
-				& #room-list {
-					text-align: left;
-					& ul {
-						padding: 0;
-					}
-					& .room {
-						list-style: none;
-						color: $lightBlue;
-						& > span {
-							cursor: pointer;
-							display: inline-block;
-							width: 100%;
-							background-color: $dimBlue;
-							padding: .1em 1.5em;
-						}
-						&:not(:last-child) {
-							margin: 0 0 .1em;
-						}
-						&:before {
-							content: "-";
-							position: absolute;
-							top: 0;
-							left: .5em;
-							transition: all 0s;
-						}
-						&:after {
-							content: "\2610";
-							position: absolute;
-							top: 0em;
-							right: .5em;
-						}
-						&.inside:after {
-							content: "\2611";
-						}
-						& ul {
-							display: none;
-							padding: 0 0 0 1em;
-							& .user {
-								list-style: none;
-								padding: .2em 0;
-								&:hover {
-									text-decoration: underline;
-									cursor: pointer;
-								}
-								&:before {
-									content: "\2517";
-									margin: 0 .2em 0 0;
-								}
-								& .icon {
-									width: 1em;
-									height: 1em;
-									border-radius: 100%;
-									display: inline-block;
-								}
+							color: $darkBlue;
+							border-radius: 0 .5em  0 0;
+							&:hover {
+								background-color: $dimBlue;
+							}
+							&:active {
+								background-color: $lightBlue;
 							}
 						}
-						&.open {
-							& ul {
-								display: block;
+					}
+					& #room-list {
+						text-align: left;
+						& ul {
+							padding: 0;
+						}
+						& .room {
+							list-style: none;
+							color: $lightBlue;
+							& > span {
+								cursor: pointer;
+								display: inline-block;
+								width: 100%;
+								background-color: $dimBlue;
+								padding: .1em 1.5em;
+							}
+							&:not(:last-child) {
+								margin: 0 0 .1em;
 							}
 							&:before {
-								content: "+";
-								top: .1em;
-								left: .4em;
+								content: "-";
+								position: absolute;
+								top: 0;
+								left: .5em;
+								transition: all 0s;
 							}
-						}
-						&.draggable {
-							position: fixed;
-							box-shadow: 0 0 .2em .1em white;
-							transition: 0s all;
+							&:after {
+								content: "\2610";
+								position: absolute;
+								top: 0em;
+								right: .5em;
+							}
+							&.inside:after {
+								content: "\2611";
+							}
+							& ul {
+								display: none;
+								padding: 0 0 0 1em;
+								& .user {
+									list-style: none;
+									padding: .2em 0;
+									&:hover {
+										text-decoration: underline;
+										cursor: pointer;
+									}
+									&:before {
+										content: "\2517";
+										margin: 0 .2em 0 0;
+									}
+									& .icon {
+										width: 1em;
+										height: 1em;
+										border-radius: 100%;
+										display: inline-block;
+									}
+								}
+							}
+							&.open {
+								& ul {
+									display: block;
+								}
+								&:before {
+									content: "+";
+									top: .1em;
+									left: .4em;
+								}
+							}
+							&.draggable {
+								position: fixed;
+								box-shadow: 0 0 .2em .1em white;
+								transition: 0s all;
+							}
 						}
 					}
 				}
@@ -1024,7 +1039,75 @@ label[for="admin-tab"] {
 	/* footer ----------------------------*/
 	/* hover events ----------------------------*/
 }
+@include media-max(450px) {
+	/* prereqs ----------------------------*/
+	/* header ----------------------------*/
+	/* body ----------------------------*/
+	#chat-box {
+		& > div {
+			padding: 0 0em 3.54em 0;
+			& .tab {
+				display: inline-block;
+				position: absolute;
+				top: 2em;
+				right: -1.1em;
+				width: 1.4em;
+				height: 1.4em;
 
+				border-radius: .25em 0 0 .5em;
+				background-color: $darkBlue;
+
+				font-weight: bold;
+				color: $veryLightBlue;
+				text-align: center;
+
+				cursor: pointer;
+				&:after {
+					content: "";
+			    position: absolute;
+			    bottom: -1em;
+			    right: 0.1em;
+			    width: 1em;
+			    height: 1em;
+			    box-shadow: 0.2em -0.2em 0 0 #004B6E;
+			    border-radius: 0 .5em 0;
+				}
+			}
+			& #side-bar {
+				right: -14em;
+			}
+			& #message {
+				border-radius: .5em .5em 0 0;
+			}
+			#chat-form {
+				& .fillout {
+					& button {
+						border-radius: 0 0 .5em 0;
+					}
+				}
+			}
+		}
+		&.open-side {
+			& > div {
+				& .tab {
+					right: 12.9;
+					&:after {
+					}
+				}
+				& #side-bar {
+					right: 0em;
+					padding: 0 0 1.6em;
+					overflow-y: auto;
+				}
+				& #message {
+					border-radius: .5em 0 0 0;
+				}
+			}
+		}
+	}
+	/* footer ----------------------------*/
+	/* hover events ----------------------------*/
+}
 /*///////////////////////// animations /////////////////////////*/
 .spinner {
 	@include animation(spin, .3s, infinite);

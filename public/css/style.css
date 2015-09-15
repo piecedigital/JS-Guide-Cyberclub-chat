@@ -1517,14 +1517,24 @@ label[for="admin-tab"] {
   background: #00ff0a;
 }
 
-#chat-box {
+#app {
   position: fixed;
   top: 50%;
   left: 50%;
+  width: 100%;
+  height: 100%;
   -ms-transform: translate(-50%, -50%);
   -moz-transform: translate(-50%, -50%);
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+  padding-bottom: 6em;
+}
+
+#chat-box {
+  position: relative;
+  margin: 0 auto;
+  top: 0%;
+  left: 0%;
   display: block;
   width: 100%;
   height: 90%;
@@ -1665,6 +1675,10 @@ label[for="admin-tab"] {
   height: 1em;
 }
 
+#chat-box > div .tab {
+  display: none;
+}
+
 #chat-box > div #side-bar {
   position: absolute;
   top: 0;
@@ -1676,15 +1690,12 @@ label[for="admin-tab"] {
   box-shadow: inset 0.2em 0 0 0 #004B6E;
 }
 
-#chat-box > div #side-bar > div {
+#chat-box > div #side-bar .parent .parent #logout {
   text-align: right;
-}
-
-#chat-box > div #side-bar > div #logout {
   box-shadow: 0 0.2em 0 0 #004B6E, 0 0.4em 0 0 #9be0ff;
 }
 
-#chat-box > div #side-bar > div #logout button {
+#chat-box > div #side-bar .parent .parent #logout button {
   border: none;
   padding: 0.2em 0.5em;
   background-color: #9be0ff;
@@ -1692,28 +1703,28 @@ label[for="admin-tab"] {
   border-radius: 0 0.5em 0 0;
 }
 
-#chat-box > div #side-bar > div #logout button:hover {
+#chat-box > div #side-bar .parent .parent #logout button:hover {
   background-color: #017ab1;
 }
 
-#chat-box > div #side-bar > div #logout button:active {
+#chat-box > div #side-bar .parent .parent #logout button:active {
   background-color: #9be0ff;
 }
 
-#chat-box > div #side-bar > div #room-list {
+#chat-box > div #side-bar .parent .parent #room-list {
   text-align: left;
 }
 
-#chat-box > div #side-bar > div #room-list ul {
+#chat-box > div #side-bar .parent .parent #room-list ul {
   padding: 0;
 }
 
-#chat-box > div #side-bar > div #room-list .room {
+#chat-box > div #side-bar .parent .parent #room-list .room {
   list-style: none;
   color: #9be0ff;
 }
 
-#chat-box > div #side-bar > div #room-list .room > span {
+#chat-box > div #side-bar .parent .parent #room-list .room > span {
   cursor: pointer;
   display: inline-block;
   width: 100%;
@@ -1721,11 +1732,11 @@ label[for="admin-tab"] {
   padding: 0.1em 1.5em;
 }
 
-#chat-box > div #side-bar > div #room-list .room:not(:last-child) {
+#chat-box > div #side-bar .parent .parent #room-list .room:not(:last-child) {
   margin: 0 0 0.1em;
 }
 
-#chat-box > div #side-bar > div #room-list .room:before {
+#chat-box > div #side-bar .parent .parent #room-list .room:before {
   content: "-";
   position: absolute;
   top: 0;
@@ -1733,55 +1744,55 @@ label[for="admin-tab"] {
   transition: all 0s;
 }
 
-#chat-box > div #side-bar > div #room-list .room:after {
+#chat-box > div #side-bar .parent .parent #room-list .room:after {
   content: "\2610";
   position: absolute;
   top: 0em;
   right: .5em;
 }
 
-#chat-box > div #side-bar > div #room-list .room.inside:after {
+#chat-box > div #side-bar .parent .parent #room-list .room.inside:after {
   content: "\2611";
 }
 
-#chat-box > div #side-bar > div #room-list .room ul {
+#chat-box > div #side-bar .parent .parent #room-list .room ul {
   display: none;
   padding: 0 0 0 1em;
 }
 
-#chat-box > div #side-bar > div #room-list .room ul .user {
+#chat-box > div #side-bar .parent .parent #room-list .room ul .user {
   list-style: none;
   padding: .2em 0;
 }
 
-#chat-box > div #side-bar > div #room-list .room ul .user:hover {
+#chat-box > div #side-bar .parent .parent #room-list .room ul .user:hover {
   text-decoration: underline;
   cursor: pointer;
 }
 
-#chat-box > div #side-bar > div #room-list .room ul .user:before {
+#chat-box > div #side-bar .parent .parent #room-list .room ul .user:before {
   content: "\2517";
   margin: 0 0.2em 0 0;
 }
 
-#chat-box > div #side-bar > div #room-list .room ul .user .icon {
+#chat-box > div #side-bar .parent .parent #room-list .room ul .user .icon {
   width: 1em;
   height: 1em;
   border-radius: 100%;
   display: inline-block;
 }
 
-#chat-box > div #side-bar > div #room-list .room.open ul {
+#chat-box > div #side-bar .parent .parent #room-list .room.open ul {
   display: block;
 }
 
-#chat-box > div #side-bar > div #room-list .room.open:before {
+#chat-box > div #side-bar .parent .parent #room-list .room.open:before {
   content: "+";
   top: .1em;
   left: .4em;
 }
 
-#chat-box > div #side-bar > div #room-list .room.draggable {
+#chat-box > div #side-bar .parent .parent #room-list .room.draggable {
   position: fixed;
   box-shadow: 0 0 0.2em 0.1em white;
   transition: 0s all;
@@ -2243,6 +2254,61 @@ label[for="admin-tab"] {
   }
   /* header ----------------------------*/
   /* body ----------------------------*/
+  /* footer ----------------------------*/
+  /* hover events ----------------------------*/
+}
+
+@media screen and (max-width: 450px) {
+  /* prereqs ----------------------------*/
+  /* header ----------------------------*/
+  /* body ----------------------------*/
+  #chat-box > div {
+    padding: 0 0em 3.54em 0;
+  }
+  #chat-box > div .tab {
+    display: inline-block;
+    position: absolute;
+    top: 2em;
+    right: -1.1em;
+    width: 1.4em;
+    height: 1.4em;
+    border-radius: 0.25em 0 0 0.5em;
+    background-color: #004B6E;
+    font-weight: bold;
+    color: #e8f8ff;
+    text-align: center;
+    cursor: pointer;
+  }
+  #chat-box > div .tab:after {
+    content: "";
+    position: absolute;
+    bottom: -1em;
+    right: 0.1em;
+    width: 1em;
+    height: 1em;
+    box-shadow: 0.2em -0.2em 0 0 #004B6E;
+    border-radius: 0 0.5em 0;
+  }
+  #chat-box > div #side-bar {
+    right: -14em;
+  }
+  #chat-box > div #message {
+    border-radius: 0.5em 0.5em 0 0;
+  }
+  #chat-box > div #chat-form .fillout button {
+    border-radius: 0 0 0.5em 0;
+  }
+  #chat-box.open-side > div .tab {
+    right: 12.9;
+  }
+  #chat-box.open-side > div #side-bar {
+    right: 0em;
+    padding: 0 0 1.6em;
+    overflow-y: auto;
+  }
+  #chat-box.open-side > div #message {
+    border-radius: .5em 0 0 0;
+  }
   /* footer ----------------------------*/
   /* hover events ----------------------------*/
 }
