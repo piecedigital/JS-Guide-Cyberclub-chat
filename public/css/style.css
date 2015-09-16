@@ -101,6 +101,7 @@ header, section, footer {
 section {
   position: relative;
   padding: 5em 0;
+  z-index: 1;
 }
 
 .page-wrap {
@@ -2119,6 +2120,7 @@ label[for="admin-tab"] {
 }
 
 #new-context-menu {
+  z-index: 1;
   transition: 0s all;
   position: fixed;
   display: none;
@@ -2217,6 +2219,7 @@ label[for="admin-tab"] {
 
 /* footer ----------------------------*/
 footer {
+  z-index: 0;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -2273,7 +2276,7 @@ footer {
   /* hover events ----------------------------*/
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 480px) {
   /* prereqs ----------------------------*/
   /* header ----------------------------*/
   /* body ----------------------------*/
@@ -2283,16 +2286,20 @@ footer {
   #chat-box > div .tab {
     display: inline-block;
     position: absolute;
-    top: 2em;
+    top: 2.5em;
     right: -.1em;
-    width: 1.4em;
-    height: 1.4em;
-    border-radius: 0.25em 0 0 0.5em;
+    width: 2em;
+    height: 2em;
+    padding: 0em 0;
+    border-radius: 0.25em 0 0 1.2em;
     background-color: #004B6E;
     font-weight: bold;
     color: #e8f8ff;
     text-align: center;
     cursor: pointer;
+  }
+  #chat-box > div .tab > div {
+    font-size: 1.4em;
   }
   #chat-box > div .tab:after {
     content: "";

@@ -222,6 +222,9 @@ module.exports = function(io, db) {
 			.on("private message", function(obj) {
 				io.emit("generate pm", obj)
 			})
+			.on("console.log", function() {
+				console.log(JSON.stringify(arguments));
+			})
 			.on("example", function(obj) {
 				//console.log("'' socket function");
 				//console.log(obj);

@@ -78,6 +78,11 @@ $(document).on("click", ".pm-box .closer", function() {
 	myLevel = $("#user-data").data("access"),
 	myMutes = [];
 
+// socket log
+var socketLog = function() {
+	socket.emit("console.log", arguments);
+}
+//
 	//get relative of chat log for new users
 	function logDate(time){
 		time = time || "";
@@ -518,49 +523,146 @@ $(document).on("click", ".pm-box .closer", function() {
 
 	$(document).on({
 		mousedown:  function(e) {
-			console.log("cancel", cancel)
-			if(cancel) {
+			if(e.buttons) {
+				console.log("cancel", cancel)
+				if(cancel) {
+					$("#new-context-menu").css({
+						"display": "none"
+					}).html("");
+					document.oncontextmenu = null;
+				}
+			}
+		},
+		touchstart:  function(e) {
+			//socketLog("touche start")
+			if(!e.buttons) {
+				
+				$(this).on("mousedown", "#new-context-menu li", function() {
+					socketLog("first");
+					cancel = false;
+					setTimeout(function() {
+						cancel = true;
+					}, 10);
+				});
+				console.log("cancel", cancel)
+				if(cancel) {
+					socketLog("second");
+					$("#new-context-menu").css({
+						"display": "none"
+					}).html("");
+					document.oncontextmenu = null;
+				}
+			}
+		},
+		scroll:  function(e) {
+			if(e.buttons) {
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
 				document.oncontextmenu = null;
 			}
 		},
-		scroll:  function(e) {
-			$("#new-context-menu").css({
-				"display": "none"
-			}).html("");
-			document.oncontextmenu = null;
+		touchmove:  function(e) {
+			if(!e.buttons) {
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
+				document.oncontextmenu = null;
+			}
 		},
 		mouseup: function() {
-			click = false;
-			console.log("up");
-			setTimeout(function() {
-				currentRoom = null;
-				console.log("current: ", currentRoom);
-			}, 250);
+			if(e.buttons) {
+				click = false;
+				console.log("up");
+				setTimeout(function() {
+					currentRoom = null;
+					console.log("current: ", currentRoom);
+				}, 250);
+			}
+		},
+		touchend:  function() {
+			if(!e.buttons) {
+				//socketLog("touche end")
+				click = false;
+				console.log("up");
+				setTimeout(function() {
+					currentRoom = null;
+					console.log("current: ", currentRoom);
+				}, 250);
+			}
 		}
 	});
 
 	$("#room-list").on("mousedown", ".room .name", function(e) {
-		if(e.buttons === 2) {
-			document.oncontextmenu = function() {
-				return false;
-			};
-			contextRoomname = $(this).parent().data("roomname");
-			populateContext(roomOpts);
-			
-			$("#new-context-menu").css({
-				"top": e.clientY,
-				"left": e.clientX,
-				"display": "block"
-			});
-			click = true;
-			cancel = false;
-			setTimeout(function() {
-				cancel = true;
-			}, 10);
-		} else {
+		if(e.buttons) {
+			if(e.buttons === 2) {
+				document.oncontextmenu = function() {
+					return false;
+				};
+				contextRoomname = $(this).parent().data("roomname");
+				populateContext(roomOpts);
+				
+				$("#new-context-menu").css({
+					"top": e.clientY,
+					"left": e.clientX,
+					"display": "block"
+				});
+				click = true;
+				cancel = false;
+				setTimeout(function() {
+					cancel = true;
+				}, 10);
+			} else
+			if(e.buttons ===  1) {
+				if(currentRoom === $(this).parent().data("roomname")) {
+					console.log("current: ", currentRoom);
+					currentRoom = null;
+					
+					contextRoomname = $(this).parent().data("roomname");
+					if(room !== "door") {
+						options.leave();
+					}
+					options.join();
+					cancel = true;
+				} else {
+					$(this).parent().toggleClass("open");
+					currentRoom = $(this).parent().data("roomname");
+					fingerPos.x = e.clientX;
+					fingerPos.y = e.clientY;
+					click = true;
+					cancel = false;
+					setTimeout(function() {
+						if(
+							e.clientX >= fingerPos.x-5 && e.clientX <= fingerPos.x+5
+							&&
+							e.clientY >= fingerPos.y-5 && e.clientY <= fingerPos.y+5
+							&&
+							click
+							) {
+							document.oncontextmenu = function() {
+								return false;
+							};
+							contextRoomname = currentRoom;
+							currentRoom = null;
+							populateContext(roomOpts);
+							
+							$("#new-context-menu").css({
+								"top": e.clientY,
+								"left": e.clientX,
+								"display": "block"
+							});
+							click = false;
+						}
+						cancel = true;
+						console.log("current: ", currentRoom);
+					}, 300);
+				}
+			}			
+		}
+	});
+	
+	$("#room-list").on("touchstart", ".room .name", function(e) {
+		if(!e.buttons || e.buttons === "undefined") {
 			if(currentRoom === $(this).parent().data("roomname")) {
 				console.log("current: ", currentRoom);
 				currentRoom = null;
@@ -628,35 +730,93 @@ $(document).on("click", ".pm-box .closer", function() {
 		}, 10);
 	});
 
-	$("#messages").on("mousedown", ".user", function(e) {
-		document.oncontextmenu = function() {
-			return false;
-		};
-		contextUsername = $(this).data("usernamefull");
-		contextUserdisp = $(this).data("displayname");
-		populateContext(userOpts);
-		console.log("user right clicked", this);
+	// $("#room-list").on("touchstart", ".user", function(e) {
+	// 	if(!e.buttons) {
+	// 		document.oncontextmenu = function() {
+	// 			return false;
+	// 		};
+	// 		contextUsername = $(this).data("usernamefull");
+	// 		contextUserdisp = $(this).data("displayname");
+	// 		populateContext(userOpts);
+	// 		console.log("user right clicked", this);
 
-		$("#new-context-menu").css({
-			"top": e.clientY,
-			"left": e.clientX,
-			"display": "block"
-		});
-		click = true;
-		cancel = false;
-		setTimeout(function() {
-			cancel = true;
-		}, 10);
+	// 		$("#new-context-menu").css({
+	// 			"top": e.clientY,
+	// 			"left": e.clientX,
+	// 			"display": "block"
+	// 		});
+	// 		click = true;
+	// 		cancel = false;
+	// 		setTimeout(function() {
+	// 			cancel = true;
+	// 		}, 10);
+	// 	}
+	// });
+
+	$("#messages").on("mousedown", ".user", function(e) {
+		if(e.buttons) {
+			document.oncontextmenu = function() {
+				return false;
+			};
+			contextUsername = $(this).data("usernamefull");
+			contextUserdisp = $(this).data("displayname");
+			populateContext(userOpts);
+			console.log("user right clicked", this);
+
+			$("#new-context-menu").css({
+				"top": e.clientY,
+				"left": e.clientX,
+				"display": "block"
+			});
+			click = true;
+			cancel = false;
+			setTimeout(function() {
+				cancel = true;
+			}, 10);
+		}
 	});
 
+	// $("#messages").on("touchstart", ".user", function(e) {
+	// 	document.oncontextmenu = function() {
+	// 		return false;
+	// 	};
+	// 	contextUsername = $(this).data("usernamefull");
+	// 	contextUserdisp = $(this).data("displayname");
+	// 	populateContext(userOpts);
+	// 	console.log("user right clicked", this);
+
+	// 	$("#new-context-menu").css({
+	// 		"top": e.clientY,
+	// 		"left": e.clientX,
+	// 		"display": "block"
+	// 	});
+	// 	click = true;
+	// 	cancel = false;
+	// 	setTimeout(function() {
+	// 		cancel = true;
+	// 	}, 10);
+	// });
+
 	$("#new-context-menu").on("mousedown", "li", function() {
+		socketLog("pressed menu item");
 		var opt = $(this).data("option");
 		console.log(opt);
 
 		options[opt.toLowerCase()]();
 	});
 
-	$("#chat-box .tab").on("click", function() {
+	// $("#new-context-menu").on("touchstart", "li", function() {
+	// 	var opt = $(this).data("option");
+	// 	console.log(opt);
+
+	// 	options[opt.toLowerCase()]();
+	// });
+
+	// $("#chat-box .tab").on("click", function() {
+	// 	$("#chat-box").toggleClass("open-side");
+	// });
+
+	$("#chat-box .tab").on("touchstart", function() {
 		$("#chat-box").toggleClass("open-side");
 	});
 }());
