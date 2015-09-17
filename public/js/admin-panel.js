@@ -1,8 +1,8 @@
 ~(function(){
 	var socket = io();
 
-	var thusUsername,
-			thusRoomname;
+	var thisUsername,
+			thisRoomname;
 
 	// PANEL functions
 	var panels = {

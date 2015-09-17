@@ -74,7 +74,7 @@ module.exports = function(io, db) {
 							};
 
 							var currentMods = 0;
-							userElem = roomQDoc.users;
+							userElem = roomQDoc.users || [];
 							for(var i = 0; i < userElem.length; i++) {
 								if(userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
 									currentMods++;
