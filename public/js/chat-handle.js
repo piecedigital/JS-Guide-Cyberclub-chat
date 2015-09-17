@@ -491,14 +491,26 @@ var socketLog = function() {
 	var options = {
 		join: function() {
 			socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
+			$("#new-context-menu").css({
+				"display": "none"
+			}).html("");
+			document.oncontextmenu = null;
 		},
 		leave: function() {
 			socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
+			$("#new-context-menu").css({
+				"display": "none"
+			}).html("");
+			document.oncontextmenu = null;
 		},
 		mention: function() {
 			var val = $("#chat-val").val();
 			$("#chat-val").val( val + "@" + contextUsername + " ");
 			contextUsername = null;
+			$("#new-context-menu").css({
+				"display": "none"
+			}).html("");
+			document.oncontextmenu = null;
 		},
 		message: function() {
 			if(myLevel === "admin" || myLevel === "moderator") {
@@ -508,32 +520,48 @@ var socketLog = function() {
 				$("#messages").append($("<li class='plain'>").html("You do not have appropriate authority to send private messages.") );
 				scrollToBottom();
 			}
+			$("#new-context-menu").css({
+				"display": "none"
+			}).html("");
+			document.oncontextmenu = null;
 		},
 		mute: function() {
 			if(contextUsername.toLowerCase() !== username) {
-				myMutes.push(contextUsername);
+				myMutes.push(contextUsername.toLowerCase());
+				$("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon").addClass("muted");
 			}
 			contextUsername = null;
+			$("#new-context-menu").css({
+				"display": "none"
+			}).html("");
+			document.oncontextmenu = null;
 		},
 		unmute: function() {
-			myMutes.splice( (myMutes.indexOf(contextUsername)), 1 );
+			myMutes.splice( (myMutes.indexOf(contextUsername.toLowerCase())), 1 );
+			$("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon").removeClass("muted");
 			contextUsername = null;
+			$("#new-context-menu").css({
+				"display": "none"
+			}).html("");
+			document.oncontextmenu = null;
 		},
 		cancel: function() {
 			console.log("cancel", cancel);
+			$("#new-context-menu").css({
+				"display": "none"
+			}).html("");
+			document.oncontextmenu = null;
 		}
 	};
 
 	$(document).on({
 		mousedown:  function(e) {
-			if(e.buttons) {
-				console.log("cancel", cancel)
-				if(cancel) {
-					$("#new-context-menu").css({
-						"display": "none"
-					}).html("");
-					document.oncontextmenu = null;
-				}
+			console.log("cancel", cancel)
+			if(cancel) {
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
+				document.oncontextmenu = null;
 			}
 		},
 		scroll:  function(e) {
@@ -659,6 +687,7 @@ var socketLog = function() {
 		cancel = false;
 		setTimeout(function() {
 			cancel = true;
+			socketLog(cancel);
 		}, 10);
 	});
 
@@ -735,10 +764,6 @@ var socketLog = function() {
 		console.log(opt);
 
 		options[opt.toLowerCase()]();
-		$("#new-context-menu").css({
-			"display": "none"
-		}).html("");
-		document.oncontextmenu = null;
 	});
 
 	// $("#new-context-menu").on("touchstart", "li", function() {
@@ -755,4 +780,13 @@ var socketLog = function() {
 	// $("#chat-box .tab").on("touchstart", function() {
 	// 	$("#chat-box").toggleClass("open-side");
 	// });
+	$("#chat-box div #tools").on("mouseup", "#timestamp", function() {
+		var checked = $(this).prop("checked");
+		if(checked) {
+			$("#messages").removeClass("show-time");
+		} else {
+			$("#messages").addClass("show-time");
+		}
+	});
+
 }());

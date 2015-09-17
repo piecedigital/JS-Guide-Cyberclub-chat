@@ -40,7 +40,11 @@
 									</div>
 								</div>
 							</div>
-							<div id="tools"></div>
+							<div id="tools">
+								<div class="inline-block fullheight"></div>
+								<label for="timestamp">Show Time: </label><!--
+								--><input type="checkbox" name="timestamp" id="timestamp">
+							</div>
 							<form id="chat-form">
 								<div class="fillout parent">
 									<div id="list-box"></div>
@@ -320,5 +324,21 @@ var dragTab = ".mover";
 	.chat > .admin {
 		box-shadow: inset 0 -.4em 0 0 {{levelColors.admin}},
 		inset 0 .4em 0 0 {{levelColors.admin}} !important;
+	}
+	/*room list icon*/
+	.icon.regular {
+		background: {{levelColors.regular}};
+	}
+	.icon.teen-mod {
+		background: {{levelColors.teenMod}};
+	}
+	.icon.junior-mod {
+		background: {{levelColors.juniorMod}};
+	}
+	.icon.moderator {
+		background: {{levelColors.moderator}};
+	}
+	.icon.admin {
+		background: {{levelColors.admin}};
 	}
 </style>

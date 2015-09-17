@@ -228,6 +228,11 @@ section {
   height: 100%;
 }
 
+.fullheight {
+  height: 100%;
+  width: 0px;
+}
+
 .unset {
   padding: 0;
   margin: 0;
@@ -1574,6 +1579,10 @@ label[for="admin-tab"] {
   list-style: none;
 }
 
+#chat-box > div #messages .chat .time-code, #chat-box > div #messages .update .time-code, #chat-box > div #messages .command .time-code, #chat-box > div #messages .plain .time-code {
+  display: none;
+}
+
 #chat-box > div #messages .chat p, #chat-box > div #messages .update p, #chat-box > div #messages .command p, #chat-box > div #messages .plain p {
   display: inline-block;
   margin: 0;
@@ -1684,11 +1693,16 @@ label[for="admin-tab"] {
   height: 1em;
 }
 
+#chat-box > div #messages.show-time .time-code {
+  display: inline-block;
+}
+
 #chat-box > div .tab {
   display: none;
 }
 
 #chat-box > div #side-bar {
+  z-index: 2;
   position: absolute;
   top: 0;
   right: 0;
@@ -1697,6 +1711,7 @@ label[for="admin-tab"] {
   background-color: #004B6E;
   padding: 0 0 0 0.2em;
   box-shadow: inset 0.2em 0 0 0 #004B6E;
+  overflow-y: auto;
 }
 
 #chat-box > div #side-bar .parent .parent #logout {
@@ -1785,10 +1800,25 @@ label[for="admin-tab"] {
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room ul .user .icon {
+  position: relative;
   width: 1em;
   height: 1em;
   border-radius: 100%;
   display: inline-block;
+}
+
+#chat-box > div #side-bar .parent .parent #room-list .room ul .user .icon.muted:before {
+  content: "";
+  position: absolute;
+  top: -.2em;
+  left: .38em;
+  width: .2em;
+  height: 1.5em;
+  background-color: red;
+  -ms-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room.open ul {
@@ -1808,8 +1838,25 @@ label[for="admin-tab"] {
 }
 
 #chat-box > div #tools {
-  padding: 1em;
+  height: 2em;
   background-color: #004B6E;
+  text-align: left;
+}
+
+#chat-box > div #tools * {
+  vertical-align: top;
+}
+
+#chat-box > div #tools input {
+  height: 100%;
+  width: 1.5em;
+  margin: 0;
+}
+
+#chat-box > div #tools label {
+  padding: 1.5% 0;
+  display: inline-block;
+  color: #e8f8ff;
 }
 
 #chat-box > div #chat-form {
@@ -1837,6 +1884,7 @@ label[for="admin-tab"] {
   border: none;
   background: white;
   padding: .2em;
+  opacity: 1;
 }
 
 #chat-box > div #chat-form .fillout button {

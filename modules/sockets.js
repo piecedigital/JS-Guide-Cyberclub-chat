@@ -245,7 +245,7 @@ module.exports = function(io, db) {
 							"room": null
 						});
 
-						Room.update({ "users" : { "$elemMatch" : { "username" : userQDoc.username } } }, { "$pull" : { "users" : { "username" : userQDoc.username} } }, { "multi" : true } );
+						Room.update({}, { "$pull" : { "users" : { "username" : userQDoc.username} } }, { "multi" : true } );
 					}
 				});
 			});
