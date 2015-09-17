@@ -526,9 +526,13 @@ var socketLog = function() {
 			document.oncontextmenu = null;
 		},
 		mute: function() {
-			if(contextUsername.toLowerCase() !== username) {
-				myMutes.push(contextUsername.toLowerCase());
-				$("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon").addClass("muted");
+			var cxtLC = contextUsername.toLowerCase();
+
+			if(cxtLC !== username) {
+				if(myMutes.indexOf(cxtLC) < 0) {
+					myMutes.push(cxtLC);
+					$("#room-list .room ul").find(".user[data-username='" + (cxtLC) + "']").find(".icon").addClass("muted");
+				}
 			}
 			contextUsername = null;
 			$("#new-context-menu").css({
