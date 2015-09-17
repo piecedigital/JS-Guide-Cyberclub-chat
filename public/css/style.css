@@ -1786,7 +1786,7 @@ label[for="admin-tab"] {
 
 #chat-box > div #side-bar .parent .parent #room-list .room ul .user {
   list-style: none;
-  padding: .2em 0;
+  padding: .4em 0;
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room ul .user:hover {
