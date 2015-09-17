@@ -11,6 +11,8 @@ var express 		 = require("express"),
 		port 				 = process.env["PORT"] || 8080,
     MongoClient  = require("mongodb");
 
+var priVar = require("./modules/private-variables");
+
 // config
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
@@ -64,31 +66,34 @@ var serverOptions = {
   "auto_reconnect": true,
   "poolSize": 5
 }
-var Server = MongoClient.Server,
-Db = MongoClient.Db,
-db = new Db("GCC-db", new Server("localhost", 27017, serverOptions));
 
 // require custom modules
-// routes modile
+// routes module
 var routes = require("./modules/routes");
 app.use(routes);
 // sockets module
 var sockets = require("./modules/sockets");
-app.use(sockets);
+//app.use(sockets);
 
-io.on("connection", sockets(io, db).socketHandler);
+var Server = MongoClient.Server,
+Db = MongoClient.Db,
+db = MongoClient.connect(priVar.mongolabURL
+  , function(err, db) {
+    if(err) throw err;
+    //console.log(db)
+    var admin = db.admin();
 
-db.open(function(err, dbase) {
-  if(err) throw err;
-  
-  // initiation stuff
-  if(true) {
-    sockets(io, db).populateBans("null");
-  }
+    io.on("connection", sockets(io, db).socketHandler);
 
-  server.listen(port)
-  console.log("listening on port " + port);
+    // initiation stuff
+    if(true) {
+      sockets(io, db).populateBans("null");
+    }
+
 });
+    server.listen(port)
+    console.log("listening on port " + port);
+
 
 process.on('uncaughtException', function (err) {
   console.log("\n\r **Uncaught Exception event** \n\r")
