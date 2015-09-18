@@ -154,8 +154,10 @@ module.exports = function(io, db) {
 					}
 					// filter out banned emotes
 					var rpCode =  "&#58;";
+					console.log(bannedEmotes)
 					for(var i = 0; i < bannedEmotes.length; i++) {
 						var banReg = new RegExp(bannedEmotes[i], "gi");
+
 						var match = obj.msg.match(banReg) || [];
 						match = (match[0]) ? match[0].replace(/[:]/gi, rpCode) : match;
 						obj.msg = obj.msg.replace(banReg, match);
