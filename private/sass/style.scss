@@ -1002,31 +1002,28 @@ label[for="admin-tab"] {
 	border-radius: .5*$em;
   box-shadow: 0 0 0 .2*$em $darkBlue;
   background-color: $lightBlue;
-  margin-right: 0;
-  vertical-align: bottom;
-  //@include transformT(0, -18.2*$em);
-  &.closed {
-  	z-index: 1;
-  	position: relative;
-  	width: 25*$em;
-  	margin-right: -21*$em;
-  	//@include transformT(0, 0);
-  }
-  & .tool {
-  	position: relative;
-  	z-index: 5;
-  	display: inline-block;
-  	margin: 0 .1*$em 0 0;
-  	background-color: $midBlue;
-  	box-shadow: 0 0 0 .1*$em $darkBlue;
-  	padding: 0 .5*$em;
-  	cursor: pointer;
-  	&.closer {
-  		border-radius: .5*$em 0 0 0;
-  	}
-  	&.mover {
-  		border-radius: 0 0 .5*$em 0;
-  	}
+  margin: 0;
+  vertical-align: top;
+  & .tools {
+  	top: 0;
+  	left: 0;
+  	display: block;
+	  z-index: 5;
+	  & .tool {
+	  	position: relative;
+	  	display: inline-block;
+	  	margin: 0 .1*$em 0 0;
+	  	background-color: $midBlue;
+	  	box-shadow: 0 0 0 .1*$em $darkBlue;
+	  	padding: 0 .75*$em;
+	  	cursor: pointer;
+	  	&.closer {
+	  		border-radius: .5*$em 0 0 0;
+	  	}
+	  	&.mover {
+	  		border-radius: 0 0 .5*$em 0;
+	  	}
+	  }
   }
   & .spinner {
   	position: absolute;
@@ -1044,6 +1041,15 @@ label[for="admin-tab"] {
   	position: relative;
   	z-index: 2;
   	border-radius: 0 0 .5*$em .5*$em;
+  }
+  &.closed {
+  	z-index: 1;
+  	position: relative;
+  	width: 5*$em;
+  	height: 100%;
+  	& iframe {
+  		height: 0%;
+  	}
   }
 }
 .pm {

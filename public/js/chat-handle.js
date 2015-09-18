@@ -46,9 +46,10 @@ var generatePM = function(initName, reciName) {
 			$("<div>").addClass("parent").attr({
 				"style": "width: 100%; height: 100%; padding: 0 0 1.4em"
 			}).append(
-				theCloser,
-				theMover,
-				theSpinner,
+				$("<div>").addClass("tools").append(
+					theCloser,
+					theMover
+					),
 				theFrame,
 				theForm,
 				theScript
@@ -58,11 +59,11 @@ var generatePM = function(initName, reciName) {
 };
 
 $(document).on("mousedown", ".pm-box .closer", function() {
-	$(this).parent().parent().remove();
+	$(this).parent().parent().parent().remove();
 });
 
 $(document).on("mousedown", ".pm-box .mover", function() {
-	$(this).parent().parent().toggleClass("closed");
+	$(this).parent().parent().parent().toggleClass("closed");
 });
 
 ~(function () {

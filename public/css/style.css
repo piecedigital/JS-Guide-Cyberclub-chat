@@ -2208,33 +2208,32 @@ label[for="admin-tab"] {
   border-radius: 8px;
   box-shadow: 0 0 0 3.2px #004B6E;
   background-color: #9be0ff;
-  margin-right: 0;
+  margin: 0;
   vertical-align: top;
 }
 
-.pm-box.closed {
-  z-index: 1;
-  position: relative;
-  width: 400px;
-  margin-right: -336px;
+.pm-box .tools {
+  top: 0;
+  left: 0;
+  display: block;
+  z-index: 5;
 }
 
-.pm-box .tool {
+.pm-box .tools .tool {
   position: relative;
-  z-index: 5;
   display: inline-block;
   margin: 0 1.6px 0 0;
   background-color: #00a2eb;
   box-shadow: 0 0 0 1.6px #004B6E;
-  padding: 0 8px;
+  padding: 0 12px;
   cursor: pointer;
 }
 
-.pm-box .tool.closer {
+.pm-box .tools .tool.closer {
   border-radius: 8px 0 0 0;
 }
 
-.pm-box .tool.mover {
+.pm-box .tools .tool.mover {
   border-radius: 0 0 8px 0;
 }
 
@@ -2258,6 +2257,17 @@ label[for="admin-tab"] {
   position: relative;
   z-index: 2;
   border-radius: 0 0 8px 8px;
+}
+
+.pm-box.closed {
+  z-index: 1;
+  position: relative;
+  width: 80px;
+  height: 100%;
+}
+
+.pm-box.closed iframe {
+  height: 0%;
 }
 
 .pm #messages {
@@ -2291,7 +2301,7 @@ label[for="admin-tab"] {
 
 #pm-section > div > div {
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
   width: 100%;
   height: 100%;
 }
