@@ -271,7 +271,7 @@ label[for="signup-tab"], label[for="login-tab"], label[for="admin-tab"] {
 	position: relative;
 	top: .4*$em;
 	padding: .5*$em .8*$em 1*$em;
-	margin: 0 .5*$em -.6*$em;
+	margin: 0*$em (.5*$em) -.6*$em;
 	background: $lightBlue;
 	display: inline-block;
 	border-radius: .5*$em;

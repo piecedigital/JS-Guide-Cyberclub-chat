@@ -148,6 +148,7 @@ module.exports = function(io, db) {
 
 					////console.log("banned stuff - ", bannedWords, bannedEmotes)
 					// filter out banned words
+					console.log(bannedWords)
 					for(var i = 0; i < bannedWords.length; i++) {
 						var banReg = new RegExp(bannedWords[i], "gi")
 						obj.msg = obj.msg.replace(banReg, "*".multiply(bannedWords[i].length));
@@ -196,7 +197,9 @@ module.exports = function(io, db) {
 						if(obj.op === "$pull") {
 							bannedWords.splice(bannedWords.indexOf(obj.word), 1);
 							bannedWords = bannedWords.sort(function(a, b) {
-							  return a.toString().length < b.toString().length;
+								aS = a.toString();
+								bS = b.toString();
+							  return bS.length - aS.length;
 							});
 						}
 					},
@@ -207,7 +210,9 @@ module.exports = function(io, db) {
 						if(obj.op === "$pull") {
 							bannedEmotes.splice(bannedEmotes.indexOf(obj.emote), 1);
 							bannedEmotes = bannedEmotes.sort(function(a, b) {
-							  return a.toString().length < b.toString().length;
+								aS = a.toString();
+								bS = b.toString();
+							  return bS.length - aS.length;
 							});
 						}
 					},
@@ -269,6 +274,11 @@ module.exports = function(io, db) {
 	  		if(chatQDoc) {
 	  			bannedWords = chatQDoc.list;
 	  			//console.log("found some")
+	  			bannedWords = bannedWords.sort(function(a, b) {
+	  				aS = a.toString();
+	  				bS = b.toString();
+					  return bS.length - aS.length;
+					});
 	  		} else {
 	  			bannedWords = [];
 	  			//console.log("found none")
@@ -283,6 +293,11 @@ module.exports = function(io, db) {
 	  		if(chatQDoc) {
 	  			bannedEmotes = chatQDoc.list;
 	  			//console.log("found some")
+	  			bannedEmotes = bannedEmotes.sort(function(a, b) {
+	  				aS = a.toString();
+	  				bS = b.toString();
+					  return bS.length - aS.length;
+					});
 	  		} else {
 	  			bannedEmotes = [];
 	  			//console.log("found none")

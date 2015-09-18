@@ -1360,7 +1360,7 @@ label[for="signup-tab"], label[for="login-tab"], label[for="admin-tab"] {
   position: relative;
   top: 6.4px;
   padding: 8px 12.8px 16px;
-  margin: 0 -1.6px;
+  margin: 0px 8px -9.6px;
   background: #9be0ff;
   display: inline-block;
   border-radius: 8px;
@@ -2289,8 +2289,6 @@ label[for="admin-tab"] {
   left: 0;
   height: 43.2px;
   width: 100%;
-  background: red;
-  box-shadow: 0 -3.2px 0 0 #004B6E;
 }
 
 #pm-section > div {
@@ -2301,7 +2299,7 @@ label[for="admin-tab"] {
 
 #pm-section > div > div {
   overflow-x: auto;
-  overflow-y: auto;
+  overflow-y: hidden;
   width: 100%;
   height: 100%;
 }

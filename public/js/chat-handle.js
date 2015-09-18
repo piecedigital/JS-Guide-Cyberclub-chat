@@ -565,7 +565,7 @@ var socketLog = function() {
 
 	$(document).on({
 		mousedown:  function(e) {
-			console.log("cancel", cancel)
+			console.log("doc first")
 			if(cancel) {
 				$("#new-context-menu").css({
 					"display": "none"
@@ -679,6 +679,7 @@ var socketLog = function() {
 	});
 
 	$("#room-list").on("mousedown", ".user", function(e) {
+		e.stopPropagation();
 		document.oncontextmenu = function() {
 			return false;
 		};
@@ -724,7 +725,8 @@ var socketLog = function() {
 	// });
 
 	$("#messages").on("mousedown", ".user", function(e) {
-		if(e.buttons) {
+		e.stopPropagation();
+		////if(e.buttons) {
 			document.oncontextmenu = function() {
 				return false;
 			};
@@ -743,7 +745,7 @@ var socketLog = function() {
 			setTimeout(function() {
 				cancel = true;
 			}, 10);
-		}
+		////}
 	});
 
 	// $("#messages").on("touchstart", ".user", function(e) {
