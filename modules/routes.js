@@ -767,7 +767,7 @@ db = MongoClient.connect(priVar.mongolabURL
 
 				if(emote) {
 					emote = emote.replace(/[:]/gi, "");
-					emote = "&$#58;" + emote + "&#58;";
+					emote = "&#58;" + emote + "&#58;";
 
 					var updateObj = {
 					};
