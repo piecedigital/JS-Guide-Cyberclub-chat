@@ -114,11 +114,11 @@ db = MongoClient.connect(priVar.mongolabURL
 									});
 				        } else {
 				        	res.clearCookie("sessId");
-									res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
+									res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
 				        }
 				      });
 						} else {
-							res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
+							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
 						}
 					} else {
 						res.redirect("/banned/ip");
@@ -157,11 +157,11 @@ db = MongoClient.connect(priVar.mongolabURL
 				          });
 				        } else {
 				        	res.clearCookie("sessId");
-									res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
+									res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
 				        }
 				      });
 						} else {
-							res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
+							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
 						}
 					} else {
 						res.redirect("/banned/ip");
@@ -622,13 +622,13 @@ db = MongoClient.connect(priVar.mongolabURL
 		      					if(remQErr) throw remQErr;
 
 		      					if(remQDoc) {
-		      						res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"Account confirmed. Please login", "sign-checked" : "", "log-checked" : "checked" });
+		      						res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Account confirmed. Please login", "sign-checked" : "", "log-checked" : "checked" });
 		      					}
 		      				});
 		      			}
 		      		});
 		      	} else {
-		      		res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "" });
+		      		res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "" });
 		      	}
 		      });
 				} else {
@@ -643,7 +643,7 @@ db = MongoClient.connect(priVar.mongolabURL
 						if(remQErr) throw remQErr;
 
 						if(remQDoc) {
-							res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"Account cancelled successfully.", "sign-checked" : "", "log-checked" : "checked" });
+							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Account cancelled successfully.", "sign-checked" : "", "log-checked" : "checked" });
 						}
 					});
 				} else {
