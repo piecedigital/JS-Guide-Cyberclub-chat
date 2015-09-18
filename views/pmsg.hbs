@@ -1,8 +1,8 @@
-<section class="pm">
+<section class="pm-layout">
 	<div id="user-data" class="hidden" data-usernamefull="{{usernameFull}}" data-access="{{accessLevel}}"></div>
 	<div id="room" class="hidden" data-room="{{room}}"></div>
 	<div class="page-wrap">
-		<div class="x-pad-1_0 y-pad-1_0">
+		<div id="app">
 			<div id="chat-box" class="pm no-time">
 				<div class="parent fillout">
 					<div id="messages"></div>
@@ -21,8 +21,6 @@
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script type="text/javascript" src="/js/chat-handle-pm.js"></script>
 <script src="//cdn.jsdelivr.net/emojione/1.5.0/lib/js/emojione.min.js"></script>
-<!-- <script type="text/javascript" src="/js/drag-n-drop.js"></script> -->
-<!-- <script type="text/javascript"></script> -->
 <style type="text/css" id="level-colors">
 	.regular {
 		box-shadow: inset 0 -.4em 0 0 {{levelColors.regular}},

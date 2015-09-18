@@ -100,7 +100,7 @@ header, section, footer {
 
 section {
   position: relative;
-  padding: 5em 0;
+  padding: 80px 0;
   z-index: 1;
 }
 
@@ -218,7 +218,7 @@ section {
 }
 
 .line-spacer {
-  margin: .5em auto;
+  margin: 8px auto;
   max-width: 50%;
   height: 4px;
 }
@@ -244,15 +244,15 @@ section {
 }
 
 .form-box {
-  max-width: 20em;
+  max-width: 320px;
   margin: 0 auto;
 }
 
 .form-box input, .form-box textarea, .form-box button, .form-box select {
   width: 100%;
-  padding: .5em;
-  margin: .5em 0;
-  border-radius: .5em;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 8px;
   border: none;
   background: #e8f8ff;
 }
@@ -1346,24 +1346,24 @@ section {
 
 .items-list li:not(:last-child) {
   margin: 0 0 2px;
-  box-shadow: 0 1.1em 0 -1em #017ab1;
+  box-shadow: 0 17.6px 0 -16px #017ab1;
 }
 
 /*///////////////////////// content styling /////////////////////////*/
 /* body ----------------------------*/
 body.home #home {
-  box-shadow: inset 0 -0.1em 0 0 #e8f8ff;
+  box-shadow: inset 0 -1.6px 0 0 #e8f8ff;
 }
 
 /*signupin*/
 label[for="signup-tab"], label[for="login-tab"], label[for="admin-tab"] {
   position: relative;
-  top: .4em;
-  padding: 0.5em 0.8em 1em;
-  margin: 0 0.5em -0.6em;
+  top: 6.4px;
+  padding: 8px 12.8px 16px;
+  margin: 0 -1.6px;
   background: #9be0ff;
   display: inline-block;
-  border-radius: .5em;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -1371,22 +1371,22 @@ label[for="signup-tab"]:before, label[for="login-tab"]:before, label[for="admin-
   content: "";
   position: absolute;
   right: 99%;
-  bottom: .6em;
-  width: 1em;
-  height: 1em;
-  border-radius: .5em;
-  box-shadow: 0em 0em 0 0 #9be0ff;
+  bottom: 9.6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 0 0 #9be0ff;
 }
 
 label[for="signup-tab"]:after, label[for="login-tab"]:after, label[for="admin-tab"]:after {
   content: "";
   position: absolute;
   left: 99%;
-  bottom: .6em;
-  width: 1em;
-  height: 1em;
-  border-radius: .5em;
-  box-shadow: 0em 0em 0 0 #9be0ff;
+  bottom: 9.6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 0 0 #9be0ff;
 }
 
 label[for="admin-tab"] {
@@ -1409,22 +1409,22 @@ label[for="admin-tab"] {
   content: "";
   position: absolute;
   right: 99%;
-  bottom: .6em;
-  width: 1em;
-  height: 1em;
-  border-radius: .5em;
-  box-shadow: 0.4em 0.4em 0 0 #9be0ff;
+  bottom: 9.6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  box-shadow: 6.4px 6.4px 0 0 #9be0ff;
 }
 
 #signup-tab:checked + label:after {
   content: "";
   position: absolute;
   left: 99%;
-  bottom: .6em;
-  width: 1em;
-  height: 1em;
-  border-radius: .5em;
-  box-shadow: -0.4em 0.4em 0 0 #9be0ff;
+  bottom: 9.6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  box-shadow: -6.4px 6.4px 0 0 #9be0ff;
 }
 
 #signup-tab:checked ~ #sign-up-in #signup {
@@ -1447,22 +1447,22 @@ label[for="admin-tab"] {
   content: "";
   position: absolute;
   right: 99%;
-  bottom: .6em;
-  width: 1em;
-  height: 1em;
-  border-radius: .5em;
-  box-shadow: 0.4em 0.4em 0 0 #9be0ff;
+  bottom: 9.6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  box-shadow: 6.4px 6.4px 0 0 #9be0ff;
 }
 
 #login-tab:checked + label:after {
   content: "";
   position: absolute;
   left: 99%;
-  bottom: .6em;
-  width: 1em;
-  height: 1em;
-  border-radius: .5em;
-  box-shadow: -0.4em 0.4em 0 0 #9be0ff;
+  bottom: 9.6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  box-shadow: -6.4px 6.4px 0 0 #9be0ff;
 }
 
 #login-tab:checked ~ #sign-up-in #login {
@@ -1485,22 +1485,22 @@ label[for="admin-tab"] {
   content: "";
   position: absolute;
   right: 99%;
-  bottom: .6em;
-  width: 1em;
-  height: 1em;
-  border-radius: .5em;
-  box-shadow: 0.4em 0.4em 0 0 #9be0ff;
+  bottom: 9.6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  box-shadow: 6.4px 6.4px 0 0 #9be0ff;
 }
 
 #admin-tab:checked + label:after {
   content: "";
   position: absolute;
   left: 99%;
-  bottom: .6em;
-  width: 1em;
-  height: 1em;
-  border-radius: .5em;
-  box-shadow: -0.4em 0.4em 0 0 #9be0ff;
+  bottom: 9.6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  box-shadow: -6.4px 6.4px 0 0 #9be0ff;
 }
 
 #admin-tab:checked ~ #sign-up-in #admin-signup {
@@ -1519,7 +1519,7 @@ label[for="admin-tab"] {
   top: 0;
   left: 0;
   width: 100%;
-  padding: .2em;
+  padding: 3.2px;
   background: #00ff0a;
 }
 
@@ -1533,7 +1533,11 @@ label[for="admin-tab"] {
   -moz-transform: translate(-50%, -50%);
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  padding-bottom: 4em;
+  padding-bottom: 64px;
+}
+
+.pm-layout #app {
+  padding: 3.2px 0 0;
 }
 
 #chat-box {
@@ -1544,10 +1548,10 @@ label[for="admin-tab"] {
   display: block;
   width: 100%;
   height: 100%;
-  max-width: 40em;
+  max-width: 640px;
   background-color: #00a2eb;
-  border-radius: .5em;
-  box-shadow: 0 0 0 0.2em #004B6E;
+  border-radius: 8px;
+  box-shadow: 0 0 0 3.2px #004B6E;
   /*private message box styling*/
 }
 
@@ -1556,13 +1560,13 @@ label[for="admin-tab"] {
 }
 
 #chat-box > div {
-  padding: 0 13em 3.54em 0;
+  padding: 0 208px 56.64px 0;
   overflow: hidden;
 }
 
 #chat-box > div #messages {
   display: block;
-  border-radius: .5em 0 0 0;
+  border-radius: 8px 0 0 0;
   width: 100%;
   height: 100%;
   background-color: #e8f8ff;
@@ -1575,7 +1579,7 @@ label[for="admin-tab"] {
 }
 
 #chat-box > div #messages .chat, #chat-box > div #messages .update, #chat-box > div #messages .command, #chat-box > div #messages .plain {
-  padding: 0.2em 0.5em;
+  padding: 3.2px 8px;
   list-style: none;
 }
 
@@ -1586,8 +1590,8 @@ label[for="admin-tab"] {
 #chat-box > div #messages .chat p, #chat-box > div #messages .update p, #chat-box > div #messages .command p, #chat-box > div #messages .plain p {
   display: inline-block;
   margin: 0;
-  padding: .5em;
-  border-radius: .5em;
+  padding: 8px;
+  border-radius: 8px;
   word-break: break-word;
   background-color: rgba(0, 200, 255, 0.2);
 }
@@ -1595,15 +1599,15 @@ label[for="admin-tab"] {
 #chat-box > div #messages .chat p .mention, #chat-box > div #messages .update p .mention, #chat-box > div #messages .command p .mention, #chat-box > div #messages .plain p .mention {
   background-color: #e8f8ff;
   color: #004B6E;
-  border-radius: .5em;
-  box-shadow: 0 0.05em 0 0.2em #e8f8ff;
+  border-radius: 8px;
+  box-shadow: 0 0.8px 0 3.2px #e8f8ff;
 }
 
 #chat-box > div #messages .chat p .emote, #chat-box > div #messages .update p .emote, #chat-box > div #messages .command p .emote, #chat-box > div #messages .plain p .emote {
   display: inline-block;
   position: relative;
-  width: 1.5em;
-  height: 1.5em;
+  width: 24px;
+  height: 24px;
   background-color: yellow;
   border-radius: 100%;
 }
@@ -1628,9 +1632,9 @@ label[for="admin-tab"] {
 
 #chat-box > div #messages .chat > .user, #chat-box > div #messages .update > .user, #chat-box > div #messages .command > .user, #chat-box > div #messages .plain > .user {
   display: inline-block;
-  padding: .5em;
-  margin: 0 0 0.5em;
-  border-radius: .5em;
+  padding: 8px;
+  margin: 0 0 8px;
+  border-radius: 8px;
 }
 
 #chat-box > div #messages .chat > .user.black, #chat-box > div #messages .update > .user.black, #chat-box > div #messages .command > .user.black, #chat-box > div #messages .plain > .user.black {
@@ -1662,23 +1666,23 @@ label[for="admin-tab"] {
 }
 
 #chat-box > div #messages .chat > .regular, #chat-box > div #messages .update > .regular, #chat-box > div #messages .command > .regular, #chat-box > div #messages .plain > .regular {
-  box-shadow: inset 0 -0.4em 0 0 grey, inset 0 0.4em 0 0 grey;
+  box-shadow: inset 0 -6.4px 0 0 grey, inset 0 6.4px 0 0 grey;
 }
 
 #chat-box > div #messages .chat > .teen-mod, #chat-box > div #messages .update > .teen-mod, #chat-box > div #messages .command > .teen-mod, #chat-box > div #messages .plain > .teen-mod {
-  box-shadow: inset 0 -0.4em 0 0 #00c800, inset 0 0.4em 0 0 #00c800;
+  box-shadow: inset 0 -6.4px 0 0 #00c800, inset 0 6.4px 0 0 #00c800;
 }
 
 #chat-box > div #messages .chat > .junior-mod, #chat-box > div #messages .update > .junior-mod, #chat-box > div #messages .command > .junior-mod, #chat-box > div #messages .plain > .junior-mod {
-  box-shadow: inset 0 -0.4em 0 0 orange, inset 0 0.4em 0 0 orange;
+  box-shadow: inset 0 -6.4px 0 0 orange, inset 0 6.4px 0 0 orange;
 }
 
 #chat-box > div #messages .chat > .moderator, #chat-box > div #messages .update > .moderator, #chat-box > div #messages .command > .moderator, #chat-box > div #messages .plain > .moderator {
-  box-shadow: inset 0 -0.4em 0 0 blue, inset 0 0.4em 0 0 blue;
+  box-shadow: inset 0 -6.4px 0 0 blue, inset 0 6.4px 0 0 blue;
 }
 
 #chat-box > div #messages .chat > .admin, #chat-box > div #messages .update > .admin, #chat-box > div #messages .command > .admin, #chat-box > div #messages .plain > .admin {
-  box-shadow: inset 0 -0.4em 0 0 red, inset 0 0.4em 0 0 red;
+  box-shadow: inset 0 -6.4px 0 0 red, inset 0 6.4px 0 0 red;
 }
 
 #chat-box > div #messages .chat:nth-of-type(odd) p {
@@ -1690,7 +1694,7 @@ label[for="admin-tab"] {
 }
 
 #chat-box > div #messages .emojione {
-  height: 1em;
+  height: 16px;
 }
 
 #chat-box > div #messages.show-time .time-code {
@@ -1706,25 +1710,25 @@ label[for="admin-tab"] {
   position: absolute;
   top: 0;
   right: 0;
-  width: 13em;
+  width: 208px;
   height: 100%;
   background-color: #004B6E;
-  padding: 0 0 0 0.2em;
-  box-shadow: inset 0.2em 0 0 0 #004B6E;
+  padding: 0 0 0 3.2px;
+  box-shadow: inset 3.2px 0 0 0 #004B6E;
   overflow-y: auto;
 }
 
 #chat-box > div #side-bar .parent .parent #logout {
   text-align: right;
-  box-shadow: 0 0.2em 0 0 #004B6E, 0 0.4em 0 0 #9be0ff;
+  box-shadow: 0 3.2px 0 0 #004B6E, 0 6.4px 0 0 #9be0ff;
 }
 
 #chat-box > div #side-bar .parent .parent #logout button {
   border: none;
-  padding: 0.2em 0.5em;
+  padding: 3.2px 8px;
   background-color: #9be0ff;
   color: #004B6E;
-  border-radius: 0 0.5em 0 0;
+  border-radius: 0 8px 0 0;
 }
 
 #chat-box > div #side-bar .parent .parent #logout button:hover {
@@ -1753,26 +1757,26 @@ label[for="admin-tab"] {
   display: inline-block;
   width: 100%;
   background-color: #017ab1;
-  padding: 0.4em 1.5em;
+  padding: 6.4px 24px;
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room:not(:last-child) {
-  margin: 0 0 0.1em;
+  margin: 0 0 1.6px;
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room:before {
   content: "-";
   position: absolute;
   top: 0;
-  left: .5em;
+  left: 8px;
   transition: all 0s;
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room:after {
   content: "\2610";
   position: absolute;
-  top: 0em;
-  right: .5em;
+  top: 0px;
+  right: 8px;
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room.inside:after {
@@ -1781,12 +1785,12 @@ label[for="admin-tab"] {
 
 #chat-box > div #side-bar .parent .parent #room-list .room ul {
   display: none;
-  padding: 0 0 0 1em;
+  padding: 0 0 0 16px;
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room ul .user {
   list-style: none;
-  padding: .2em 0;
+  padding: 6.4px 0;
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room ul .user:hover {
@@ -1796,13 +1800,13 @@ label[for="admin-tab"] {
 
 #chat-box > div #side-bar .parent .parent #room-list .room ul .user:before {
   content: "\2517";
-  margin: 0 0.2em 0 0;
+  margin: 0 3.2px 0 0;
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room ul .user .icon {
   position: relative;
-  width: 1em;
-  height: 1em;
+  width: 16px;
+  height: 16px;
   border-radius: 100%;
   display: inline-block;
 }
@@ -1810,10 +1814,10 @@ label[for="admin-tab"] {
 #chat-box > div #side-bar .parent .parent #room-list .room ul .user .icon.muted:before {
   content: "";
   position: absolute;
-  top: -.2em;
-  left: .38em;
-  width: .2em;
-  height: 1.5em;
+  top: -3.2px;
+  left: 6.08px;
+  width: 3.2px;
+  height: 24px;
   background-color: red;
   -ms-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
@@ -1827,18 +1831,18 @@ label[for="admin-tab"] {
 
 #chat-box > div #side-bar .parent .parent #room-list .room.open:before {
   content: "+";
-  top: .1em;
-  left: .4em;
+  top: 1.6px;
+  left: 6.4px;
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room.draggable {
   position: fixed;
-  box-shadow: 0 0 0.2em 0.1em white;
+  box-shadow: 0 0 3.2px 1.6px white;
   transition: 0s all;
 }
 
 #chat-box > div #tools {
-  height: 2em;
+  height: 32px;
   background-color: #004B6E;
   text-align: left;
 }
@@ -1849,7 +1853,7 @@ label[for="admin-tab"] {
 
 #chat-box > div #tools input {
   height: 100%;
-  width: 1.5em;
+  width: 24px;
   margin: 0;
 }
 
@@ -1864,26 +1868,28 @@ label[for="admin-tab"] {
 }
 
 #chat-box > div #chat-form #list-box {
-  padding: .1em;
   position: absolute;
   bottom: 100%;
   left: 0;
-  border-radius: .5em;
+  padding: 1.6px;
+  margin: 0;
+  border-radius: 8px;
   background-color: #004B6E;
   display: none;
 }
 
 #chat-box > div #chat-form .fillout {
-  padding: 0 3.7em 0 0;
-  box-shadow: 0 -0.1em 0 0 #9be0ff;
+  padding: 0 59.2px 0 0;
+  box-shadow: 0 -1.6px 0 0 #9be0ff;
 }
 
 #chat-box > div #chat-form .fillout #chat-val {
   width: 100%;
-  border-radius: 0 0 0 0.5em;
+  border-radius: 0 0 0 8px;
   border: none;
+  padding: 3.2px;
+  margin: 0;
   background: white;
-  padding: .2em;
   opacity: 1;
 }
 
@@ -1892,7 +1898,8 @@ label[for="admin-tab"] {
   top: 0;
   right: 0;
   border: none;
-  padding: 0.2em 0.5em;
+  padding: 3.2px 8px;
+  margin: 0;
   background-color: #9be0ff;
   color: #969696;
 }
@@ -1910,31 +1917,22 @@ label[for="admin-tab"] {
 }
 
 #chat-box.pm > div {
-  padding: 0 0em 1.54em 0;
-}
-
-#chat-box.pm > div #messages {
-  border-radius: 0;
+  padding: 0 0px 24.64px 0;
 }
 
 /*admin chat*/
 #admin {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  position: relative;
   display: block;
   width: 100%;
-  min-width: 40em;
-  max-width: 40em;
-  height: 90%;
-  padding: 2em 0 0;
+  min-width: 640px;
+  max-width: 640px;
+  height: 100%;
+  padding: 32px 0 0;
+  margin: 0 auto;
   background: #00a2eb;
-  border-radius: .5em;
-  box-shadow: 0 0 0 0.2em #004B6E;
+  border-radius: 8px;
+  box-shadow: 0 0 0 3.2px #004B6E;
   text-align: center;
 }
 
@@ -1958,39 +1956,39 @@ label[for="admin-tab"] {
 
 #admin .tab {
   position: relative;
-  top: -.2em;
+  top: -3.2px;
   z-index: 0;
   background-color: #9be0ff;
-  border-radius: 0.5em 0.5em 0 0;
-  padding: .5em;
-  margin: 0 0.5em;
-  box-shadow: 0 0 0 0.15em #004B6E;
+  border-radius: 8px 8px 0 0;
+  padding: 8px;
+  margin: 0 8px;
+  box-shadow: 0 0 0 2.4px #004B6E;
 }
 
 #admin .tab:before {
   content: "";
   position: absolute;
   bottom: 0;
-  left: -1.14em;
-  width: 1em;
-  height: 1em;
-  border-radius: 0 0 0.5em 0;
-  box-shadow: 0.14em 0.14em 0 0 #004B6E, 0.5em 0.5em 0 0 #9be0ff;
+  left: -18.24px;
+  width: 16px;
+  height: 16px;
+  border-radius: 0 0 8px 0;
+  box-shadow: 2.24px 2.24px 0 0 #004B6E, 8px 8px 0 0 #9be0ff;
 }
 
 #admin .tab:after {
   content: "";
   position: absolute;
   bottom: 0;
-  right: -1.16em;
-  width: 1em;
-  height: 1em;
-  border-radius: 0 0 0 0.5em;
-  box-shadow: -0.14em 0.14em 0 0 #004B6E, -0.5em 0.5em 0 0 #9be0ff;
+  right: -18.56px;
+  width: 16px;
+  height: 16px;
+  border-radius: 0 0 0 8px;
+  box-shadow: -2.24px 2.24px 0 0 #004B6E, -8px 8px 0 0 #9be0ff;
 }
 
 #admin input#chat:checked + label {
-  top: -.6em;
+  top: -9.6px;
 }
 
 #admin input#chat:checked ~ .panel.chat {
@@ -1998,7 +1996,7 @@ label[for="admin-tab"] {
 }
 
 #admin input#chat-opt:checked + label {
-  top: -.6em;
+  top: -9.6px;
 }
 
 #admin input#chat-opt:checked ~ .panel.chat-opt {
@@ -2006,7 +2004,7 @@ label[for="admin-tab"] {
 }
 
 #admin input#rooms:checked + label {
-  top: -.6em;
+  top: -9.6px;
 }
 
 #admin input#rooms:checked ~ .panel.rooms {
@@ -2014,7 +2012,7 @@ label[for="admin-tab"] {
 }
 
 #admin input#users:checked + label {
-  top: -.6em;
+  top: -9.6px;
 }
 
 #admin input#users:checked ~ .panel.users {
@@ -2022,7 +2020,7 @@ label[for="admin-tab"] {
 }
 
 #admin input#addrs:checked + label {
-  top: -.6em;
+  top: -9.6px;
 }
 
 #admin input#addrs:checked ~ .panel.addrs {
@@ -2040,19 +2038,19 @@ label[for="admin-tab"] {
   display: block;
   width: 100%;
   height: 100%;
-  max-width: 40em;
+  max-width: 640px;
   background-color: #00a2eb;
-  border-radius: .5em;
-  box-shadow: 0 0 0 0.2em #004B6E;
+  border-radius: 8px;
+  box-shadow: 0 0 0 3.2px #004B6E;
 }
 
 #admin #mgmt #item-list {
   vertical-align: top;
   margin: 0;
-  padding: 0em;
+  padding: 0px;
   display: inline-block;
   width: 25%;
-  box-shadow: 0.1em 0 0 0 #004B6E;
+  box-shadow: 1.6px 0 0 0 #004B6E;
   height: 100%;
 }
 
@@ -2063,7 +2061,7 @@ label[for="admin-tab"] {
 }
 
 #admin #mgmt #item-list .item:first-child span.name {
-  border-radius: .5em 0 0 0;
+  border-radius: 8px 0 0 0;
 }
 
 #admin #mgmt #item-list .item > .name {
@@ -2071,17 +2069,17 @@ label[for="admin-tab"] {
   display: inline-block;
   width: 100%;
   background-color: #017ab1;
-  padding: 0.1em 0.2em;
+  padding: 1.6px 3.2px;
 }
 
 #admin #mgmt #item-list .item:not(:last-child) {
-  margin: 0 0 0.1em;
+  margin: 0 0 1.6px;
 }
 
 #admin #mgmt #item-list .item .number {
   position: absolute;
   top: 0;
-  right: 1em;
+  right: 16px;
 }
 
 #admin #mgmt #item-options {
@@ -2091,7 +2089,7 @@ label[for="admin-tab"] {
 }
 
 #admin #mgmt #item-options .title {
-  margin: 0 0 1em;
+  margin: 0 0 16px;
 }
 
 #admin #mgmt #item-options .option-box #banned-list {
@@ -2102,17 +2100,17 @@ label[for="admin-tab"] {
 #admin #mgmt #item-options .option-box #banned-list .word, #admin #mgmt #item-options .option-box #banned-list .addr, #admin #mgmt #item-options .option-box #banned-list .emote {
   list-style: none;
   display: inline-block;
-  margin: .25em;
-  padding: .25em;
-  border-radius: .5em;
+  margin: 4px;
+  padding: 4px;
+  border-radius: 8px;
   background-color: #017ab1;
 }
 
 #admin #mgmt #item-options .option-box #banned-list .word .close, #admin #mgmt #item-options .option-box #banned-list .addr .close, #admin #mgmt #item-options .option-box #banned-list .emote .close {
   display: inline-block;
   background-color: #004B6E;
-  margin: 0 0 0 0.25em;
-  padding: 0 0.3em;
+  margin: 0 0 0 4px;
+  padding: 0 4.8px;
   border-radius: 100%;
   cursor: pointer;
 }
@@ -2123,9 +2121,9 @@ label[for="admin-tab"] {
 
 #admin #mgmt #item-options form input, #admin #mgmt #item-options form select, #admin #mgmt #item-options form button {
   background-color: #e8f8ff;
-  padding: .5em;
+  padding: 8px;
   border: none;
-  border-radius: .5em;
+  border-radius: 8px;
   width: 100%;
 }
 
@@ -2134,17 +2132,17 @@ label[for="admin-tab"] {
 }
 
 #admin #mgmt #item-options form input[type="color"], #admin #mgmt #item-options form select[type="color"], #admin #mgmt #item-options form button[type="color"] {
-  width: 3em;
-  height: 3em;
+  width: 48px;
+  height: 48px;
 }
 
 #admin #mgmt #item-options form button {
   cursor: pointer;
-  box-shadow: 0 0 0 0em #9be0ff;
+  box-shadow: 0 0 0 0px #9be0ff;
 }
 
 #admin #mgmt #item-options form button:hover {
-  box-shadow: 0 0 0 0.2em #9be0ff;
+  box-shadow: 0 0 0 3.2px #9be0ff;
 }
 
 #admin #mgmt #item-options form .options {
@@ -2154,8 +2152,8 @@ label[for="admin-tab"] {
 #admin #mgmt #item-options form > div:not(:last-child) {
   display: inline-block;
   width: 50%;
-  margin: 0 0 0.5em;
-  padding: 0 1em;
+  margin: 0 0 8px;
+  padding: 0 16px;
 }
 
 #admin #mgmt #item-options form > div:not(:last-child) label {
@@ -2174,22 +2172,22 @@ label[for="admin-tab"] {
   display: none;
   padding: 0;
   margin: 0;
-  width: 5em;
-  box-shadow: 0 0 0 0.1em #004B6E;
-  border-radius: .5em;
+  width: 80px;
+  box-shadow: 0 0 0 1.6px #004B6E;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 #new-context-menu li {
   width: 100%;
   list-style: none;
-  padding: .5em;
+  padding: 8px;
   color: #004B6E;
   background-color: #e8f8ff;
 }
 
 #new-context-menu li:not(:last-child) {
-  box-shadow: 0 0.6em 0 -0.5em #004B6E;
+  box-shadow: 0 9.6px 0 -8px #004B6E;
 }
 
 #new-context-menu li:hover {
@@ -2198,37 +2196,46 @@ label[for="admin-tab"] {
 
 /* private messaging box*/
 .pm-box {
+  z-index: 4;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: inline-block;
   transition: all 0s;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 25em;
-  height: 20em;
-  border-radius: .5em;
-  box-shadow: 0 0 0 0.2em #004B6E;
+  width: 400px;
+  max-width: 100vw;
+  height: 320px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 3.2px #004B6E;
   background-color: #9be0ff;
+  margin-right: 0;
+  vertical-align: top;
+}
+
+.pm-box.closed {
+  z-index: 1;
+  position: relative;
+  width: 400px;
+  margin-right: -336px;
 }
 
 .pm-box .tool {
   position: relative;
-  z-index: 3;
+  z-index: 5;
   display: inline-block;
-  margin: 0 0.1em 0 0;
+  margin: 0 1.6px 0 0;
   background-color: #00a2eb;
-  box-shadow: 0 0 0 0.1em #004B6E;
-}
-
-.pm-box .tool.closer {
-  border-radius: .5em 0 0 0;
+  box-shadow: 0 0 0 1.6px #004B6E;
+  padding: 0 8px;
   cursor: pointer;
 }
 
-.pm-box .tool.mover {
-  border-radius: 0 0 0.5em 0;
+.pm-box .tool.closer {
+  border-radius: 8px 0 0 0;
 }
 
 .pm-box .tool.mover {
-  cursor: move;
+  border-radius: 0 0 8px 0;
 }
 
 .pm-box .spinner {
@@ -2239,22 +2246,22 @@ label[for="admin-tab"] {
   -moz-transform: translate(-50%, -50%);
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  width: 2em;
-  height: 2em;
+  width: 32px;
+  height: 32px;
   border-radius: 100%;
-  border: 0.2em solid #004B6E;
+  border: 3.2px solid #004B6E;
   border-color: #004B6E transparent transparent transparent;
 }
 
 .pm-box iframe {
-  margin: .1em 0 0;
+  margin: 1.6px 0 0;
   position: relative;
   z-index: 2;
-  border-radius: 0 0 0.5em 0.5em;
+  border-radius: 0 0 8px 8px;
 }
 
 .pm #messages {
-  border-radius: 0 0 0.5em 0.5em;
+  border-radius: 0 0 8px 8px;
 }
 
 .pm #chat-box {
@@ -2262,7 +2269,31 @@ label[for="admin-tab"] {
 }
 
 .pm #chat-box button {
-  border-radius: 0 0 0.5em 0;
+  border-radius: 0 0 8px 0;
+}
+
+#pm-section {
+  z-index: 4;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 43.2px;
+  width: 100%;
+  background: red;
+  box-shadow: 0 -3.2px 0 0 #004B6E;
+}
+
+#pm-section > div {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#pm-section > div > div {
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 /* footer ----------------------------*/
@@ -2329,17 +2360,17 @@ footer {
   /* header ----------------------------*/
   /* body ----------------------------*/
   #chat-box > div {
-    padding: 0 0em 3.54em 0;
+    padding: 0 0px 56.64px 0;
   }
   #chat-box > div .tab {
     display: inline-block;
     position: absolute;
-    top: 2.5em;
-    right: -.1em;
-    width: 2em;
-    height: 2em;
-    padding: 0em 0;
-    border-radius: 0.25em 0 0 1.2em;
+    top: 40px;
+    right: -1.6px;
+    width: 32px;
+    height: 32px;
+    padding: 0px 0;
+    border-radius: 4px 0 0 19.2px;
     background-color: #004B6E;
     font-weight: bold;
     color: #e8f8ff;
@@ -2347,34 +2378,34 @@ footer {
     cursor: pointer;
   }
   #chat-box > div .tab > div {
-    font-size: 1.4em;
+    font-size: 22.4px;
   }
   #chat-box > div .tab:after {
     content: "";
     position: absolute;
-    bottom: -1em;
-    right: 0.1em;
-    width: 1em;
-    height: 1em;
-    box-shadow: 0.2em -0.2em 0 0 #004B6E;
-    border-radius: 0 0.5em 0;
+    bottom: -16px;
+    right: 1.6px;
+    width: 16px;
+    height: 16px;
+    box-shadow: 0px 0 0 #004B6E;
+    border-radius: 0 8px 0;
   }
   #chat-box > div #side-bar {
-    right: -13em;
-    padding: 0 0 1.6em 0.2em;
+    right: -208px;
+    padding: 0 0 25.6px 3.2px;
     overflow-y: auto;
   }
   #chat-box > div #messages {
-    border-radius: 0.5em 0.5em 0 0;
+    border-radius: 8px 8px 0 0;
   }
   #chat-box > div #chat-form .fillout button {
-    border-radius: 0 0 0.5em 0;
+    border-radius: 0 0 8px 0;
   }
   #chat-box.open-side > div .tab {
-    right: 12.9em;
+    right: 206.4px;
   }
   #chat-box.open-side > div #side-bar {
-    right: 0em;
+    right: 0px;
   }
   /* footer ----------------------------*/
   /* hover events ----------------------------*/

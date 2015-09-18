@@ -22,7 +22,7 @@ function checkMutes(myMutes, user) {
 var generatePM = function(initName, reciName) {
 	var frameName = reciName + "-frame";
 
-	$(".pm-box[data-id='" + frameName + "']").remove();
+	//$(".pm-box[data-id='" + frameName + "']").remove();
 
 	var theCloser = $("<div>").addClass("tool closer").html("&#x2716;"),
 			theMover = $("<div>").addClass("tool mover").html("&#x2630;"),
@@ -41,7 +41,7 @@ var generatePM = function(initName, reciName) {
 			}).html( $("<input>").attr({ "type": "hidden" }) ),
 			theScript = $("<script>").html("$('#" + frameName + "').submit()");
 
-	$("body").append(
+	$("#pm-section > div > div").append(
 		$("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).html(
 			$("<div>").addClass("parent").attr({
 				"style": "width: 100%; height: 100%; padding: 0 0 1.4em"
@@ -57,9 +57,13 @@ var generatePM = function(initName, reciName) {
 		);
 };
 
-$(document).on("click", ".pm-box .closer", function() {
+$(document).on("mousedown", ".pm-box .closer", function() {
 	$(this).parent().parent().remove();
-})
+});
+
+$(document).on("mousedown", ".pm-box .mover", function() {
+	$(this).parent().parent().toggleClass("closed");
+});
 
 ~(function () {
 	var socket = io(),

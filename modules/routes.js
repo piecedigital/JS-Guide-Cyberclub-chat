@@ -7,7 +7,9 @@ var app = require('express')(),
 		ObjectId = require("mongodb").ObjectID,
 		hb = require("hbs");
 
-var priVar = require("./private-variables");
+var priVar = require("./private-variables"),
+		account = require("./accounts"),
+		getIP = require("./acquire-ip");
 
 //sass compile
 var sass = require('node-sass');
@@ -32,10 +34,6 @@ Db = MongoClient.Db,
 db = MongoClient.connect(priVar.mongolabURL
   , function(err, db) {
   	if(err) throw err;
-  	var admin = db.admin();
-
-		var account = require("./accounts"),
-				getIP = require("./acquire-ip");
 
 		var User = db.collection("users"),
 				Pending = db.collection("pending"),
@@ -926,7 +924,7 @@ db = MongoClient.connect(priVar.mongolabURL
 										userQDoc.usernameFull === req.params.receiver) {
 										var name = (userQDoc.usernameFull === req.params.initiator) ? req.params.receiver : req.params.initiator;
 
-										res.render("pmsg", { "title" : "Chat w/ " + name, "room" : room, "usernameFull" : userQDoc.usernameFull, "username" : userQDoc.username, "alert" : true });
+										res.render("pmsg", { "title" : "Chat w/ " + name, "room" : room, "usernameFull" : userQDoc.usernameFull, "username" : userQDoc.username, "alert" : true, "layout" : "private-layout" });
 									} else {
 										res.status(404).send("incorrect room");
 									}
