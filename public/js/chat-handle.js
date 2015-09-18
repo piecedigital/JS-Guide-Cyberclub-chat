@@ -22,7 +22,7 @@ function checkMutes(myMutes, user) {
 var generatePM = function(initName, reciName) {
 	var frameName = reciName + "-frame";
 
-	//$(".pm-box[data-id='" + frameName + "']").remove();
+	$(".pm-box[data-id='" + frameName + "']").remove();
 
 	var theCloser = $("<div>").addClass("tool closer").html("&#x2716;"),
 			theMover = $("<div>").addClass("tool mover").html("&#x2630;"),
