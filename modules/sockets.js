@@ -195,6 +195,9 @@ module.exports = function(io, db) {
 						}
 						if(obj.op === "$pull") {
 							bannedWords.splice(bannedWords.indexOf(obj.word), 1);
+							bannedWords = bannedWords.sort(function(a, b) {
+							  return a.toString().length < b.toString().length;
+							});
 						}
 					},
 					updateBannedEmotes: function() {
@@ -203,6 +206,9 @@ module.exports = function(io, db) {
 						}
 						if(obj.op === "$pull") {
 							bannedEmotes.splice(bannedEmotes.indexOf(obj.emote), 1);
+							bannedEmotes = bannedEmotes.sort(function(a, b) {
+							  return a.toString().length < b.toString().length;
+							});
 						}
 					},
 					updateRooms: function() {
