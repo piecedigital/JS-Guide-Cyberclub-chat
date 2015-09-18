@@ -2,7 +2,7 @@ var express 		 = require("express"),
     app          = express(),
     server       = require("http").Server(app),
     io           = require("socket.io")(server),
-    //favicon      = require('serve-favicon'),
+    favicon      = require('serve-favicon'),
 		path 				 = require("path"),
 		logger 			 = require('morgan'),
 		cookieParser = require('cookie-parser'),
@@ -20,7 +20,7 @@ app.set('view engine', 'hbs');
 app.set("view options", { layout: "layout" });
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(function(req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
 
