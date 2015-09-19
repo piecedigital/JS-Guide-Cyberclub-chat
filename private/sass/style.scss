@@ -127,6 +127,9 @@ section {
 .hidden-force {
 	display: none !important;
 }
+.of-hidden {
+	overflow: hidden;
+}
 .invisible {
 	visibility: hidden;
 }
@@ -1093,7 +1096,6 @@ footer {
 /* hover events ----------------------------*/
 
 /*///////////////////////// responsive styling /////////////////////////*/
-
 @include media-max(1024px) {
 	/* prereqs ----------------------------*/
 	.col-4-3-2-1 {
@@ -1107,6 +1109,9 @@ footer {
 }
 @include media-max(800px) {
 	/* prereqs ----------------------------*/
+	*, *:before, *:after {
+	  font-size: 15px;
+	}
 	.col-4-3-2-1 {
 		display: inline-block;
 		width: 50%;
@@ -1141,6 +1146,9 @@ footer {
 }
 @include media-max(480px) {
 	/* prereqs ----------------------------*/
+	*, *:before, *:after {
+	  font-size: 14px;
+	}
 	/* header ----------------------------*/
 	/* body ----------------------------*/
 	#chat-box {

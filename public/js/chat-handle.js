@@ -120,112 +120,11 @@ var socketLog = function() {
 		windowFocus = false;
 	});
 
-	/*
-	//get caret positon
-	function getCaretPos(input) {
-  // Internet Explorer Caret Position (TextArea)
-    if (document.selection && document.selection.createRange) {
-        var range = document.selection.createRange();
-        var bookmark = range.getBookmark();
-        var caret_pos = bookmark.charCodeAt(2) - 2;
-    } else {
-        // Firefox Caret Position (TextArea)
-        if (input.setSelectionRange)
-          var caret_pos = input.selectionStart;
-    }
-    return caret_pos;
-	}
-	*/
-/* MENTINO SECTION/////////////////
-   Uncomment later if useable////////////
-	//mention
-	var caretPosition = 0, selection = 1, subStr, listLen;
-	//check for keyup events
-	$("#chat-val").on("keyup", function(){
-		if ( $(this).val().charAt( getCaretPos(this) - 1).match(/[@]/gi) ){
-			//show list box
-			console.log("prep mention");
-			$("#list-box").css({"display": "inline-block"});
-			caretPosition = getCaretPos(this) - 1;
-		}
-		if ( $(this).val().charAt( getCaretPos(this) - 1).match(/[\s]/gi) || $(this).val().charAt( getCaretPos(this) - 1) === "" ){
-			//hide list box
-			$("#list-box").css({"display": "none"});
-		}
-		subStr = $(this).val().split("").slice(caretPosition+1).join("");
-		var matchedUser = new RegExp("\b(" + subStr + ")", "gi");
-		$("#list-box").html("");
-		userList.map(function(elem, index){
-			if (elem.match(matchedUser) && $("#list-box").attr("style") === "display: inline-block;") {
-				var match = elem.replace(matchedUser, "<span class='match-box-str'>"+subStr+"</span>");
-				$("#list-box").append("<li class='matched-user' data-index='" + (index+1) + "' data-name='" + elem + "'>" + match + "</li>");
-			}
-		});
-		$("#list-box li:nth-child(" + selection + ")").addClass("selected");
-	});
-	//check for keydown events
-	*/
 	$("#chat-val").keydown(function(k){
 		if( $("#chat-val").val() ) {
 			$("#chat-form button").addClass("full");
 		}
-		/*
-		listLen = $("#list-box .matched-user").size();
-		//check for enter key
-		if (k.keyCode === 13){
-			if ( $("#list-box").attr("style") === "display: inline-block;" ) {
-				selectMention();
-				return false;
-			}
-		}
-		//check for up key
-		if (k.keyCode === 38) {
-			selection--;
-			if (selection < 1){ selection = listLen}
-			$("#list-box li").removeClass("selected");
-			return false;
-		}
-		//check for down key
-		if (k.keyCode === 40) {
-			selection++;
-			if (selection > listLen){ selection = 1}
-			$("#list-box li").removeClass("selected");
-			return false;
-		}
-		*/
 	});
-	/*
-	//mouse hover over user mention
-	$(document).on({
-		mouseenter: function(){
-			$(".matched-user").removeClass("selected");
-			selection = $(this).data("index");
-			$(this).addClass("selected");
-		}
-	}, ".matched-user");
-	//mouse press on user mention
-	$(document).on("click", ".matched-user",function(){
-		selectMention();
-	});
-
-	function selectMention(){
-		//re-enable the submit button
-		$("#chat-box button[type='submit']").prop("disabled", false);
-		//attach the full user names to the input value
-		$("#chat-val").val( $("#chat-val").val() + $("#list-box li:nth-child(" + selection +
-		 ")").data("name").split("").slice(subStr.length).join("") );
-		//hide list box
-		$("#list-box").css({"display": "none"});
-		selection = 1;
-	}
-*/
-	//socket response on chat log
-	/*
-	socket.on("chat log", function(time, who, msg){
-		$("#messages").append($("<li class='chat'>").html("[<span class='log'>" + logDate(time) + "</span>] <span class='user'> " + who + "</span>: " + "<p class='chat-text'>" + regexFilter(msg, who) + "</p>" ) );
-		$("#messages")[0].scrollTop = $("#messages")[0].scrollHeight;
-	});
-	*/
 	
 	//socket response on chat response
 	socket.on("chat response", function(data){
@@ -252,19 +151,6 @@ var socketLog = function() {
 		scrollToBottom();
 	});
 	
-/*
-	//socket response on command
-	socket.on("command", function(msg){
-		$("#messages").append($("<li class='command'>").html("[COMMAND] " + msg) );
-		scrollToBottom();
-	});
-*/
-	/*
-	//socket responses on room entry
-	socket.on("user list", function(data){
-	});
-	*/
-
 	//socket responses on room entry
 	socket.on("enter room", function(data){
 		$("#messages").append($("<li class='plain'>").html(data.msg) );
@@ -474,8 +360,6 @@ var socketLog = function() {
 		}
 	})
 
-	$("#chat-val").focus();
-
 	///////////////////////////
 	// interface interactions//
 	///////////////////////////
@@ -565,12 +449,25 @@ var socketLog = function() {
 
 	$(document).on({
 		mousedown:  function(e) {
-			console.log("doc first")
-			if(cancel) {
-				$("#new-context-menu").css({
-					"display": "none"
-				}).html("");
-				document.oncontextmenu = null;
+			if(e.buttons) {
+				console.log("doc first")
+				if(cancel) {
+					$("#new-context-menu").css({
+						"display": "none"
+					}).html("");
+					document.oncontextmenu = null;
+				}
+			}
+		},
+		touchstart:  function(e) {
+			if(!e.buttons) {
+				console.log("doc first")
+				if(cancel) {
+					$("#new-context-menu").css({
+						"display": "none"
+					}).html("");
+					document.oncontextmenu = null;
+				}
 			}
 		},
 		scroll:  function(e) {
@@ -679,54 +576,33 @@ var socketLog = function() {
 	});
 
 	$("#room-list").on("mousedown", ".user", function(e) {
-		e.stopPropagation();
-		document.oncontextmenu = function() {
-			return false;
-		};
-		contextUsername = $(this).data("usernamefull");
-		contextUserdisp = $(this).data("displayname");
-		populateContext(userOpts);
-		console.log("user right clicked", this);
+		if(e.buttons) {
+			e.stopPropagation();
+			document.oncontextmenu = function() {
+				return false;
+			};
+			contextUsername = $(this).data("usernamefull");
+			contextUserdisp = $(this).data("displayname");
+			populateContext(userOpts);
+			console.log("user right clicked", this);
 
-		$("#new-context-menu").css({
-			"top": e.clientY,
-			"left": e.clientX,
-			"display": "block"
-		});
-		click = true;
-		cancel = false;
-		setTimeout(function() {
-			cancel = true;
-			socketLog(cancel);
-		}, 10);
+			$("#new-context-menu").css({
+				"top": e.clientY,
+				"left": e.clientX,
+				"display": "block"
+			});
+			click = true;
+			cancel = false;
+			setTimeout(function() {
+				cancel = true;
+				socketLog(cancel);
+			}, 10);
+		}
 	});
 
-	// $("#room-list").on("touchstart", ".user", function(e) {
-	// 	if(!e.buttons) {
-	// 		document.oncontextmenu = function() {
-	// 			return false;
-	// 		};
-	// 		contextUsername = $(this).data("usernamefull");
-	// 		contextUserdisp = $(this).data("displayname");
-	// 		populateContext(userOpts);
-	// 		console.log("user right clicked", this);
-
-	// 		$("#new-context-menu").css({
-	// 			"top": e.clientY,
-	// 			"left": e.clientX,
-	// 			"display": "block"
-	// 		});
-	// 		click = true;
-	// 		cancel = false;
-	// 		setTimeout(function() {
-	// 			cancel = true;
-	// 		}, 10);
-	// 	}
-	// });
-
-	$("#messages").on("mousedown", ".user", function(e) {
-		e.stopPropagation();
-		////if(e.buttons) {
+	$("#room-list").on("touchstart", ".user", function(e) {
+		if(!e.buttons) {
+			e.stopPropagation();
 			document.oncontextmenu = function() {
 				return false;
 			};
@@ -745,58 +621,109 @@ var socketLog = function() {
 			setTimeout(function() {
 				cancel = true;
 			}, 10);
-		////}
+		}
 	});
 
-	// $("#messages").on("touchstart", ".user", function(e) {
-	// 	document.oncontextmenu = function() {
-	// 		return false;
-	// 	};
-	// 	contextUsername = $(this).data("usernamefull");
-	// 	contextUserdisp = $(this).data("displayname");
-	// 	populateContext(userOpts);
-	// 	console.log("user right clicked", this);
+	$("#messages").on("mousedown", ".user", function(e) {
+		e.stopPropagation();
+		if(e.buttons) {
+			document.oncontextmenu = function() {
+				return false;
+			};
+			contextUsername = $(this).data("usernamefull");
+			contextUserdisp = $(this).data("displayname");
+			populateContext(userOpts);
+			console.log("user right clicked", this);
 
-	// 	$("#new-context-menu").css({
-	// 		"top": e.clientY,
-	// 		"left": e.clientX,
-	// 		"display": "block"
-	// 	});
-	// 	click = true;
-	// 	cancel = false;
-	// 	setTimeout(function() {
-	// 		cancel = true;
-	// 	}, 10);
-	// });
-
-	$("#new-context-menu").on("mousedown", "li", function() {
-		socketLog("pressed menu item");
-		var opt = $(this).data("option");
-		console.log(opt);
-
-		options[opt.toLowerCase()]();
+			$("#new-context-menu").css({
+				"top": e.clientY,
+				"left": e.clientX,
+				"display": "block"
+			});
+			click = true;
+			cancel = false;
+			setTimeout(function() {
+				cancel = true;
+			}, 10);
+		}
 	});
 
-	// $("#new-context-menu").on("touchstart", "li", function() {
-	// 	var opt = $(this).data("option");
-	// 	console.log(opt);
+	$("#messages").on("touchstart", ".user", function(e) {
+		if(!e.buttons) {
+			document.oncontextmenu = function() {
+				return false;
+			};
+			contextUsername = $(this).data("usernamefull");
+			contextUserdisp = $(this).data("displayname");
+			populateContext(userOpts);
+			console.log("user right clicked", this);
 
-	// 	options[opt.toLowerCase()]();
-	// });
-
-	$("#chat-box .tab").on("click", function() {
-		$("#chat-box").toggleClass("open-side");
+			$("#new-context-menu").css({
+				"top": e.clientY,
+				"left": e.clientX,
+				"display": "block"
+			});
+			click = true;
+			cancel = false;
+			setTimeout(function() {
+				cancel = true;
+			}, 10);
+		}
 	});
 
-	// $("#chat-box .tab").on("touchstart", function() {
-	// 	$("#chat-box").toggleClass("open-side");
-	// });
-	$("#chat-box div #tools").on("mouseup", "#timestamp", function() {
-		var checked = $(this).prop("checked");
-		if(checked) {
-			$("#messages").removeClass("show-time");
-		} else {
-			$("#messages").addClass("show-time");
+	$("#new-context-menu").on("mousedown", "li", function(e) {
+		if(e.buttons) {
+			var opt = $(this).data("option");
+			console.log(opt);
+
+			options[opt.toLowerCase()]();
+		}
+	});
+
+	$("#new-context-menu").on("touchstart", "li", function(e) {
+		if(!e.buttons) {
+			var opt = $(this).data("option");
+			console.log(opt);
+
+			options[opt.toLowerCase()]();
+		}
+	});
+
+	$("#chat-box .tab").on("mousedown", function(e) {
+		if(e.buttons) {
+			if(e.buttons === 1) {
+				$("#chat-box").toggleClass("open-side");
+			}
+		}
+	});
+
+	$("#chat-box .tab").on("touchstart", function(e) {
+		if(!e.buttons) {
+			$("#chat-box").toggleClass("open-side");
+		}
+	});
+
+	$("#chat-box div #tools").on("mousedown", "#timestamp", function(e) {
+		if(e.buttons) {
+			if(e.buttons === 1) {
+				var checked = $(this).prop("checked");
+				if(checked) {
+					$("#messages").removeClass("show-time");
+				} else {
+					$("#messages").addClass("show-time");
+				}
+			}
+		}
+	});
+
+	$("#chat-box div #tools").on("touchstart", "#timestamp", function(e) {
+		if(!e.buttons) {
+			var checked = $(this).prop("checked");
+			if(checked) {
+				$("#messages").removeClass("show-time");
+			} else {
+				$("#messages").addClass("show-time");
+			}
 		}
 	});
 

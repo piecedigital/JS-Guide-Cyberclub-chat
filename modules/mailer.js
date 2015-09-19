@@ -34,7 +34,7 @@ module.exports = function(type, email, name, message) {
 				sendMail(data, messageDetails);
 			});
 
-			console.log("gotten");
+			//console.log("gotten");
 		}
 	};
 }

@@ -2329,6 +2329,9 @@ footer {
 
 @media screen and (max-width: 800px) {
   /* prereqs ----------------------------*/
+  *, *:before, *:after {
+    font-size: 15px;
+  }
   .col-4-3-2-1 {
     display: inline-block;
     width: 50%;
@@ -2365,6 +2368,9 @@ footer {
 
 @media screen and (max-width: 480px) {
   /* prereqs ----------------------------*/
+  *, *:before, *:after {
+    font-size: 14px;
+  }
   /* header ----------------------------*/
   /* body ----------------------------*/
   #chat-box > div {

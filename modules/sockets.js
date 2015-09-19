@@ -146,16 +146,15 @@ module.exports = function(io, db) {
 					obj.msg = obj.msg.replace(/[<]/gi, "&lt;")
 						.replace(/[>]/gi, "&gt;");
 
-					////console.log("banned stuff - ", bannedWords, bannedEmotes)
 					// filter out banned words
-					console.log(bannedWords)
+					//console.log(bannedWords)
 					for(var i = 0; i < bannedWords.length; i++) {
 						var banReg = new RegExp(bannedWords[i], "gi")
 						obj.msg = obj.msg.replace(banReg, "*".multiply(bannedWords[i].length));
 					}
 					// filter out banned emotes
 					var rpCode =  "&#58;";
-					console.log(bannedEmotes)
+					//console.log(bannedEmotes)
 					for(var i = 0; i < bannedEmotes.length; i++) {
 						var banReg = new RegExp(bannedEmotes[i], "gi");
 
