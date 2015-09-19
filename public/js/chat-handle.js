@@ -376,7 +376,7 @@ var socketLog = function() {
 		}
 	};
 
-	var click = false, cancel = true, currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
+	var cancel = true, currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
 	var options = {
 		join: function() {
 			socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
@@ -484,7 +484,7 @@ var socketLog = function() {
 		},
 		mouseup: function(e) {
 			if(e.buttons) {
-				click = false;
+			
 				console.log("up");
 				setTimeout(function() {
 					currentRoom = null;
@@ -492,10 +492,10 @@ var socketLog = function() {
 				}, 250);
 			}
 		},
-		touchend:  function() {
+		touchend:  function(e) {
 			if(!e.buttons) {
 				//socketLog("touche end")
-				click = false;
+			
 				console.log("up");
 				setTimeout(function() {
 					currentRoom = null;
@@ -519,11 +519,11 @@ var socketLog = function() {
 					"left": e.clientX,
 					"display": "block"
 				});
-				click = true;
-				cancel = false;
-				setTimeout(function() {
-					cancel = true;
-				}, 10);
+			
+				// cancel = false;
+				// setTimeout(function() {
+				// 	cancel = true;
+				// }, 10);
 			} else {
 				if(currentRoom === $(this).parent().data("roomname")) {
 					console.log("current: ", currentRoom);
@@ -534,12 +534,12 @@ var socketLog = function() {
 						options.leave();
 					}
 					options.join();
-					cancel = true;
+					// cancel = true;
 				} else {
 					$(this).parent().toggleClass("open");
 					currentRoom = $(this).parent().data("roomname");
-					click = true;
-					cancel = true;
+				
+					// cancel = true;
 					setTimeout(function() {
 						currentRoom = null;
 					}, 250);
@@ -560,14 +560,14 @@ var socketLog = function() {
 					options.leave();
 				}
 				options.join();
-				cancel = true;
+				// cancel = true;
 			} else {
 				$(this).parent().toggleClass("open");
 				currentRoom = $(this).parent().data("roomname");
-				cancel = false;
+				// cancel = false;
 				console.log("current: ", currentRoom);
 				setTimeout(function() {
-					cancel = true;
+					// cancel = true;
 					currentRoom = null;
 					console.log("current: ", currentRoom);
 				}, 250);
@@ -576,8 +576,8 @@ var socketLog = function() {
 	});
 
 	$("#room-list").on("mousedown", ".user", function(e) {
+		e.stopPropagation();
 		if(e.buttons) {
-			e.stopPropagation();
 			document.oncontextmenu = function() {
 				return false;
 			};
@@ -591,36 +591,41 @@ var socketLog = function() {
 				"left": e.clientX,
 				"display": "block"
 			});
-			click = true;
-			cancel = false;
-			setTimeout(function() {
-				cancel = true;
-				socketLog(cancel);
-			}, 10);
+
+			// cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// 	socketLog(cancel);
+			// }, 10);
 		}
 	});
 
-	$("#room-list").on("touchstart", ".user", function(e) {
+	$(document).on("touchstart", "#room-list .user", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
 		if(!e.buttons) {
-			e.stopPropagation();
 			document.oncontextmenu = function() {
 				return false;
 			};
 			contextUsername = $(this).data("usernamefull");
 			contextUserdisp = $(this).data("displayname");
 			populateContext(userOpts);
-			console.log("user right clicked", this);
+			var touchX = e.originalEvent.touches[0].pageX;
+			var touchY = e.originalEvent.touches[0].pageY;
+
+			socketLog("coords", touchX, touchY);
+			console.log("coords", touchX, touchY);
 
 			$("#new-context-menu").css({
-				"top": e.clientY,
-				"left": e.clientX,
+				"top": touchY,
+				"left": touchX,
 				"display": "block"
 			});
-			click = true;
-			cancel = false;
-			setTimeout(function() {
-				cancel = true;
-			}, 10);
+
+			//cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// }, 10);
 		}
 	});
 
@@ -640,15 +645,16 @@ var socketLog = function() {
 				"left": e.clientX,
 				"display": "block"
 			});
-			click = true;
-			cancel = false;
-			setTimeout(function() {
-				cancel = true;
-			}, 10);
+
+			// cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// }, 10);
 		}
 	});
 
 	$("#messages").on("touchstart", ".user", function(e) {
+		e.stopPropagation();
 		if(!e.buttons) {
 			document.oncontextmenu = function() {
 				return false;
@@ -663,11 +669,11 @@ var socketLog = function() {
 				"left": e.clientX,
 				"display": "block"
 			});
-			click = true;
-			cancel = false;
-			setTimeout(function() {
-				cancel = true;
-			}, 10);
+
+			//cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// }, 10);
 		}
 	});
 

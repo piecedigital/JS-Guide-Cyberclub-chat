@@ -213,6 +213,10 @@ section {
   display: none !important;
 }
 
+.of-hidden {
+  overflow: hidden;
+}
+
 .invisible {
   visibility: hidden;
 }
@@ -2311,6 +2315,7 @@ footer {
   bottom: 0;
   left: 0;
   width: 100%;
+  font-size: 14px;
 }
 
 /* hover events ----------------------------*/

@@ -244,6 +244,9 @@ module.exports = function(io, db) {
 			.on("disconnect", function() {
 				//console.log("disconnected", socket.id);
 
+				io.to(socket.id).emit("update", {
+					"msg": "You have disconnected from the chat server. If this was an error, please refresh your browser."
+				});
 				User.findOne({ "socket" : socket.id }, function(userQErr, userQDoc) {
 					if(userQErr) throw userQErr;
 
