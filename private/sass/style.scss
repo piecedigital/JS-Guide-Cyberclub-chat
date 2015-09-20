@@ -1049,7 +1049,8 @@ label[for="admin-tab"] {
   	z-index: 1;
   	position: relative;
   	width: 5*$em;
-  	height: 100%;
+  	height: 1.4*$em;
+  	margin: .2*$em .2*$em 0;
   	& iframe {
   		height: 0%;
   	}
@@ -1082,6 +1083,10 @@ label[for="admin-tab"] {
 			overflow-y: hidden;
 			width: 100%;
 			height: 100%;
+			& > div {
+				width: 100%;
+				height: 100%;
+			}
 		}
 	}
 }

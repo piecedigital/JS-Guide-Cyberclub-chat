@@ -22,7 +22,7 @@ function checkMutes(myMutes, user) {
 var generatePM = function(initName, reciName) {
 	var frameName = reciName + "-frame";
 
-	$(".pm-box[data-id='" + frameName + "']").remove();
+	//$(".pm-box[data-id='" + frameName + "']").remove();
 
 	var theCloser = $("<div>").addClass("tool closer").html("&#x2716;"),
 			theMover = $("<div>").addClass("tool mover").html("&#x2630;"),
@@ -41,7 +41,7 @@ var generatePM = function(initName, reciName) {
 			}).html( $("<input>").attr({ "type": "hidden" }) ),
 			theScript = $("<script>").html("$('#" + frameName + "').submit()");
 
-	$("#pm-section > div > div").append(
+	$("#pm-section > div > div > div").append(
 		$("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).html(
 			$("<div>").addClass("parent").attr({
 				"style": "width: 100%; height: 100%; padding: 0 0 1.4em"
@@ -56,14 +56,35 @@ var generatePM = function(initName, reciName) {
 				)
 			)
 		);
+	var width = (5*16) + ((.2*16) * 2);
+	var size = $("#pm-section > div > div > div").find(".pm-box").length;
+	console.log("width", width)
+	console.log("size", size)
+	$("#pm-section > div > div > div").css({ "width" : width * size + "px"})
 };
 
-$(document).on("mousedown", ".pm-box .closer", function() {
-	$(this).parent().parent().parent().remove();
+$(document).on("mousedown", ".pm-box .closer", function(e) {
+	if(e.buttons) {
+		$(this).parent().parent().parent().remove();
+	}
 });
 
-$(document).on("mousedown", ".pm-box .mover", function() {
-	$(this).parent().parent().parent().toggleClass("closed");
+$(document).on("mousedown", ".pm-box .mover", function(e) {
+	if(e.buttons) {
+		$(this).parent().parent().parent().toggleClass("closed");
+	}
+});
+
+$(document).on("touchend", ".pm-box .closer", function(e) {
+	if(!e.buttons) {
+		$(this).parent().parent().parent().remove();
+	}
+});
+
+$(document).on("touchend", ".pm-box .mover", function(e) {
+	if(!e.buttons) {
+		$(this).parent().parent().parent().toggleClass("closed");
+	}
 });
 
 $(document).ready(function() {
@@ -447,8 +468,14 @@ var socketLog = function() {
 				socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
 				generatePM(usernameFull, contextUsername);
 			} else {
-				$("#messages").append($("<li class='plain'>").html("You do not have appropriate authority to send private messages.") );
-				scrollToBottom();
+				var $acc = $("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon");
+				if($acc.hasClass("moderator") || $acc.hasClass("admin")) {
+					socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
+					generatePM(usernameFull, contextUsername);
+				} else {
+					$("#messages").append($("<li class='plain'>").html("You do not have appropriate authority to send private messages.") );
+					scrollToBottom();
+				}
 			}
 			$("#new-context-menu").css({
 				"display": "none"
