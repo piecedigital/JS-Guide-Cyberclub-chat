@@ -29,7 +29,7 @@ module.exports = {
 			return IP;
 		};
 	},
-	getIP2: function() {
+	getIP3: function() {
 		var IP = req.headers['x-forwarded-for'] || 
 			     req.connection.remoteAddress || 
 			     req.socket.remoteAddress ||
