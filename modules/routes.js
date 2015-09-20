@@ -699,6 +699,7 @@ sass.render({
 			.get('/test/', function(req, res) {
 				//res.status(200).send("http://" + req.headers.host + "/img.png")
 				console.log("PIXEL TRACKER WORKED!")
+			})
 			.get("*", function(req, res, next) {
 				res.status(404).send("Error 404: page not found");
 			})
