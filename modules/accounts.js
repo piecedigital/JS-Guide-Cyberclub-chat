@@ -96,7 +96,11 @@ module.exports = function(db) {
       if(email && username && password && passwordConf) {
         //checks for valid password
         if(email.match(/([a-z0-9])*([.][a-z0-9]*)?([@][a-z0-9]*[.][a-z]{1,3})([.][a-z]{1,2})?/i)) {
-          if(!username.match(/[\/\\ \-\9\0\[\]\\[\]\s`~!@#$%^&*=+\?<>,.]/gi)) {
+          var underscoreMatch = username.match(/_/gi) || [];
+          if(username.match(/^[a-z_]*$/gi)
+            && underscoreMatch.length <= 2
+            && username.length >= 4
+            && username.length <= 20) {
             if(password === passwordConf) {
               User.findOne({ "username" : username }, function(userQErr, userQDoc) {
                 if(userQErr) throw userQErr;
@@ -163,11 +167,19 @@ module.exports = function(db) {
               res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords to not match", "sign-checked" : "checked", "log-checked" : "" });
             }
           } else {
-            var illMatch = username.match(/[\/\\ \-\9\0\[\]\\[\]\s`~!@#$%^&*=+\?<>,.]/gi),
-                illLength = illMatch.length,
-                S = (illLength > 1) ? "s" : "";
+            var charMatchMsg = (!username.match(/^[a-z_]*$/gi)) ? "username contains illegal characters" : (underscoreMatch.length > 2) ? "username contains too many underscores" : null;
+            var lengthMsg = (username.length < 4) ? "username is too short" : (username.length > 20) ? "username is too long" : null;
+            var errsMsg = [charMatchMsg, lengthMsg].filter(function(elem, ind) {
+              if(elem) {
+                return elem;
+              }
+            });
+            if(errsMsg.length > 1) {
+              errsMsg[errsMsg.length-1] = "and " + errsMsg[errsMsg.length-1];
+            }
+            errsMsg.join(", ");
             //error message to the user if their username contains illegal characters
-            res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username contains " + illLength + " illegal character" + S + ": " + illMatch, "sign-checked" : "checked", "log-checked" : "" });
+            res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username Errors: " + errsMsg + ". Username must be between 4-20 characters, and contain only letters and underscores (max 2)", "sign-checked" : "checked", "log-checked" : "" });
           }
         } else {
           //error message to the user if the email isn't valid

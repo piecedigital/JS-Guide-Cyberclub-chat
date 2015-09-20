@@ -41,15 +41,17 @@ sass.render({
 
 		// clears the users in rooms on server start
 		Room.update({}, { "$set" : { "users" : [] } }, { "multi" : true });
-		
+
 		//////////////////////
 		//// GET requests ////
 		//////////////////////
 		app
 			.get('/', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
-				
+				var IP = getIP.getIP();
+
+				console.log("req ip", IP)
+
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
@@ -85,7 +87,7 @@ sass.render({
 			})
 			.get("/login", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP();
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -126,7 +128,7 @@ sass.render({
 			})
 			.get("/signup", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP();
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -169,7 +171,7 @@ sass.render({
 			})
 			.get("/admin-signup", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP();
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -232,7 +234,7 @@ sass.render({
 			})
 			.get('/chat', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP();
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -364,7 +366,7 @@ sass.render({
 			})
 			.get('/admin-chat', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP();
 
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -671,7 +673,7 @@ sass.render({
 			.get("*", function(req, res, next) {
 				res.status(404).send("Error 404: page not found");
 
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP();
 				////console.log(IP, typeof IP);
 				var session = req.cookies["sessId"] || "";
 				
@@ -684,7 +686,7 @@ sass.render({
 		            if(err2) throw err2;
 
 		            if(userQDoc) {
-		            	User.update({ "username" : userQDoc.username }, { "$set" : { "currentIp" : IP } });
+		            	User.update({ "username" : userQDoc.username }, { "$set" : { "currentIp" : IP || "0.0.0.0" } });
 
 		            } else {
 		            	//console.log("user not present. no file write");

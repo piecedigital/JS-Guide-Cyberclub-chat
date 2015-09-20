@@ -83,7 +83,7 @@ $(document).ready(function() {
 					//console.log("applying user: ", users[user])
 					users[user].displayName = users[user].displayName || users[user].usernameFull;
 
-					$("#room-list").find(".room[data-roomname='" + roomName + "'] ul").append("<li class='user parent' data-usernameFull='" + users[user].usernameFull + "' data-username='" + (users[user].usernameFull.toLowerCase()) + "' data-displayname='" + users[user].displayName + "'><span class='icon " + users[user].accessLevel + "'></span><span class='name'>" + users[user].displayName + "</span></li>");
+					$("#room-list").find(".room[data-roomname='" + roomName + "'] ul").append("<li class='user parent' data-usernameFull='" + users[user].usernameFull + "' data-username='" + (users[user].usernameFull.toLowerCase()) + "' data-displayname='" + users[user].displayName + "'><span class='icon " + users[user].accessLevel + "'></span><span class='username'>" + users[user].displayName + "</span></li>");
 				}
 			}
 		},
@@ -207,7 +207,7 @@ var socketLog = function() {
 	});
 	socket.on("new entry", function(data){
 		$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").remove();
-		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='name'>" + data.usernameFull + "</span></li>");
+		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
 		if(data.usernameFull === usernameFull) {
 			displayName = data.usernameFull;
 		}
@@ -215,7 +215,7 @@ var socketLog = function() {
 		scrollToBottom();
 	});
 	socket.on("update display name", function(data){
-		$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").attr("data-displayname", data.displayName).find(".name").text(data.displayName);
+		$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").attr("data-displayname", data.displayName).find(".username").text(data.displayName);
 		if(data.usernameFull === usernameFull) {
 			displayName = data.displayName;
 		}
