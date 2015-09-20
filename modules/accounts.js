@@ -97,7 +97,7 @@ module.exports = function(db) {
         //checks for valid password
         if(email.match(/([a-z0-9])*([.][a-z0-9]*)?([@][a-z0-9]*[.][a-z]{1,3})([.][a-z]{1,2})?/i)) {
           var underscoreMatch = username.match(/_/gi) || [];
-          if(username.match(/^[a-z_]*$/gi)
+          if(username.match(/^[a-z0-9_]*$/gi)
             && underscoreMatch.length <= 2
             && username.length >= 4
             && username.length <= 20) {
@@ -167,7 +167,7 @@ module.exports = function(db) {
               res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords to not match", "sign-checked" : "checked", "log-checked" : "" });
             }
           } else {
-            var charMatchMsg = (!username.match(/^[a-z_]*$/gi)) ? "username contains illegal characters" : (underscoreMatch.length > 2) ? "username contains too many underscores" : null;
+            var charMatchMsg = (!username.match(/^[a-z0-9_]*$/gi)) ? "username contains illegal characters" : (underscoreMatch.length > 2) ? "username contains too many underscores" : null;
             var lengthMsg = (username.length < 4) ? "username is too short" : (username.length > 20) ? "username is too long" : null;
             var errsMsg = [charMatchMsg, lengthMsg].filter(function(elem, ind) {
               if(elem) {
