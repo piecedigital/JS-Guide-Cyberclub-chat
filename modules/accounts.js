@@ -348,7 +348,7 @@ module.exports = function(db) {
                       "usernameFull": usernameFull,
                       "newName": newUsername
                     },
-                    userQDoc.currentIp],
+                    userQDoc.currentIp || "0.0.0.0"],
                     "op": [ban, "$push"]
                   });
                 } else {
