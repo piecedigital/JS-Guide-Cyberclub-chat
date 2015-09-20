@@ -28,5 +28,13 @@ module.exports = {
 			});
 			return IP;
 		};
+	},
+	getIP2: function() {
+		var IP = req.headers['x-forwarded-for'] || 
+			     req.connection.remoteAddress || 
+			     req.socket.remoteAddress ||
+			     req.connection.socket.remoteAddress ||
+			     "0.0.0.0";
+		return IP;
 	}
 }

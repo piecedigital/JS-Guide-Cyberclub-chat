@@ -48,7 +48,7 @@ sass.render({
 		app
 			.get('/', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP();
+				var IP = getIP.getIP3();
 
 				console.log("req ip", IP)
 
@@ -87,7 +87,7 @@ sass.render({
 			})
 			.get("/login", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP();
+				var IP = getIP.getIP3();
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -128,7 +128,7 @@ sass.render({
 			})
 			.get("/signup", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP();
+				var IP = getIP.getIP3();
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -171,7 +171,7 @@ sass.render({
 			})
 			.get("/admin-signup", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP();
+				var IP = getIP.getIP3();
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -234,7 +234,7 @@ sass.render({
 			})
 			.get('/chat', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP();
+				var IP = getIP.getIP3();
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -366,7 +366,7 @@ sass.render({
 			})
 			.get('/admin-chat', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP();
+				var IP = getIP.getIP3();
 
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -673,7 +673,7 @@ sass.render({
 			.get("*", function(req, res, next) {
 				res.status(404).send("Error 404: page not found");
 
-				var IP = getIP.getIP();
+				var IP = getIP.getIP3();
 				////console.log(IP, typeof IP);
 				var session = req.cookies["sessId"] || "";
 				
