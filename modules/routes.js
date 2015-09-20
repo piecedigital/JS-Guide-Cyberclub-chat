@@ -29,9 +29,7 @@ sass.render({
 });
 
 // mongodb config
-var Server = MongoClient.Server,
-Db = MongoClient.Db,
-db = MongoClient.connect(priVar.mongolabURL
+ MongoClient.connect(priVar.mongolabURL
   , function(err, db) {
   	if(err) throw err;
 
@@ -43,7 +41,10 @@ db = MongoClient.connect(priVar.mongolabURL
 
 		// clears the users in rooms on server start
 		Room.update({}, { "$set" : { "users" : [] } }, { "multi" : true });
-		// GET requests
+		
+		//////////////////////
+		//// GET requests ////
+		//////////////////////
 		app
 			.get('/', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
@@ -668,7 +669,7 @@ db = MongoClient.connect(priVar.mongolabURL
 				//res.status(200).send("http://" + req.headers.host + "/img.png")
 			})
 			.get("*", function(req, res, next) {
-				res.send("Error 404: page not found");
+				res.status(404).send("Error 404: page not found");
 
 				var IP = getIP.getIP2();
 				////console.log(IP, typeof IP);
@@ -696,16 +697,32 @@ db = MongoClient.connect(priVar.mongolabURL
 				} else {
 					//console.log("session cookie not present. no file write");
 				}
-			});
+			})
+			;
 
-		// POST requests
+		///////////////////////
+		//// POST requests ////
+		///////////////////////
 		app
-		  //POST request for user signup
 			.post("/signup", account(db).signup)
-			//POST request for user logins
 			.post("/login", account(db).login)
-			//POST requests for admin panel
 			.post("/adjust-user", account(db).updateUser)
+			.post("/populate-users", function(req, res, next) {
+				Room.find({}, { "_id" : 0, "roomname" : 1, "users" : 1 }).toArray(function(roomQErr, roomQDoc) {
+      		if(roomQErr) throw roomQErr;
+
+      		if(roomQDoc) {
+      			console.log(roomQDoc);
+
+      			res.status(200).send({
+      				"msg": "success",
+      				"data": roomQDoc
+      			})
+      		} else {
+      			res.status(417).send("Error");
+      		}
+      	});
+			})
 			.post("/update-rooms", function(req, res, next) {
 				//console.log("update rooms function")
 				//console.log(req.body);
@@ -942,5 +959,6 @@ db = MongoClient.connect(priVar.mongolabURL
 				console.log(req.headers);
 			})
 			;
+
 });
 module.exports = app;

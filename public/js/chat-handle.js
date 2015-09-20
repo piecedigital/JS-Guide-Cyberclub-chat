@@ -66,6 +66,37 @@ $(document).on("mousedown", ".pm-box .mover", function() {
 	$(this).parent().parent().parent().toggleClass("closed");
 });
 
+$(document).ready(function() {
+	$.ajax({
+		url: "/populate-users",
+		type: "POST",
+		dataType: "json",
+		success: function(data) {
+			console.log(data);
+
+			for(var obj in data.data) {
+				console.log(obj)
+				var roomName = data.data[obj].roomname;
+				var users = data.data[obj].users;
+				console.log("working on: ", roomName, users);
+				for(var user in users) {
+					//console.log("applying user: ", users[user])
+					users[user].displayName = users[user].displayName || users[user].usernameFull;
+
+					$("#room-list").find(".room[data-roomname='" + roomName + "'] ul").append("<li class='user parent' data-usernameFull='" + users[user].usernameFull + "' data-username='" + (users[user].usernameFull.toLowerCase()) + "' data-displayname='" + users[user].displayName + "'><span class='icon " + users[user].accessLevel + "'></span><span class='name'>" + users[user].displayName + "</span></li>");
+				}
+			}
+		},
+		error: function(err1, err2, err3) {
+			alert("There was an error populate user data. Please refresh or alert the admin.")
+			console.log(err1);
+			console.log(err1.status);
+			console.log(err2);
+			console.log(err3.message);
+		}
+	})
+});
+
 ~(function () {
 	var socket = io(),
 	usernameFull = $("#user-data").data("usernamefull"),
@@ -176,8 +207,18 @@ var socketLog = function() {
 	});
 	socket.on("new entry", function(data){
 		$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").remove();
-		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.displayName + "'><span class='icon " + data.accessLevel + "'></span>" + data.displayName + "</li>");
-		console.log(data, room);
+		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='name'>" + data.usernameFull + "</span></li>");
+		if(data.usernameFull === usernameFull) {
+			displayName = data.usernameFull;
+		}
+		console.log(data);
+		scrollToBottom();
+	});
+	socket.on("update display name", function(data){
+		$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").attr("data-displayname", data.displayName).find(".name").text(data.displayName);
+		if(data.usernameFull === usernameFull) {
+			displayName = data.displayName;
+		}
 		scrollToBottom();
 	});
 	socket.on("generate pm", function(data) {
@@ -394,8 +435,8 @@ var socketLog = function() {
 		},
 		mention: function() {
 			var val = $("#chat-val").val();
-			$("#chat-val").val( val + "@" + contextUsername + " ");
-			contextUsername = null;
+			$("#chat-val").val( val + "@" + contextUserdisp + " ");
+			contextUserdisp = null;
 			$("#new-context-menu").css({
 				"display": "none"
 			}).html("");
@@ -506,12 +547,13 @@ var socketLog = function() {
 	});
 
 	$("#room-list").on("mousedown", ".room .name", function(e) {
+		e.stopPropagation();
 		if(e.buttons) {
 			if(e.buttons === 2) {
 				document.oncontextmenu = function() {
 					return false;
 				};
-				contextRoomname = $(this).parent().data("roomname");
+				contextRoomname = $(this).parent().attr("data-roomname");
 				populateContext(roomOpts);
 				
 				$("#new-context-menu").css({
@@ -525,11 +567,11 @@ var socketLog = function() {
 				// 	cancel = true;
 				// }, 10);
 			} else {
-				if(currentRoom === $(this).parent().data("roomname")) {
+				if(currentRoom === $(this).parent().attr("data-roomname")) {
 					console.log("current: ", currentRoom);
 					currentRoom = null;
 					
-					contextRoomname = $(this).parent().data("roomname");
+					contextRoomname = $(this).parent().attr("data-roomname");
 					if(room !== "door") {
 						options.leave();
 					}
@@ -537,7 +579,7 @@ var socketLog = function() {
 					// cancel = true;
 				} else {
 					$(this).parent().toggleClass("open");
-					currentRoom = $(this).parent().data("roomname");
+					currentRoom = $(this).parent().attr("data-roomname");
 				
 					// cancel = true;
 					setTimeout(function() {
@@ -551,11 +593,11 @@ var socketLog = function() {
 	
 	$("#room-list").on("touchstart", ".room .name", function(e) {
 		if(!e.buttons) {
-			if(currentRoom === $(this).parent().data("roomname")) {
+			if(currentRoom === $(this).parent().attr("data-roomname")) {
 				console.log("current: ", currentRoom);
 				currentRoom = null;
 				
-				contextRoomname = $(this).parent().data("roomname");
+				contextRoomname = $(this).parent().attr("data-roomname");
 				if(room !== "door") {
 					options.leave();
 				}
@@ -563,7 +605,7 @@ var socketLog = function() {
 				// cancel = true;
 			} else {
 				$(this).parent().toggleClass("open");
-				currentRoom = $(this).parent().data("roomname");
+				currentRoom = $(this).parent().attr("data-roomname");
 				// cancel = false;
 				console.log("current: ", currentRoom);
 				setTimeout(function() {
@@ -581,8 +623,8 @@ var socketLog = function() {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			contextUsername = $(this).data("usernamefull");
-			contextUserdisp = $(this).data("displayname");
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
 			populateContext(userOpts);
 			console.log("user right clicked", this);
 
@@ -607,8 +649,8 @@ var socketLog = function() {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			contextUsername = $(this).data("usernamefull");
-			contextUserdisp = $(this).data("displayname");
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
 			populateContext(userOpts);
 			var touchX = e.originalEvent.touches[0].pageX;
 			var touchY = e.originalEvent.touches[0].pageY;
@@ -635,8 +677,8 @@ var socketLog = function() {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			contextUsername = $(this).data("usernamefull");
-			contextUserdisp = $(this).data("displayname");
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
 			populateContext(userOpts);
 			console.log("user right clicked", this);
 
@@ -659,8 +701,8 @@ var socketLog = function() {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			contextUsername = $(this).data("usernamefull");
-			contextUserdisp = $(this).data("displayname");
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
 			populateContext(userOpts);
 			console.log("user right clicked", this);
 
@@ -679,7 +721,7 @@ var socketLog = function() {
 
 	$("#new-context-menu").on("mousedown", "li", function(e) {
 		if(e.buttons) {
-			var opt = $(this).data("option");
+			var opt = $(this).attr("data-option");
 			console.log(opt);
 
 			options[opt.toLowerCase()]();
@@ -688,7 +730,7 @@ var socketLog = function() {
 
 	$("#new-context-menu").on("touchstart", "li", function(e) {
 		if(!e.buttons) {
-			var opt = $(this).data("option");
+			var opt = $(this).attr("data-option");
 			console.log(opt);
 
 			options[opt.toLowerCase()]();

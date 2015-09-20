@@ -164,18 +164,35 @@ module.exports = function(io, db) {
 					}
 
 					// check if command or regular message
-					if(obj.msg.match(/^(\/me)/gi)) {
-						obj.msg = obj.msg.replace(/^(\/me)(\s)?/gi, "");
+					if(obj.msg.match(/^\/me\s/gi)) {
+						obj.msg = obj.msg.replace(/^\/me\s/i, "");
 
 						io.in(obj.room).emit("chat me response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					} else
-					if(obj.msg.match(/^(\/topic)/gi)) {
+					if(obj.msg.match(/^\/topic\s/i)) {
 						Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
 							if(roomQErr) throw roomQErr;
 
 							if(roomQDoc) {
-								obj.msg = obj.msg.replace(/^(\/topic)(\s)?/gi, "");
+								obj.msg = obj.msg.replace(/^\/topic\s/gi, "");
 								io.in(obj.room).emit("update", { "msg" : "The topic for " + roomQDoc.roomname + " is <span class='bold'>" + roomQDoc.topic + "</span>" });
+							}
+						});
+
+					} else
+					if(obj.msg.match(/^\/changeDisplayName\s/i)
+						||
+						obj.msg.match(/^\/CDN\s/i)) {
+						obj.msg = obj.msg
+							.replace(/^\/CDN\s/i, "")
+							.replace(/^\/changeDisplayName\s/i, "");
+
+						Room.update({ 'roomname' : obj.room, 'users.usernameFull' : obj.usernameFull }, { '$set' : { 'users.$.displayName' : obj.msg } }, function(roomQErr, roomQDoc) {
+							if(roomQErr) throw roomQErr;
+
+							if(roomQDoc) {
+								obj.msg = obj.msg.replace(/^(\/topic)(\s)?/gi, '');
+								io.emit('update display name', { 'displayName' : obj.msg.substr(0, 20), 'usernameFull' : obj.usernameFull });
 							}
 						});
 
