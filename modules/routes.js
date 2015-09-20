@@ -46,11 +46,40 @@ sass.render({
 		//// GET requests ////
 		//////////////////////
 		app
+			.get(/\/.*/, function(req, res, next) {
+				var IP = getIP.getIP3(req);
+				console.log("req ip", IP);
+
+				////console.log(IP, typeof IP);
+				var session = req.cookies["sessId"] || "";
+				
+				if(session) {
+		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
+		        if(sessQErr) throw sessQErr;
+
+		        if(sessQDoc) {
+							User.findOne({ "username" : sessQDoc.user }, function(err2, userQDoc) {
+		            if(err2) throw err2;
+
+		            if(userQDoc) {
+		            	User.update({ "username" : userQDoc.username }, { "$set" : { "currentIp" : IP || "0.0.0.0" } });
+
+		            } else {
+		            	//console.log("user not present. no file write");
+		            }
+		          });
+		        } else {
+		        	//console.log("sessiion not present. no file write");
+		        }
+		      });
+				} else {
+					//console.log("session cookie not present. no file write");
+				}
+				next();
+			})
 			.get('/', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
 				var IP = getIP.getIP3(req);
-
-				console.log("req ip", IP)
 
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -667,38 +696,11 @@ sass.render({
 
 				res.status(404).send("Your " + type + " has been banned. Contact the administrator directly to resolve this issue.");
 			})
-			.get('/test/:img', function(req, res) {
+			.get('/test/', function(req, res) {
 				//res.status(200).send("http://" + req.headers.host + "/img.png")
 			})
 			.get("*", function(req, res, next) {
 				res.status(404).send("Error 404: page not found");
-
-				var IP = getIP.getIP3(req);
-				////console.log(IP, typeof IP);
-				var session = req.cookies["sessId"] || "";
-				
-				if(session) {
-		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
-		        if(sessQErr) throw sessQErr;
-
-		        if(sessQDoc) {
-							User.findOne({ "username" : sessQDoc.user }, function(err2, userQDoc) {
-		            if(err2) throw err2;
-
-		            if(userQDoc) {
-		            	User.update({ "username" : userQDoc.username }, { "$set" : { "currentIp" : IP || "0.0.0.0" } });
-
-		            } else {
-		            	//console.log("user not present. no file write");
-		            }
-		          });
-		        } else {
-		        	//console.log("sessiion not present. no file write");
-		        }
-		      });
-				} else {
-					//console.log("session cookie not present. no file write");
-				}
 			})
 			;
 

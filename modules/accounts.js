@@ -70,7 +70,7 @@ module.exports = function(db) {
       if(insertedDoc) {
         //console.log("account created \n\r");
         console.log(host);
-        mailer("Confirm admin profile", email, usernameFull, "<img width=1 height=1 src='http://" + host + "/test/img.png'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://" + host + "/validate?key=" + validationId + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://" + host + "/cancel?key=" + validationId).mailPost();
+        mailer("Confirm admin profile", email, usernameFull, "<img width=1 height=1 src='http://" + host + "/test'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://" + host + "/validate?key=" + validationId + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://" + host + "/cancel?key=" + validationId).mailPost();
 
         res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked" });
       }
