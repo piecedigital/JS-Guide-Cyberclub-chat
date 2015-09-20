@@ -169,12 +169,12 @@ module.exports = function(io, db) {
 
 						io.in(obj.room).emit("chat me response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					} else
-					if(obj.msg.match(/^\/topic\s/i)) {
+					if(obj.msg.match(/^\/topic$/i)) {
 						Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
 							if(roomQErr) throw roomQErr;
 
 							if(roomQDoc) {
-								obj.msg = obj.msg.replace(/^\/topic\s/gi, "");
+								obj.msg = obj.msg.replace(/^\/topic$/gi, "");
 								io.in(obj.room).emit("update", { "msg" : "The topic for " + roomQDoc.roomname + " is <span class='bold'>" + roomQDoc.topic + "</span>" });
 							}
 						});
