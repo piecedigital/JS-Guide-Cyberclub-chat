@@ -34,7 +34,7 @@ module.exports = {
 			     req.connection.remoteAddress || 
 			     req.socket.remoteAddress ||
 			     req.connection.socket.remoteAddress ||
-			     "0.0.0.0";
+			     null;
 		return IP;
 	}
 }
