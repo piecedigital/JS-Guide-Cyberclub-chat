@@ -43,6 +43,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.disable("x-powered-by");
 app.use(helmet());
+app.use(helmet.hidePoweredBy());
+app.use(helmet.frameguard("allow-from", "http://*.*"));
 app.use(helmet.contentSecurityPolicy({
   defaultSrc: ["'self'"],
   scriptSrc: ["'self'", "'unsafe-inline'","*.jsdelivr.net", "'unsafe-eval'"],
@@ -52,7 +54,7 @@ app.use(helmet.contentSecurityPolicy({
   fontSrc: ["fonts.google.com"],
   objectSrc: ["*"],
   mediaSrc: ["'self'", "youtube.com", "twitch.tv"],
-  frameSrc: ["*"],
+  frameSrc: ["*", "*.codepen.io/*"],
   sandbox: ["allow-forms", "allow-scripts", "allow-same-origin"],
   reportUri: '/report-violation',
   reportOnly: false, // set to true if you only want to report errors 

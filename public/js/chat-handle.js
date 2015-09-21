@@ -56,7 +56,7 @@ var generatePM = function(initName, reciName) {
 				)
 			)
 		);
-	var width = (5*16) + ((.2*16) * 2);
+	var width = (5*16) + ((.2*16) * 1);
 	var size = $("#pm-section > div > div > div").find(".pm-box").length;
 	console.log("width", width)
 	console.log("size", size)
