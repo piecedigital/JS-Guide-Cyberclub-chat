@@ -53,7 +53,7 @@ app.use(helmet.contentSecurityPolicy({
   connectSrc: ["*"],
   fontSrc: ["fonts.google.com"],
   objectSrc: ["*"],
-  mediaSrc: ["'self'", "youtube.com", "twitch.tv"],
+  mediaSrc: ["'self'"],
   frameSrc: ["*"],
   sandbox: ["allow-forms", "allow-scripts", "allow-same-origin"],
   reportUri: '/report-violation',
