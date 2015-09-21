@@ -54,7 +54,7 @@ app.use(helmet.contentSecurityPolicy({
   fontSrc: ["fonts.google.com"],
   objectSrc: ["*"],
   mediaSrc: ["'self'", "youtube.com", "twitch.tv"],
-  frameSrc: ["*", "*.codepen.io/*"],
+  frameSrc: ["*"],
   sandbox: ["allow-forms", "allow-scripts", "allow-same-origin"],
   reportUri: '/report-violation',
   reportOnly: false, // set to true if you only want to report errors 
