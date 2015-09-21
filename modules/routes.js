@@ -118,7 +118,7 @@ sass.render({
 				var session = req.cookies["sessId"] || "";
 				var IP = getIP.getIP3(req);
 				
-				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
+				Chat.findOne({ 'optionName' : 'bannedAddrs', 'list' : { '$in' : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
 					if(!chatQDoc) {
@@ -136,7 +136,7 @@ sass.render({
 												
 												res.redirect(dest);
 											} else {
-												res.redirect("/banned/account")
+												res.redirect('/banned/account/' + userQDoc.usernameFull)
 											}
 										} else {
 											res.redirect("/signup");
@@ -151,7 +151,7 @@ sass.render({
 							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
 						}
 					} else {
-						res.redirect("/banned/ip");
+						res.redirect('/banned/ip');
 					}
 				});
 			})
@@ -178,11 +178,11 @@ sass.render({
 
 						  					res.redirect(dest);
 				            	} else {
-				            		res.redirect("/banned/account")
+				            		res.redirect('/banned/account/' + userQDoc.usernameFull)
 				            	}
 				            } else {
 				            	res.clearCookie("sessId");
-				        			res.redirect("/signup");
+				        			res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
 				            }
 				          });
 				        } else {
@@ -221,7 +221,7 @@ sass.render({
 
 						  					res.redirect(dest);
 				            	} else {
-				            		res.redirect("/banned/account")
+				            		res.redirect('/banned/account/' + userQDoc.usernameFull)
 				            	}
 				            } else {
 				            	res.clearCookie("sessId");
@@ -374,7 +374,7 @@ sass.render({
 					            	});
 				            	} else {
 				            		res.clearCookie("sessId");
-				        				res.redirect("/banned/account");
+				        				res.redirect('/banned/account/' + userQDoc.usernameFull);
 				            	}
 				            } else {
 				        			res.redirect("/signup");
@@ -606,7 +606,7 @@ sass.render({
 												*/
 											} else {
 												res.clearCookie("sessId");
-				        				res.redirect("/banned/account");
+				        				res.redirect('/banned/account/' + userQDoc.usernameFull);
 											}
 				            } else {
 				        			res.clearCookie("sessId");
@@ -691,17 +691,48 @@ sass.render({
 					res.redirect("/login");
 				}
 			})
-			.get('/banned/:type', function(req, res, next) {
-				var type = req.params.type.toUpperCase();
+			.get('/banned/account/:user', function(req, res, next) {
+				var username = req.params.user;
 
-				res.status(404).send("Your " + type + " has been banned. Contact the administrator directly to resolve this issue.");
+				User.findOne({ 'usernameFull' : username }, function(userQErr, userQDoc) {
+					if(userQErr) throw userQErr;
+
+					if(userQDoc) {
+						if(userQDoc.banned) {
+							res.clearCookie("sessId");
+							res.status(200).send('Your account ' + username + ' has been banned.<br><br>Reason: ' + userQDoc.banned + '.<br><br>Contact the administrator directly to resolve this issue.<br><br><a href="/">return Home</a>');
+						} else {
+							res.redirect('/');
+						}
+					} else {
+						res.clearCookie("sessId");
+						res.redirect('/');
+					}
+				})
+
 			})
-			.get('/test/', function(req, res) {
-				//res.status(200).send("http://" + req.headers.host + "/img.png")
-				console.log("PIXEL TRACKER WORKED!")
+			.get('/banned/ip', function(req, res, next) {
+				var IP = getIP.getIP3(req);
+
+				Chat.findOne({ 'optionName' : 'bannedAddrs', 'list' : { '$elemMatch' : { 'ip' : IP } } }, { 'list' : { '$elemMatch' : { 'ip' : IP } } }, function(chatQErr, chatQDoc) {
+					if(chatQErr) throw chatQErr;
+
+					if(!chatQDoc) {
+						var ipData = userQDoc.list[0];
+
+						res.clearCookie("sessId");
+						res.status(200).send('Your IP has been banned.<br><br>Reason: ' + ipData.reason + '<br><br>This type of ban is due to a very serious offense.<br><br>Contact the administrator directly to resolve this issue.<br><br><a href="/">return Home</a>');
+					} else {
+						res.redirect("/banned/ip");
+					}
+				});
 			})
-			.get("*", function(req, res, next) {
-				res.status(404).send("Error 404: page not found");
+			.get('/tracker', function(req, res) {
+				res.status(200).send('pixel tracker');
+				console.log('PIXEL TRACKER WORKED!')
+			})
+			.get('*', function(req, res, next) {
+				res.status(404).send('Error 404: page not found<br><br><a href="/">return Home</a>');
 			})
 			;
 
@@ -850,7 +881,8 @@ sass.render({
 				//console.log(req.body);
 
 				var ip = req.body.ip || [],
-						op = req.body.op || "$push";
+						op = req.body.op || "$push",
+						reason = req.body.reason || "The activty from this connection exhibited an inordinate degree of offenses.";
 
 				//console.log(ip, typeof ip);
 				if(typeof ip === "object") {
@@ -870,7 +902,7 @@ sass.render({
 				if(ip) {
 					var updateObj = {
 					};
-					updateObj[op] = { "list" : ip } 
+					updateObj[op] = { "list" : { "ip" : ip, "reason" : reason } } 
 
 
 					Chat.update({ "optionName" : "bannedAddrs" }, updateObj, { "upsert" : true }, function(chatQErr, chatQDoc) {

@@ -295,7 +295,7 @@ var socketLog = function() {
 				if(data.op === "remove") {
 					$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").remove();
 					if(usernameFull === data.usernameFull) {
-						window.location.href = "/banned/account";
+						window.location.href = "/banned/account/" + usernameFull;
 					}
 				};
 				if(data.op === "update") {
