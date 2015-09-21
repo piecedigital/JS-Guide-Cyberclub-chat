@@ -718,7 +718,7 @@ sass.render({
 					if(chatQErr) throw chatQErr;
 
 					if(chatQDoc) {
-						var ipData = userQDoc.list[0];
+						var ipData = chatQDoc.list[0];
 
 						res.clearCookie("sessId");
 						res.status(200).send('Your IP has been banned.<br><br>Reason: ' + ipData.reason + '<br><br>This type of ban is due to a very serious offense.<br><br>Contact the administrator directly to resolve this issue.<br><br><a href="/">return Home</a>');
