@@ -164,7 +164,7 @@ module.exports = function(db) {
                 }
               });
             } else {
-              res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords to not match", "sign-checked" : "checked", "log-checked" : "" });
+              res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords do not match", "sign-checked" : "checked", "log-checked" : "" });
             }
           } else {
             var charMatchMsg = (!username.match(/^[a-z0-9_]*$/gi)) ? "username contains illegal characters" : (underscoreMatch.length > 2) ? "username contains too many underscores" : null;
