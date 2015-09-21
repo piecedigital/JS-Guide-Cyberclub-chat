@@ -159,7 +159,7 @@ sass.render({
 				var session = req.cookies["sessId"] || "";
 				var IP = getIP.getIP3(req);
 				
-				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
+				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$elemMatch" : { "ip" : IP } } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
 					if(!chatQDoc) {
@@ -202,7 +202,7 @@ sass.render({
 				var session = req.cookies["sessId"] || "";
 				var IP = getIP.getIP3(req);
 				
-				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
+				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$elemMatch" : { "ip" : IP } } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
 					if(!chatQDoc) {
@@ -241,31 +241,11 @@ sass.render({
 					}
 				});
 			})
-			.get("/logout", function(req, res, next) {
-				var session = req.cookies["sessId"] || "";
-
-				if(session) {
-					Sess.findOne({ "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
-						if(sessQErr) throw sessQErr;
-
-						if(sessQDoc) {
-							Sess.remove({ "_id" : new ObjectId(session) });
-							res.clearCookie("sessId");
-							res.redirect("/");
-						} else {
-							res.clearCookie("sessId");
-							res.redirect("/");
-						}
-					});
-				} else {
-					res.redirect("/");
-				}
-			})
 			.get('/chat', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
 				var IP = getIP.getIP3(req);
 				
-				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
+				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$elemMatch" : { "ip" : IP } } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
 					if(!chatQDoc) {
@@ -397,7 +377,7 @@ sass.render({
 				var session = req.cookies["sessId"] || "";
 				var IP = getIP.getIP3(req);
 
-				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
+				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$elemMatch" : { "ip" : IP } } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
 					if(!chatQDoc) {
@@ -709,7 +689,6 @@ sass.render({
 						res.redirect('/');
 					}
 				})
-
 			})
 			.get('/banned/ip', function(req, res, next) {
 				var IP = getIP.getIP3(req);
@@ -717,13 +696,13 @@ sass.render({
 				Chat.findOne({ 'optionName' : 'bannedAddrs', 'list' : { '$elemMatch' : { 'ip' : IP } } }, { 'list' : { '$elemMatch' : { 'ip' : IP } } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
-					if(!chatQDoc) {
-						var ipData = userQDoc.list[0];
+					if(chatQDoc) {
+						var ipData = chatQDoc.list[0];
 
 						res.clearCookie("sessId");
 						res.status(200).send('Your IP has been banned.<br><br>Reason: ' + ipData.reason + '<br><br>This type of ban is due to a very serious offense.<br><br>Contact the administrator directly to resolve this issue.<br><br><a href="/">return Home</a>');
 					} else {
-						res.redirect("/banned/ip");
+						res.redirect("/");
 					}
 				});
 			})
