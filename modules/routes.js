@@ -717,7 +717,7 @@ sass.render({
 				Chat.findOne({ 'optionName' : 'bannedAddrs', 'list' : { '$elemMatch' : { 'ip' : IP } } }, { 'list' : { '$elemMatch' : { 'ip' : IP } } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
-					if(!chatQDoc) {
+					if(chatQDoc) {
 						var ipData = userQDoc.list[0];
 
 						res.clearCookie("sessId");
