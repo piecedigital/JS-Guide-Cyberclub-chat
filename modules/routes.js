@@ -118,7 +118,7 @@ sass.render({
 				var session = req.cookies["sessId"] || "";
 				var IP = getIP.getIP3(req);
 				
-				Chat.findOne({ 'optionName' : 'bannedAddrs', 'list' : { "$elemMatch" : { "ip" : IP } } }, function(chatQErr, chatQDoc) {
+				Chat.findOne({ 'optionName' : 'bannedAddrs', 'list' : { '$in' : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
 					if(!chatQDoc) {
