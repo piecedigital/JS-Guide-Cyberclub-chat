@@ -7,7 +7,9 @@ var app = require('express')(),
 		ObjectId = require("mongodb").ObjectID,
 		hb = require("hbs");
 
-var priVar = require("./private-variables");
+var priVar = require("./private-variables"),
+		account = require("./accounts"),
+		getIP = require("./acquire-ip");
 
 //sass compile
 var sass = require('node-sass');
@@ -27,15 +29,9 @@ sass.render({
 });
 
 // mongodb config
-var Server = MongoClient.Server,
-Db = MongoClient.Db,
-db = MongoClient.connect(priVar.mongolabURL
+ MongoClient.connect(priVar.mongolabURL
   , function(err, db) {
   	if(err) throw err;
-  	var admin = db.admin();
-
-		var account = require("./accounts"),
-				getIP = require("./acquire-ip");
 
 		var User = db.collection("users"),
 				Pending = db.collection("pending"),
@@ -45,12 +41,46 @@ db = MongoClient.connect(priVar.mongolabURL
 
 		// clears the users in rooms on server start
 		Room.update({}, { "$set" : { "users" : [] } }, { "multi" : true });
-		// GET requests
+
+		//////////////////////
+		//// GET requests ////
+		//////////////////////
 		app
+			.get(/\/.*/, function(req, res, next) {
+				var IP = getIP.getIP3(req);
+				console.log("req ip", IP);
+
+				////console.log(IP, typeof IP);
+				var session = req.cookies["sessId"] || "";
+				
+				if(session) {
+		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
+		        if(sessQErr) throw sessQErr;
+
+		        if(sessQDoc) {
+							User.findOne({ "username" : sessQDoc.user }, function(err2, userQDoc) {
+		            if(err2) throw err2;
+
+		            if(userQDoc) {
+		            	User.update({ "username" : userQDoc.username }, { "$set" : { "currentIp" : IP || "0.0.0.0" } });
+
+		            } else {
+		            	//console.log("user not present. no file write");
+		            }
+		          });
+		        } else {
+		        	//console.log("sessiion not present. no file write");
+		        }
+		      });
+				} else {
+					//console.log("session cookie not present. no file write");
+				}
+				next();
+			})
 			.get('/', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
-				
+				var IP = getIP.getIP3(req);
+
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
@@ -86,9 +116,9 @@ db = MongoClient.connect(priVar.mongolabURL
 			})
 			.get("/login", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP3(req);
 				
-				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
+				Chat.findOne({ 'optionName' : 'bannedAddrs', 'list' : { "$elemMatch" : { "ip" : IP } } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
 
 					if(!chatQDoc) {
@@ -106,7 +136,7 @@ db = MongoClient.connect(priVar.mongolabURL
 												
 												res.redirect(dest);
 											} else {
-												res.redirect("/banned/account")
+												res.redirect('/banned/account/' + userQDoc.usernameFull)
 											}
 										} else {
 											res.redirect("/signup");
@@ -114,20 +144,20 @@ db = MongoClient.connect(priVar.mongolabURL
 									});
 				        } else {
 				        	res.clearCookie("sessId");
-									res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
+									res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
 				        }
 				      });
 						} else {
-							res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
+							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
 						}
 					} else {
-						res.redirect("/banned/ip");
+						res.redirect('/banned/ip');
 					}
 				});
 			})
 			.get("/signup", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP3(req);
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -148,20 +178,20 @@ db = MongoClient.connect(priVar.mongolabURL
 
 						  					res.redirect(dest);
 				            	} else {
-				            		res.redirect("/banned/account")
+				            		res.redirect('/banned/account/' + userQDoc.usernameFull)
 				            	}
 				            } else {
 				            	res.clearCookie("sessId");
-				        			res.redirect("/signup");
+				        			res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
 				            }
 				          });
 				        } else {
 				        	res.clearCookie("sessId");
-									res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
+									res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
 				        }
 				      });
 						} else {
-							res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
+							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
 						}
 					} else {
 						res.redirect("/banned/ip");
@@ -170,7 +200,7 @@ db = MongoClient.connect(priVar.mongolabURL
 			})
 			.get("/admin-signup", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP3(req);
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -191,7 +221,7 @@ db = MongoClient.connect(priVar.mongolabURL
 
 						  					res.redirect(dest);
 				            	} else {
-				            		res.redirect("/banned/account")
+				            		res.redirect('/banned/account/' + userQDoc.usernameFull)
 				            	}
 				            } else {
 				            	res.clearCookie("sessId");
@@ -233,7 +263,7 @@ db = MongoClient.connect(priVar.mongolabURL
 			})
 			.get('/chat', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP3(req);
 				
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -344,7 +374,7 @@ db = MongoClient.connect(priVar.mongolabURL
 					            	});
 				            	} else {
 				            		res.clearCookie("sessId");
-				        				res.redirect("/banned/account");
+				        				res.redirect('/banned/account/' + userQDoc.usernameFull);
 				            	}
 				            } else {
 				        			res.redirect("/signup");
@@ -365,7 +395,7 @@ db = MongoClient.connect(priVar.mongolabURL
 			})
 			.get('/admin-chat', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP2();
+				var IP = getIP.getIP3(req);
 
 				Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [IP] } }, function(chatQErr, chatQDoc) {
 					if(chatQErr) throw chatQErr;
@@ -576,7 +606,7 @@ db = MongoClient.connect(priVar.mongolabURL
 												*/
 											} else {
 												res.clearCookie("sessId");
-				        				res.redirect("/banned/account");
+				        				res.redirect('/banned/account/' + userQDoc.usernameFull);
 											}
 				            } else {
 				        			res.clearCookie("sessId");
@@ -622,13 +652,13 @@ db = MongoClient.connect(priVar.mongolabURL
 		      					if(remQErr) throw remQErr;
 
 		      					if(remQDoc) {
-		      						res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"Account confirmed. Please login", "sign-checked" : "", "log-checked" : "checked" });
+		      						res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Account confirmed. Please login", "sign-checked" : "", "log-checked" : "checked" });
 		      					}
 		      				});
 		      			}
 		      		});
 		      	} else {
-		      		res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "" });
+		      		res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "" });
 		      	}
 		      });
 				} else {
@@ -643,7 +673,7 @@ db = MongoClient.connect(priVar.mongolabURL
 						if(remQErr) throw remQErr;
 
 						if(remQDoc) {
-							res.render("signUpIn", { "title" : "Sign Up/Login", "msg" :"Account cancelled successfully.", "sign-checked" : "", "log-checked" : "checked" });
+							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Account cancelled successfully.", "sign-checked" : "", "log-checked" : "checked" });
 						}
 					});
 				} else {
@@ -661,53 +691,74 @@ db = MongoClient.connect(priVar.mongolabURL
 					res.redirect("/login");
 				}
 			})
-			.get('/banned/:type', function(req, res, next) {
-				var type = req.params.type.toUpperCase();
+			.get('/banned/account/:user', function(req, res, next) {
+				var username = req.params.user;
 
-				res.status(404).send("Your " + type + " has been banned. Contact the administrator directly to resolve this issue.");
+				User.findOne({ 'usernameFull' : username }, function(userQErr, userQDoc) {
+					if(userQErr) throw userQErr;
+
+					if(userQDoc) {
+						if(userQDoc.banned) {
+							res.clearCookie("sessId");
+							res.status(200).send('Your account ' + username + ' has been banned.<br><br>Reason: ' + userQDoc.banned + '.<br><br>Contact the administrator directly to resolve this issue.<br><br><a href="/">return Home</a>');
+						} else {
+							res.redirect('/');
+						}
+					} else {
+						res.clearCookie("sessId");
+						res.redirect('/');
+					}
+				})
+
 			})
-			.get('/test/:img', function(req, res) {
-				//res.status(200).send("http://" + req.headers.host + "/img.png")
+			.get('/banned/ip', function(req, res, next) {
+				var IP = getIP.getIP3(req);
+
+				Chat.findOne({ 'optionName' : 'bannedAddrs', 'list' : { '$elemMatch' : { 'ip' : IP } } }, { 'list' : { '$elemMatch' : { 'ip' : IP } } }, function(chatQErr, chatQDoc) {
+					if(chatQErr) throw chatQErr;
+
+					if(!chatQDoc) {
+						var ipData = userQDoc.list[0];
+
+						res.clearCookie("sessId");
+						res.status(200).send('Your IP has been banned.<br><br>Reason: ' + ipData.reason + '<br><br>This type of ban is due to a very serious offense.<br><br>Contact the administrator directly to resolve this issue.<br><br><a href="/">return Home</a>');
+					} else {
+						res.redirect("/banned/ip");
+					}
+				});
 			})
-			.get("*", function(req, res, next) {
-				res.send("Error 404: page not found");
+			.get('/tracker', function(req, res) {
+				res.status(200).send('pixel tracker');
+				console.log('PIXEL TRACKER WORKED!')
+			})
+			.get('*', function(req, res, next) {
+				res.status(404).send('Error 404: page not found<br><br><a href="/">return Home</a>');
+			})
+			;
 
-				var IP = getIP.getIP2();
-				////console.log(IP, typeof IP);
-				var session = req.cookies["sessId"] || "";
-				
-				if(session) {
-		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
-		        if(sessQErr) throw sessQErr;
-
-		        if(sessQDoc) {
-							User.findOne({ "username" : sessQDoc.user }, function(err2, userQDoc) {
-		            if(err2) throw err2;
-
-		            if(userQDoc) {
-		            	User.update({ "username" : userQDoc.username }, { "$set" : { "currentIp" : IP } });
-
-		            } else {
-		            	//console.log("user not present. no file write");
-		            }
-		          });
-		        } else {
-		        	//console.log("sessiion not present. no file write");
-		        }
-		      });
-				} else {
-					//console.log("session cookie not present. no file write");
-				}
-			});
-
-		// POST requests
+		///////////////////////
+		//// POST requests ////
+		///////////////////////
 		app
-		  //POST request for user signup
 			.post("/signup", account(db).signup)
-			//POST request for user logins
 			.post("/login", account(db).login)
-			//POST requests for admin panel
 			.post("/adjust-user", account(db).updateUser)
+			.post("/populate-users", function(req, res, next) {
+				Room.find({}, { "_id" : 0, "roomname" : 1, "users" : 1 }).toArray(function(roomQErr, roomQDoc) {
+      		if(roomQErr) throw roomQErr;
+
+      		if(roomQDoc) {
+      			console.log(roomQDoc);
+
+      			res.status(200).send({
+      				"msg": "success",
+      				"data": roomQDoc
+      			})
+      		} else {
+      			res.status(417).send("Error");
+      		}
+      	});
+			})
 			.post("/update-rooms", function(req, res, next) {
 				//console.log("update rooms function")
 				//console.log(req.body);
@@ -767,7 +818,7 @@ db = MongoClient.connect(priVar.mongolabURL
 
 				if(emote) {
 					emote = emote.replace(/[:]/gi, "");
-					emote = "&$#58;" + emote + "&#58;";
+					emote = ":" + emote + ":";
 
 					var updateObj = {
 					};
@@ -830,7 +881,8 @@ db = MongoClient.connect(priVar.mongolabURL
 				//console.log(req.body);
 
 				var ip = req.body.ip || [],
-						op = req.body.op || "$push";
+						op = req.body.op || "$push",
+						reason = req.body.reason || "The activty from this connection exhibited an inordinate degree of offenses.";
 
 				//console.log(ip, typeof ip);
 				if(typeof ip === "object") {
@@ -850,7 +902,7 @@ db = MongoClient.connect(priVar.mongolabURL
 				if(ip) {
 					var updateObj = {
 					};
-					updateObj[op] = { "list" : ip } 
+					updateObj[op] = { "list" : { "ip" : ip, "reason" : reason } } 
 
 
 					Chat.update({ "optionName" : "bannedAddrs" }, updateObj, { "upsert" : true }, function(chatQErr, chatQDoc) {
@@ -926,7 +978,7 @@ db = MongoClient.connect(priVar.mongolabURL
 										userQDoc.usernameFull === req.params.receiver) {
 										var name = (userQDoc.usernameFull === req.params.initiator) ? req.params.receiver : req.params.initiator;
 
-										res.render("pmsg", { "title" : "Chat w/ " + name, "room" : room, "usernameFull" : userQDoc.usernameFull, "username" : userQDoc.username, "alert" : true });
+										res.render("pmsg", { "title" : "Chat w/ " + name, "room" : room, "usernameFull" : userQDoc.usernameFull, "username" : userQDoc.username, "alert" : true, "layout" : "private-layout" });
 									} else {
 										res.status(404).send("incorrect room");
 									}
@@ -944,5 +996,6 @@ db = MongoClient.connect(priVar.mongolabURL
 				console.log(req.headers);
 			})
 			;
+
 });
 module.exports = app;

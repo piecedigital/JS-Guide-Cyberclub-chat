@@ -70,7 +70,7 @@ module.exports = function(db) {
       if(insertedDoc) {
         //console.log("account created \n\r");
         console.log(host);
-        mailer("Confirm admin profile", email, usernameFull, "<img width=1 height=1 src='http://" + host + "/test/img.png'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://" + host + "/validate?key=" + validationId + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://" + host + "/cancel?key=" + validationId).mailPost();
+        mailer("Confirm admin profile", email, usernameFull, "<img width=1 height=1 src='http://" + host + "/tracker'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://" + host + "/validate?key=" + validationId + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://" + host + "/cancel?key=" + validationId).mailPost();
 
         res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked" });
       }
@@ -96,7 +96,11 @@ module.exports = function(db) {
       if(email && username && password && passwordConf) {
         //checks for valid password
         if(email.match(/([a-z0-9])*([.][a-z0-9]*)?([@][a-z0-9]*[.][a-z]{1,3})([.][a-z]{1,2})?/i)) {
-          if(!username.match(/[\/\\ \-\9\0\[\]\\[\]\s`~!@#$%^&*=+\?<>,.]/gi)) {
+          var underscoreMatch = username.match(/_/gi) || [];
+          if(username.match(/^[a-z0-9_]*$/gi)
+            && underscoreMatch.length <= 2
+            && username.length >= 4
+            && username.length <= 20) {
             if(password === passwordConf) {
               User.findOne({ "username" : username }, function(userQErr, userQDoc) {
                 if(userQErr) throw userQErr;
@@ -160,14 +164,22 @@ module.exports = function(db) {
                 }
               });
             } else {
-              res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords to not match", "sign-checked" : "checked", "log-checked" : "" });
+              res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords do not match", "sign-checked" : "checked", "log-checked" : "" });
             }
           } else {
-            var illMatch = username.match(/[\/\\ \-\9\0\[\]\\[\]\s`~!@#$%^&*=+\?<>,.]/gi),
-                illLength = illMatch.length,
-                S = (illLength > 1) ? "s" : "";
+            var charMatchMsg = (!username.match(/^[a-z0-9_]*$/gi)) ? "username contains illegal characters" : (underscoreMatch.length > 2) ? "username contains too many underscores" : null;
+            var lengthMsg = (username.length < 4) ? "username is too short" : (username.length > 20) ? "username is too long" : null;
+            var errsMsg = [charMatchMsg, lengthMsg].filter(function(elem, ind) {
+              if(elem) {
+                return elem;
+              }
+            });
+            if(errsMsg.length > 1) {
+              errsMsg[errsMsg.length-1] = "and " + errsMsg[errsMsg.length-1];
+            }
+            errsMsg.join(", ");
             //error message to the user if their username contains illegal characters
-            res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username contains " + illLength + " illegal character" + S + ": " + illMatch, "sign-checked" : "checked", "log-checked" : "" });
+            res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username Errors: " + errsMsg + ". Username must be between 4-20 characters, and contain only letters and underscores (max 2)", "sign-checked" : "checked", "log-checked" : "" });
           }
         } else {
           //error message to the user if the email isn't valid
@@ -181,7 +193,6 @@ module.exports = function(db) {
     login: function(req, res, next) {
       //sets up variables that's be used
       var username = req.body.username.toLowerCase() || "",
-          usernameFull = req.body.username || "",
           password = req.body.password || "",
           session = req.cookies["sessId"] || "";
           //console.log(req.body);
@@ -207,7 +218,7 @@ module.exports = function(db) {
                 //if not the the user is notified that the provided password is
                 //invalid
                 ////console.log(userQDoc);
-                usernameFull = userQDoc.usernameFull;
+                var usernameFull = userQDoc.usernameFull;
                 bcrypt.compare(password, userQDoc.password, function(bcErr, bcSuccess) {
                   if(bcErr) throw bcErr;
 
@@ -235,7 +246,7 @@ module.exports = function(db) {
                   }
                 });
               } else {
-                res.redirect("/banned/account");
+                res.redirect("/banned/account/" + userQDoc.usernameFull);
               }
             } else {
               //console.log("user not found");
@@ -279,7 +290,9 @@ module.exports = function(db) {
       var newUsername = req.body.newUsername || "",
           usernameFull = req.body.originalName || "",
           accessLevel = req.body.accessLevel || "",
-          ban = req.body.ban || "";
+          ban = req.body.ban || "",
+          reason = req.body.reason || "Your behavior did not align with the rules of the chat room.",
+          reasonIp = req.body.reasonIp || "The activty from this connection exhibited an inordinate degree of offenses.";
       if(!ban) {
         User.update({ "usernameFull" : usernameFull }, { "$set" : { "username" : (newUsername.toLowerCase()), "usernameFull" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
           if(userQErr) throw userQErr;
@@ -297,10 +310,9 @@ module.exports = function(db) {
             });
           }
         });
-
       } else {
         if(ban === "ACC") {
-          User.update({ "usernameFull" : usernameFull }, { "$set" : { "banned" : true } }, function(userQErr, userQDoc) {
+          User.update({ "usernameFull" : usernameFull }, { "$set" : { "banned" : reason } }, function(userQErr, userQDoc) {
             if(userQErr) throw userQErr;
 
             if(userQDoc && userQDoc.result.ok) { 
@@ -322,9 +334,9 @@ module.exports = function(db) {
             if(userQErr) throw userQErr;
 
             if(userQDoc) {
-              User.update({ "username" : usernameFull }, { "$set" : { "banned" : true } });
+              User.update({ "username" : usernameFull }, { "$set" : { "banned" : reason } });
               Sess.remove({ "user" : usernameFull });
-              Chat.update({ "optionName" : "bannedAddrs" }, { "$push" : { "list" : userQDoc.currentIp } }, { "upsert" : true }, function(chatQErr, chatQDoc) {
+              Chat.update({ "optionName" : "bannedAddrs" }, { "$push" : { "list" : { 'ip' : userQDoc.currentIp || "0.0.0.0", 'reason' : reasonIp } } }, { "upsert" : true }, function(chatQErr, chatQDoc) {
                 if(chatQErr) throw chatQErr;
 
                 if(chatQDoc && chatQDoc.result.ok) {
@@ -336,7 +348,7 @@ module.exports = function(db) {
                       "usernameFull": usernameFull,
                       "newName": newUsername
                     },
-                    userQDoc.currentIp],
+                    userQDoc.currentIp || "0.0.0.0"],
                     "op": [ban, "$push"]
                   });
                 } else {

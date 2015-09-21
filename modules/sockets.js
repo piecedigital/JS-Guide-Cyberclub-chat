@@ -146,34 +146,53 @@ module.exports = function(io, db) {
 					obj.msg = obj.msg.replace(/[<]/gi, "&lt;")
 						.replace(/[>]/gi, "&gt;");
 
-					////console.log("banned stuff - ", bannedWords, bannedEmotes)
 					// filter out banned words
+					//console.log(bannedWords)
 					for(var i = 0; i < bannedWords.length; i++) {
 						var banReg = new RegExp(bannedWords[i], "gi")
 						obj.msg = obj.msg.replace(banReg, "*".multiply(bannedWords[i].length));
 					}
 					// filter out banned emotes
 					var rpCode =  "&#58;";
+					//console.log(bannedEmotes)
 					for(var i = 0; i < bannedEmotes.length; i++) {
 						var banReg = new RegExp(bannedEmotes[i], "gi");
+
 						var match = obj.msg.match(banReg) || [];
 						match = (match[0]) ? match[0].replace(/[:]/gi, rpCode) : match;
 						obj.msg = obj.msg.replace(banReg, match);
 					}
 
 					// check if command or regular message
-					if(obj.msg.match(/^(\/me)/gi)) {
-						obj.msg = obj.msg.replace(/^(\/me)(\s)?/gi, "");
+					if(obj.msg.match(/^\/me\s/gi)) {
+						obj.msg = obj.msg.replace(/^\/me\s/i, "");
 
 						io.in(obj.room).emit("chat me response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					} else
-					if(obj.msg.match(/^(\/topic)/gi)) {
+					if(obj.msg.match(/^\/topic$/i)) {
 						Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
 							if(roomQErr) throw roomQErr;
 
 							if(roomQDoc) {
-								obj.msg = obj.msg.replace(/^(\/topic)(\s)?/gi, "");
+								obj.msg = obj.msg.replace(/^\/topic$/gi, "");
 								io.in(obj.room).emit("update", { "msg" : "The topic for " + roomQDoc.roomname + " is <span class='bold'>" + roomQDoc.topic + "</span>" });
+							}
+						});
+
+					} else
+					if(obj.msg.match(/^\/changeDisplayName\s/i)
+						||
+						obj.msg.match(/^\/CDN\s/i)) {
+						obj.msg = obj.msg
+							.replace(/^\/CDN\s/i, "")
+							.replace(/^\/changeDisplayName\s/i, "");
+
+						Room.update({ 'roomname' : obj.room, 'users.usernameFull' : obj.usernameFull }, { '$set' : { 'users.$.displayName' : obj.msg } }, function(roomQErr, roomQDoc) {
+							if(roomQErr) throw roomQErr;
+
+							if(roomQDoc) {
+								obj.msg = obj.msg.replace(/^(\/topic)(\s)?/gi, '');
+								io.emit('update display name', { 'displayName' : obj.msg.substr(0, 20), 'usernameFull' : obj.usernameFull });
 							}
 						});
 
@@ -193,6 +212,11 @@ module.exports = function(io, db) {
 						}
 						if(obj.op === "$pull") {
 							bannedWords.splice(bannedWords.indexOf(obj.word), 1);
+							bannedWords = bannedWords.sort(function(a, b) {
+								aS = a.toString();
+								bS = b.toString();
+							  return bS.length - aS.length;
+							});
 						}
 					},
 					updateBannedEmotes: function() {
@@ -201,6 +225,11 @@ module.exports = function(io, db) {
 						}
 						if(obj.op === "$pull") {
 							bannedEmotes.splice(bannedEmotes.indexOf(obj.emote), 1);
+							bannedEmotes = bannedEmotes.sort(function(a, b) {
+								aS = a.toString();
+								bS = b.toString();
+							  return bS.length - aS.length;
+							});
 						}
 					},
 					updateRooms: function() {
@@ -232,6 +261,9 @@ module.exports = function(io, db) {
 			.on("disconnect", function() {
 				//console.log("disconnected", socket.id);
 
+				io.to(socket.id).emit("update", {
+					"msg": "You have disconnected from the chat server. If this was an error, please refresh your browser."
+				});
 				User.findOne({ "socket" : socket.id }, function(userQErr, userQDoc) {
 					if(userQErr) throw userQErr;
 
@@ -261,6 +293,11 @@ module.exports = function(io, db) {
 	  		if(chatQDoc) {
 	  			bannedWords = chatQDoc.list;
 	  			//console.log("found some")
+	  			bannedWords = bannedWords.sort(function(a, b) {
+	  				aS = a.toString();
+	  				bS = b.toString();
+					  return bS.length - aS.length;
+					});
 	  		} else {
 	  			bannedWords = [];
 	  			//console.log("found none")
@@ -275,6 +312,11 @@ module.exports = function(io, db) {
 	  		if(chatQDoc) {
 	  			bannedEmotes = chatQDoc.list;
 	  			//console.log("found some")
+	  			bannedEmotes = bannedEmotes.sort(function(a, b) {
+	  				aS = a.toString();
+	  				bS = b.toString();
+					  return bS.length - aS.length;
+					});
 	  		} else {
 	  			bannedEmotes = [];
 	  			//console.log("found none")

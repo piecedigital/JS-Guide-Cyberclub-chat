@@ -10,18 +10,24 @@
 			<div id="sign-up-in" class="border-radius-0_5">
 				<div id="signup">
 					<form action="/signup" method="POST" class="x-pad-0_5 y-pad-0_5">
-						<input type="text" name="email" placeholder="email" value="piecedigitalstudios@gmail.com">
-						<input type="text" name="username" placeholder="username" value="user">
-						<input type="password" name="password" value="pass">
-						<input type="password" name="passwordconfirm" value="pass">
+						<label for="" class="bold dark-blue">Email</label>
+						<input type="email" name="email" placeholder="Email" value="">
+						<label for="" class="bold dark-blue">Username</label>
+						<input type="text" name="username" placeholder="Username" value="" minlength=4 maxlength=20>
+						<label for="" class="bold dark-blue">Password</label>
+						<input type="password" name="password" placeholder="Password" value="">
+						<label for="" class="bold dark-blue">Confirm Password</label>
+						<input type="password" name="passwordconfirm" placeholder="Confirm password" value="">
 						<input type="hidden" name="formtype" value="regular">
 						<button>Submit</button>
 					</form>
 				</div>
 				<div id="login">
 					<form action="/login" method="POST" class="x-pad-0_5">
+						<label for="" class="bold dark-blue">Email</label>
 						<input type="text" name="username" placeholder="username">
-						<input type="password" name="password">
+						<label for="" class="bold dark-blue">Password</label>
+						<input type="password" name="password" placeholder="Password">
 						<button>Submit</button>
 					</form>
 				</div>

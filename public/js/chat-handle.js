@@ -22,7 +22,7 @@ function checkMutes(myMutes, user) {
 var generatePM = function(initName, reciName) {
 	var frameName = reciName + "-frame";
 
-	$(".pm-box[data-id='" + frameName + "']").remove();
+	//$(".pm-box[data-id='" + frameName + "']").remove();
 
 	var theCloser = $("<div>").addClass("tool closer").html("&#x2716;"),
 			theMover = $("<div>").addClass("tool mover").html("&#x2630;"),
@@ -41,25 +41,82 @@ var generatePM = function(initName, reciName) {
 			}).html( $("<input>").attr({ "type": "hidden" }) ),
 			theScript = $("<script>").html("$('#" + frameName + "').submit()");
 
-	$("body").append(
+	$("#pm-section > div > div > div").append(
 		$("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).html(
 			$("<div>").addClass("parent").attr({
 				"style": "width: 100%; height: 100%; padding: 0 0 1.4em"
 			}).append(
-				theCloser,
-				theMover,
-				theSpinner,
+				$("<div>").addClass("tools").append(
+					theCloser,
+					theMover
+					),
 				theFrame,
 				theForm,
 				theScript
 				)
 			)
 		);
+	var width = (5*16) + ((.2*16) * 1);
+	var size = $("#pm-section > div > div > div").find(".pm-box").length;
+	console.log("width", width)
+	console.log("size", size)
+	$("#pm-section > div > div > div").css({ "width" : width * size + "px"})
 };
 
-$(document).on("click", ".pm-box .closer", function() {
-	$(this).parent().parent().remove();
-})
+$(document).on("mousedown", ".pm-box .closer", function(e) {
+	if(e.buttons) {
+		$(this).parent().parent().parent().remove();
+	}
+});
+
+$(document).on("mousedown", ".pm-box .mover", function(e) {
+	if(e.buttons) {
+		$(this).parent().parent().parent().toggleClass("closed");
+	}
+});
+
+$(document).on("touchend", ".pm-box .closer", function(e) {
+	if(!e.buttons) {
+		$(this).parent().parent().parent().remove();
+	}
+});
+
+$(document).on("touchend", ".pm-box .mover", function(e) {
+	if(!e.buttons) {
+		$(this).parent().parent().parent().toggleClass("closed");
+	}
+});
+
+$(document).ready(function() {
+	$.ajax({
+		url: "/populate-users",
+		type: "POST",
+		dataType: "json",
+		success: function(data) {
+			console.log(data);
+
+			for(var obj in data.data) {
+				console.log(obj)
+				var roomName = data.data[obj].roomname;
+				var users = data.data[obj].users;
+				console.log("working on: ", roomName, users);
+				for(var user in users) {
+					//console.log("applying user: ", users[user])
+					users[user].displayName = users[user].displayName || users[user].usernameFull;
+
+					$("#room-list").find(".room[data-roomname='" + roomName + "'] ul").append("<li class='user parent' data-usernameFull='" + users[user].usernameFull + "' data-username='" + (users[user].usernameFull.toLowerCase()) + "' data-displayname='" + users[user].displayName + "'><span class='icon " + users[user].accessLevel + "'></span><span class='username'>" + users[user].displayName + "</span></li>");
+				}
+			}
+		},
+		error: function(err1, err2, err3) {
+			alert("There was an error populate user data. Please refresh or alert the admin.")
+			console.log(err1);
+			console.log(err1.status);
+			console.log(err2);
+			console.log(err3.message);
+		}
+	})
+});
 
 ~(function () {
 	var socket = io(),
@@ -115,112 +172,11 @@ var socketLog = function() {
 		windowFocus = false;
 	});
 
-	/*
-	//get caret positon
-	function getCaretPos(input) {
-  // Internet Explorer Caret Position (TextArea)
-    if (document.selection && document.selection.createRange) {
-        var range = document.selection.createRange();
-        var bookmark = range.getBookmark();
-        var caret_pos = bookmark.charCodeAt(2) - 2;
-    } else {
-        // Firefox Caret Position (TextArea)
-        if (input.setSelectionRange)
-          var caret_pos = input.selectionStart;
-    }
-    return caret_pos;
-	}
-	*/
-/* MENTINO SECTION/////////////////
-   Uncomment later if useable////////////
-	//mention
-	var caretPosition = 0, selection = 1, subStr, listLen;
-	//check for keyup events
-	$("#chat-val").on("keyup", function(){
-		if ( $(this).val().charAt( getCaretPos(this) - 1).match(/[@]/gi) ){
-			//show list box
-			console.log("prep mention");
-			$("#list-box").css({"display": "inline-block"});
-			caretPosition = getCaretPos(this) - 1;
-		}
-		if ( $(this).val().charAt( getCaretPos(this) - 1).match(/[\s]/gi) || $(this).val().charAt( getCaretPos(this) - 1) === "" ){
-			//hide list box
-			$("#list-box").css({"display": "none"});
-		}
-		subStr = $(this).val().split("").slice(caretPosition+1).join("");
-		var matchedUser = new RegExp("\b(" + subStr + ")", "gi");
-		$("#list-box").html("");
-		userList.map(function(elem, index){
-			if (elem.match(matchedUser) && $("#list-box").attr("style") === "display: inline-block;") {
-				var match = elem.replace(matchedUser, "<span class='match-box-str'>"+subStr+"</span>");
-				$("#list-box").append("<li class='matched-user' data-index='" + (index+1) + "' data-name='" + elem + "'>" + match + "</li>");
-			}
-		});
-		$("#list-box li:nth-child(" + selection + ")").addClass("selected");
-	});
-	//check for keydown events
-	*/
 	$("#chat-val").keydown(function(k){
 		if( $("#chat-val").val() ) {
 			$("#chat-form button").addClass("full");
 		}
-		/*
-		listLen = $("#list-box .matched-user").size();
-		//check for enter key
-		if (k.keyCode === 13){
-			if ( $("#list-box").attr("style") === "display: inline-block;" ) {
-				selectMention();
-				return false;
-			}
-		}
-		//check for up key
-		if (k.keyCode === 38) {
-			selection--;
-			if (selection < 1){ selection = listLen}
-			$("#list-box li").removeClass("selected");
-			return false;
-		}
-		//check for down key
-		if (k.keyCode === 40) {
-			selection++;
-			if (selection > listLen){ selection = 1}
-			$("#list-box li").removeClass("selected");
-			return false;
-		}
-		*/
 	});
-	/*
-	//mouse hover over user mention
-	$(document).on({
-		mouseenter: function(){
-			$(".matched-user").removeClass("selected");
-			selection = $(this).data("index");
-			$(this).addClass("selected");
-		}
-	}, ".matched-user");
-	//mouse press on user mention
-	$(document).on("click", ".matched-user",function(){
-		selectMention();
-	});
-
-	function selectMention(){
-		//re-enable the submit button
-		$("#chat-box button[type='submit']").prop("disabled", false);
-		//attach the full user names to the input value
-		$("#chat-val").val( $("#chat-val").val() + $("#list-box li:nth-child(" + selection +
-		 ")").data("name").split("").slice(subStr.length).join("") );
-		//hide list box
-		$("#list-box").css({"display": "none"});
-		selection = 1;
-	}
-*/
-	//socket response on chat log
-	/*
-	socket.on("chat log", function(time, who, msg){
-		$("#messages").append($("<li class='chat'>").html("[<span class='log'>" + logDate(time) + "</span>] <span class='user'> " + who + "</span>: " + "<p class='chat-text'>" + regexFilter(msg, who) + "</p>" ) );
-		$("#messages")[0].scrollTop = $("#messages")[0].scrollHeight;
-	});
-	*/
 	
 	//socket response on chat response
 	socket.on("chat response", function(data){
@@ -247,19 +203,6 @@ var socketLog = function() {
 		scrollToBottom();
 	});
 	
-/*
-	//socket response on command
-	socket.on("command", function(msg){
-		$("#messages").append($("<li class='command'>").html("[COMMAND] " + msg) );
-		scrollToBottom();
-	});
-*/
-	/*
-	//socket responses on room entry
-	socket.on("user list", function(data){
-	});
-	*/
-
 	//socket responses on room entry
 	socket.on("enter room", function(data){
 		$("#messages").append($("<li class='plain'>").html(data.msg) );
@@ -285,8 +228,18 @@ var socketLog = function() {
 	});
 	socket.on("new entry", function(data){
 		$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").remove();
-		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.displayName + "'><span class='icon " + data.accessLevel + "'></span>" + data.displayName + "</li>");
-		console.log(data, room);
+		$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
+		if(data.usernameFull === usernameFull) {
+			displayName = data.usernameFull;
+		}
+		console.log(data);
+		scrollToBottom();
+	});
+	socket.on("update display name", function(data){
+		$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").attr("data-displayname", data.displayName).find(".username").text(data.displayName);
+		if(data.usernameFull === usernameFull) {
+			displayName = data.displayName;
+		}
 		scrollToBottom();
 	});
 	socket.on("generate pm", function(data) {
@@ -342,7 +295,7 @@ var socketLog = function() {
 				if(data.op === "remove") {
 					$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").remove();
 					if(usernameFull === data.usernameFull) {
-						window.location.href = "/banned/account";
+						window.location.href = "/banned/account/" + usernameFull;
 					}
 				};
 				if(data.op === "update") {
@@ -469,8 +422,6 @@ var socketLog = function() {
 		}
 	})
 
-	$("#chat-val").focus();
-
 	///////////////////////////
 	// interface interactions//
 	///////////////////////////
@@ -487,7 +438,7 @@ var socketLog = function() {
 		}
 	};
 
-	var click = false, cancel = true, currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
+	var cancel = true, currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
 	var options = {
 		join: function() {
 			socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
@@ -505,8 +456,8 @@ var socketLog = function() {
 		},
 		mention: function() {
 			var val = $("#chat-val").val();
-			$("#chat-val").val( val + "@" + contextUsername + " ");
-			contextUsername = null;
+			$("#chat-val").val( val + "@" + contextUserdisp + " ");
+			contextUserdisp = null;
 			$("#new-context-menu").css({
 				"display": "none"
 			}).html("");
@@ -517,8 +468,14 @@ var socketLog = function() {
 				socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
 				generatePM(usernameFull, contextUsername);
 			} else {
-				$("#messages").append($("<li class='plain'>").html("You do not have appropriate authority to send private messages.") );
-				scrollToBottom();
+				var $acc = $("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon");
+				if($acc.hasClass("moderator") || $acc.hasClass("admin")) {
+					socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
+					generatePM(usernameFull, contextUsername);
+				} else {
+					$("#messages").append($("<li class='plain'>").html("You do not have appropriate authority to send private messages.") );
+					scrollToBottom();
+				}
 			}
 			$("#new-context-menu").css({
 				"display": "none"
@@ -560,12 +517,25 @@ var socketLog = function() {
 
 	$(document).on({
 		mousedown:  function(e) {
-			console.log("cancel", cancel)
-			if(cancel) {
-				$("#new-context-menu").css({
-					"display": "none"
-				}).html("");
-				document.oncontextmenu = null;
+			if(e.buttons) {
+				console.log("doc first")
+				if(cancel) {
+					$("#new-context-menu").css({
+						"display": "none"
+					}).html("");
+					document.oncontextmenu = null;
+				}
+			}
+		},
+		touchstart:  function(e) {
+			if(!e.buttons) {
+				console.log("doc first")
+				if(cancel) {
+					$("#new-context-menu").css({
+						"display": "none"
+					}).html("");
+					document.oncontextmenu = null;
+				}
 			}
 		},
 		scroll:  function(e) {
@@ -582,7 +552,7 @@ var socketLog = function() {
 		},
 		mouseup: function(e) {
 			if(e.buttons) {
-				click = false;
+			
 				console.log("up");
 				setTimeout(function() {
 					currentRoom = null;
@@ -590,10 +560,10 @@ var socketLog = function() {
 				}, 250);
 			}
 		},
-		touchend:  function() {
+		touchend:  function(e) {
 			if(!e.buttons) {
 				//socketLog("touche end")
-				click = false;
+			
 				console.log("up");
 				setTimeout(function() {
 					currentRoom = null;
@@ -604,12 +574,13 @@ var socketLog = function() {
 	});
 
 	$("#room-list").on("mousedown", ".room .name", function(e) {
+		e.stopPropagation();
 		if(e.buttons) {
 			if(e.buttons === 2) {
 				document.oncontextmenu = function() {
 					return false;
 				};
-				contextRoomname = $(this).parent().data("roomname");
+				contextRoomname = $(this).parent().attr("data-roomname");
 				populateContext(roomOpts);
 				
 				$("#new-context-menu").css({
@@ -617,27 +588,27 @@ var socketLog = function() {
 					"left": e.clientX,
 					"display": "block"
 				});
-				click = true;
-				cancel = false;
-				setTimeout(function() {
-					cancel = true;
-				}, 10);
+			
+				// cancel = false;
+				// setTimeout(function() {
+				// 	cancel = true;
+				// }, 10);
 			} else {
-				if(currentRoom === $(this).parent().data("roomname")) {
+				if(currentRoom === $(this).parent().attr("data-roomname")) {
 					console.log("current: ", currentRoom);
 					currentRoom = null;
 					
-					contextRoomname = $(this).parent().data("roomname");
+					contextRoomname = $(this).parent().attr("data-roomname");
 					if(room !== "door") {
 						options.leave();
 					}
 					options.join();
-					cancel = true;
+					// cancel = true;
 				} else {
 					$(this).parent().toggleClass("open");
-					currentRoom = $(this).parent().data("roomname");
-					click = true;
-					cancel = true;
+					currentRoom = $(this).parent().attr("data-roomname");
+				
+					// cancel = true;
 					setTimeout(function() {
 						currentRoom = null;
 					}, 250);
@@ -649,23 +620,23 @@ var socketLog = function() {
 	
 	$("#room-list").on("touchstart", ".room .name", function(e) {
 		if(!e.buttons) {
-			if(currentRoom === $(this).parent().data("roomname")) {
+			if(currentRoom === $(this).parent().attr("data-roomname")) {
 				console.log("current: ", currentRoom);
 				currentRoom = null;
 				
-				contextRoomname = $(this).parent().data("roomname");
+				contextRoomname = $(this).parent().attr("data-roomname");
 				if(room !== "door") {
 					options.leave();
 				}
 				options.join();
-				cancel = true;
+				// cancel = true;
 			} else {
 				$(this).parent().toggleClass("open");
-				currentRoom = $(this).parent().data("roomname");
-				cancel = false;
+				currentRoom = $(this).parent().attr("data-roomname");
+				// cancel = false;
 				console.log("current: ", currentRoom);
 				setTimeout(function() {
-					cancel = true;
+					// cancel = true;
 					currentRoom = null;
 					console.log("current: ", currentRoom);
 				}, 250);
@@ -674,57 +645,13 @@ var socketLog = function() {
 	});
 
 	$("#room-list").on("mousedown", ".user", function(e) {
-		document.oncontextmenu = function() {
-			return false;
-		};
-		contextUsername = $(this).data("usernamefull");
-		contextUserdisp = $(this).data("displayname");
-		populateContext(userOpts);
-		console.log("user right clicked", this);
-
-		$("#new-context-menu").css({
-			"top": e.clientY,
-			"left": e.clientX,
-			"display": "block"
-		});
-		click = true;
-		cancel = false;
-		setTimeout(function() {
-			cancel = true;
-			socketLog(cancel);
-		}, 10);
-	});
-
-	// $("#room-list").on("touchstart", ".user", function(e) {
-	// 	if(!e.buttons) {
-	// 		document.oncontextmenu = function() {
-	// 			return false;
-	// 		};
-	// 		contextUsername = $(this).data("usernamefull");
-	// 		contextUserdisp = $(this).data("displayname");
-	// 		populateContext(userOpts);
-	// 		console.log("user right clicked", this);
-
-	// 		$("#new-context-menu").css({
-	// 			"top": e.clientY,
-	// 			"left": e.clientX,
-	// 			"display": "block"
-	// 		});
-	// 		click = true;
-	// 		cancel = false;
-	// 		setTimeout(function() {
-	// 			cancel = true;
-	// 		}, 10);
-	// 	}
-	// });
-
-	$("#messages").on("mousedown", ".user", function(e) {
+		e.stopPropagation();
 		if(e.buttons) {
 			document.oncontextmenu = function() {
 				return false;
 			};
-			contextUsername = $(this).data("usernamefull");
-			contextUserdisp = $(this).data("displayname");
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
 			populateContext(userOpts);
 			console.log("user right clicked", this);
 
@@ -733,63 +660,145 @@ var socketLog = function() {
 				"left": e.clientX,
 				"display": "block"
 			});
-			click = true;
-			cancel = false;
-			setTimeout(function() {
-				cancel = true;
-			}, 10);
+
+			// cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// 	socketLog(cancel);
+			// }, 10);
 		}
 	});
 
-	// $("#messages").on("touchstart", ".user", function(e) {
-	// 	document.oncontextmenu = function() {
-	// 		return false;
-	// 	};
-	// 	contextUsername = $(this).data("usernamefull");
-	// 	contextUserdisp = $(this).data("displayname");
-	// 	populateContext(userOpts);
-	// 	console.log("user right clicked", this);
+	$(document).on("touchstart", "#room-list .user", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		if(!e.buttons) {
+			document.oncontextmenu = function() {
+				return false;
+			};
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
+			populateContext(userOpts);
+			var touchX = e.originalEvent.touches[0].pageX;
+			var touchY = e.originalEvent.touches[0].pageY;
 
-	// 	$("#new-context-menu").css({
-	// 		"top": e.clientY,
-	// 		"left": e.clientX,
-	// 		"display": "block"
-	// 	});
-	// 	click = true;
-	// 	cancel = false;
-	// 	setTimeout(function() {
-	// 		cancel = true;
-	// 	}, 10);
-	// });
+			socketLog("coords", touchX, touchY);
+			console.log("coords", touchX, touchY);
 
-	$("#new-context-menu").on("mousedown", "li", function() {
-		socketLog("pressed menu item");
-		var opt = $(this).data("option");
-		console.log(opt);
+			$("#new-context-menu").css({
+				"top": touchY,
+				"left": touchX,
+				"display": "block"
+			});
 
-		options[opt.toLowerCase()]();
+			//cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// }, 10);
+		}
 	});
 
-	// $("#new-context-menu").on("touchstart", "li", function() {
-	// 	var opt = $(this).data("option");
-	// 	console.log(opt);
+	$("#messages").on("mousedown", ".user", function(e) {
+		e.stopPropagation();
+		if(e.buttons) {
+			document.oncontextmenu = function() {
+				return false;
+			};
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
+			populateContext(userOpts);
+			console.log("user right clicked", this);
 
-	// 	options[opt.toLowerCase()]();
-	// });
+			$("#new-context-menu").css({
+				"top": e.clientY,
+				"left": e.clientX,
+				"display": "block"
+			});
 
-	$("#chat-box .tab").on("click", function() {
-		$("#chat-box").toggleClass("open-side");
+			// cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// }, 10);
+		}
 	});
 
-	// $("#chat-box .tab").on("touchstart", function() {
-	// 	$("#chat-box").toggleClass("open-side");
-	// });
-	$("#chat-box div #tools").on("mouseup", "#timestamp", function() {
-		var checked = $(this).prop("checked");
-		if(checked) {
-			$("#messages").removeClass("show-time");
-		} else {
-			$("#messages").addClass("show-time");
+	$("#messages").on("touchstart", ".user", function(e) {
+		e.stopPropagation();
+		if(!e.buttons) {
+			document.oncontextmenu = function() {
+				return false;
+			};
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
+			populateContext(userOpts);
+			console.log("user right clicked", this);
+
+			$("#new-context-menu").css({
+				"top": e.clientY,
+				"left": e.clientX,
+				"display": "block"
+			});
+
+			//cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// }, 10);
+		}
+	});
+
+	$("#new-context-menu").on("mousedown", "li", function(e) {
+		if(e.buttons) {
+			var opt = $(this).attr("data-option");
+			console.log(opt);
+
+			options[opt.toLowerCase()]();
+		}
+	});
+
+	$("#new-context-menu").on("touchstart", "li", function(e) {
+		if(!e.buttons) {
+			var opt = $(this).attr("data-option");
+			console.log(opt);
+
+			options[opt.toLowerCase()]();
+		}
+	});
+
+	$("#chat-box .tab").on("mousedown", function(e) {
+		if(e.buttons) {
+			if(e.buttons === 1) {
+				$("#chat-box").toggleClass("open-side");
+			}
+		}
+	});
+
+	$("#chat-box .tab").on("touchstart", function(e) {
+		if(!e.buttons) {
+			$("#chat-box").toggleClass("open-side");
+		}
+	});
+
+	$("#chat-box div #tools").on("mousedown", "#timestamp", function(e) {
+		if(e.buttons) {
+			if(e.buttons === 1) {
+				var checked = $(this).prop("checked");
+				if(checked) {
+					$("#messages").removeClass("show-time");
+				} else {
+					$("#messages").addClass("show-time");
+				}
+			}
+		}
+	});
+
+	$("#chat-box div #tools").on("touchstart", "#timestamp", function(e) {
+		if(!e.buttons) {
+			var checked = $(this).prop("checked");
+			if(checked) {
+				$("#messages").removeClass("show-time");
+			} else {
+				$("#messages").addClass("show-time");
+			}
 		}
 	});
 

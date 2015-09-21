@@ -2,7 +2,7 @@ var express 		 = require("express"),
     app          = express(),
     server       = require("http").Server(app),
     io           = require("socket.io")(server),
-    //favicon      = require('serve-favicon'),
+    favicon      = require('serve-favicon'),
 		path 				 = require("path"),
 		logger 			 = require('morgan'),
 		cookieParser = require('cookie-parser'),
@@ -15,12 +15,12 @@ var priVar = require("./modules/private-variables");
 
 // config
 // view engine setup
-//app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.set("view options", { layout: "layout" });
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(function(req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
 
@@ -43,6 +43,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.disable("x-powered-by");
 app.use(helmet());
+app.use(helmet.hidePoweredBy());
+app.use(helmet.frameguard("allow-from", "http://*.*"));
 app.use(helmet.contentSecurityPolicy({
   defaultSrc: ["'self'"],
   scriptSrc: ["'self'", "'unsafe-inline'","*.jsdelivr.net", "'unsafe-eval'"],
@@ -51,7 +53,7 @@ app.use(helmet.contentSecurityPolicy({
   connectSrc: ["*"],
   fontSrc: ["fonts.google.com"],
   objectSrc: ["*"],
-  mediaSrc: ["'self'", "youtube.com", "twitch.tv"],
+  mediaSrc: ["'self'"],
   frameSrc: ["*"],
   sandbox: ["allow-forms", "allow-scripts", "allow-same-origin"],
   reportUri: '/report-violation',

@@ -101,7 +101,23 @@
 		if(dataObj.ban) {
 			var conf = confirm("Are you sure you want to ban " + thisUsername + "?");
 			if(conf) {
-				functions.ajax(action, "POST", "json", dataObj);
+				dataObj.reason = prompt("Please provide a reason for this account ban.", "Your behavior did not align with the rules of the chat room.");
+				if(dataObj.reason) {
+					if(dataObj.ban === "IP") {
+						dataObj.reasonIp = prompt("Please provide a reason for this ban.", "The activty from this connection exhibited an inordinate degree of offenses.");
+						if(dataObj.reasonIp) {
+							functions.ajax(action, "POST", "json", dataObj);
+						} else {
+							alert("Operation cancelled");
+						}
+					} else {
+						functions.ajax(action, "POST", "json", dataObj);
+					}
+				} else {
+					alert("Operation cancelled");
+				}
+			} else {
+				alert("Operation cancelled");
 			}
 		} else
 		if(dataObj.op) {
