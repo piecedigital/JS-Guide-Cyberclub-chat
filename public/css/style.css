@@ -2226,7 +2226,7 @@ label[for="admin-tab"] {
 .pm-box .tools .tool {
   position: relative;
   display: inline-block;
-  margin: 0 1.6px 0 0;
+  margin: 0 4px 0 0;
   background-color: #00a2eb;
   box-shadow: 0 0 0 1.6px #004B6E;
   padding: 0 12px;
@@ -2292,7 +2292,7 @@ label[for="admin-tab"] {
   position: fixed;
   bottom: 0;
   left: 0;
-  height: 43.2px;
+  height: 54.4px;
   width: 100%;
 }
 
@@ -2310,8 +2310,11 @@ label[for="admin-tab"] {
 }
 
 #pm-section > div > div > div {
-  width: 100%;
+  display: inline-block;
   height: 100%;
+  -webkit-column-width: 70.4px;
+  -moz-column-width: 70.4px;
+  column-width: 70.4px;
 }
 
 /* footer ----------------------------*/
