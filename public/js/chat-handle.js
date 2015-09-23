@@ -53,7 +53,10 @@ var confirm2 = function(msg, cb) {
     
     var data = getData( $(this).parent() );
     $(".alert").parent().remove();
-    return cb(data);
+    if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
   });
 }
 
@@ -91,7 +94,10 @@ var alert2 = function(msg, cb) {
     
     var data = getData( $(this).parent() );
     $(".alert").parent().remove();
-    return cb(data);
+    if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
   });
 }
 var prompt2 = function(msg, defaultVal, cb) {
@@ -132,24 +138,49 @@ var prompt2 = function(msg, defaultVal, cb) {
 
   $(document).on("keydown", ".alert .top-form", function(e) {
   	if(e.keyCode === 13) {
-	  	e.preventDefault();
-	  	var form = $(this).find("form");
-	  	$(form[0]).submit();
+	  	return false;
   	}
+  	return false;
   });
 
   $(document).on("submit", ".alert form form.true", function(e) {
     e.preventDefault();
   	var data = getData( $(this).parent() );
   	data.action = "true";
-  	$(".alert").parent().remove();
-  	return cb(data);
+  	$(".alert-box").remove();
+  	if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
   });
+  $(document).on("click", ".alert form form.true button", function(e) {
+    e.preventDefault();
+  	var data = getData( $(this).parent().parent() );
+  	data.action = "true";
+  	$(".alert-box").remove();
+  	if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
+  });
+
   $(document).on("submit", ".alert form form.false", function(e) {
     e.preventDefault();
     var data = getData( $(this) );
-  	$(".alert").parent().remove();
-  	return cb(data);
+  	$(".alert-box").remove();
+  	if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
+  });
+  $(document).on("submit", ".alert form form.false button", function(e) {
+    e.preventDefault();
+    var data = getData( $(this).parent() );
+  	$(".alert-box").remove();
+  	if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
   });
 }
 // generate private message window

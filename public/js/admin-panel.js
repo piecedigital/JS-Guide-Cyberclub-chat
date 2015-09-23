@@ -39,7 +39,6 @@ var confirm2 = function(msg, cb) {
     return null;
   });
 }
-
 var alert2 = function(msg, cb) {
   $("body").append(
     $("<div>").addClass("alert-box").html(
