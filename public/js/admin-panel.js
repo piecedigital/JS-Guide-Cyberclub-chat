@@ -1,3 +1,168 @@
+var getData = function (data) {
+  var obj = {};
+  data.serializeArray()
+    .map(function(elem) {
+    obj[elem.name] = elem.value;
+  });
+  return obj;
+}
+
+var confirm2 = function(msg, cb) {
+  $("body").append(
+    $("<div>").addClass("alert-box").html(
+    	$("<div>").addClass("alert").attr({
+      "type": "post"
+	    }).append(
+	      $("<p>").text(msg),
+	      $("<div>").addClass("commands").append(
+	        $("<form>").append(
+	          $("<input>").attr({
+	            "type": "hidden",
+	            "name": "action",
+	            "value": true,
+	          }),
+	          $("<button>").text("OK")
+	        )
+	      )
+	    )
+    )
+  );
+
+  $(document).on("click", ".alert form button", function(e) {
+    e.preventDefault();
+    
+    var data = getData( $(this).parent() );
+    $(".alert").parent().remove();
+    if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
+  });
+}
+var alert2 = function(msg, cb) {
+  $("body").append(
+    $("<div>").addClass("alert-box").html(
+    	$("<div>").addClass("alert").attr({
+      "type": "post"
+	    }).append(
+	      $("<p>").text(msg),
+	      $("<div>").addClass("commands").append(
+	        $("<form>").append(
+	          $("<input>").attr({
+	            "type": "hidden",
+	            "name": "action",
+	            "value": true,
+	          }),
+	          $("<button>").text("OK")
+	        ),
+	        $("<form>").append(
+	          $("<input>").attr({
+	            "type": "hidden",
+	            "name": "action",
+	            "value": false,
+	          }),
+	          $("<button>").text("Cancel")
+	        )
+	      )
+	    )
+    )
+  );
+
+  $(document).on("click", ".alert form button", function(e) {
+    e.preventDefault();
+    
+    var data = getData( $(this).parent() );
+    $(".alert").parent().remove();
+    if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
+  });
+}
+var prompt2 = function(msg, defaultVal, cb) {
+  $("body").append(
+    $("<div>").addClass("alert-box").html(
+    	$("<div>").addClass("alert").attr({
+      "type": "post"
+	    }).append(
+	      $("<p>").text(msg),
+	      $("<div>").addClass("commands").html(
+	      	$("<form>").addClass("top-form").append(
+	      		$("<input>").attr({
+	      			"type": "text",
+	      			"name": "response",
+	      			"value": defaultVal || ""
+	      		}),
+		        $("<form>").addClass("true").append(
+		          $("<input>").attr({
+		            "type": "hidden",
+		            "name": "action",
+		            "value": true,
+		          }),
+		          $("<button>").text("OK")
+		        ),
+		        $("<form>").addClass("false").append(
+		          $("<input>").attr({
+		            "type": "hidden",
+		            "name": "action",
+		            "value": false,
+		          }),
+		          $("<button>").text("Cancel")
+		        )
+	      	)
+	      )
+	    )
+    )
+  );
+
+  $(document).on("keydown", ".alert .top-form", function(e) {
+  	if(e.keyCode === 13) {
+	  	return false;
+  	}
+  	return false;
+  });
+
+  $(document).on("submit", ".alert form form.true", function(e) {
+    e.preventDefault();
+  	var data = getData( $(this).parent() );
+  	data.action = "true";
+  	$(".alert-box").remove();
+  	if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
+  });
+  $(document).on("click", ".alert form form.true button", function(e) {
+    e.preventDefault();
+  	var data = getData( $(this).parent().parent() );
+  	data.action = "true";
+  	$(".alert-box").remove();
+  	if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
+  });
+
+  $(document).on("submit", ".alert form form.false", function(e) {
+    e.preventDefault();
+    var data = getData( $(this) );
+  	$(".alert-box").remove();
+  	if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
+  });
+  $(document).on("submit", ".alert form form.false button", function(e) {
+    e.preventDefault();
+    var data = getData( $(this).parent() );
+  	$(".alert-box").remove();
+  	if(typeof cb === "function") {
+    	return cb(data);
+    }
+    return null;
+  });
+}
+
 ~(function(){
 	var socket = io();
 
@@ -99,27 +264,32 @@
 		var action = functions.parseAction(e);
 
 		if(dataObj.ban) {
-			var conf = confirm("Are you sure you want to ban " + thisUsername + "?");
-			if(conf) {
-				dataObj.reason = prompt("Please provide a reason for this account ban.", "Your behavior did not align with the rules of the chat room.");
-				if(dataObj.reason) {
-					if(dataObj.ban === "IP") {
-						dataObj.reasonIp = prompt("Please provide a reason for this ban.", "The activty from this connection exhibited an inordinate degree of offenses.");
-						if(dataObj.reasonIp) {
-							functions.ajax(action, "POST", "json", dataObj);
+			alert2("Are you sure you want to ban " + thisUsername + "?", function(res) {
+				if(res.action === "true") {
+					prompt2("Please provide a reason for this account ban.", "Your behavior did not align with the rules of the chat room.", function(res) {
+						if(res.action === "true") {
+							dataObj.reason = res.response;
+							if(dataObj.ban === "IP") {
+								prompt2("Please provide a reason for this IP ban.", "The activty from this connection exhibited an inordinate degree of offenses.", function(res) {
+									if(res.action === "true") {
+										dataObj.reasonIp = res.response;
+										functions.ajax(action, "POST", "json", dataObj);
+									} else {
+										confirm2("Operation cancelled");
+									}
+								});
+							} else {
+								functions.ajax(action, "POST", "json", dataObj);
+							}
 						} else {
-							alert("Operation cancelled");
+							confirm2("Operation cancelled");
 						}
-					} else {
-						functions.ajax(action, "POST", "json", dataObj);
-					}
+					});
 				} else {
-					alert("Operation cancelled");
+					confirm2("Operation cancelled");
 				}
-			} else {
-				alert("Operation cancelled");
-			}
-		} else
+			})
+		} else 
 		if(dataObj.op) {
 			var conf = confirm("Are you sure you want to remove " + dataObj.roomname + "?");
 			if(conf) {
@@ -157,7 +327,7 @@
 				data: dataObj,
 				success: function(data) {
 					console.log(data);
-					alert(data.msg);
+					confirm2(data.msg);
 
 					if(data.action === "callback") {
 						if(typeof data.callback === "object") {
@@ -174,7 +344,7 @@
 					console.log(error2);
 					console.log(error3);
 					console.log(error1.responseText);
-					alert(error1.responseText);
+					confirm2(error1.responseText);
 				}
 			});
 		},

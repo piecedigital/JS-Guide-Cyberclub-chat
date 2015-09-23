@@ -361,6 +361,35 @@ module.exports = function(db) {
           });
         }
       }
+    },
+    queryUser: function(req, res, next) {
+      var session = req.cookies["sessId"] || "";
+        
+      if(session) {
+        Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
+          if(sessQErr) throw sessQErr;
+
+          if(sessQDoc) {
+            User.findOne({ "username" : sessQDoc.user }, function(err2, userQDoc) {
+              if(err2) throw err2;
+
+              if(userQDoc) {
+                res.status(200).send({
+                  "usernameFull": userQDoc.usernameFull,
+                  "accessLevel": userQDoc.accessLevel
+                })
+
+              } else {
+                res.status(404).send("user not found");
+              }
+            });
+          } else {
+            res.status(404).send("session not found");
+          }
+        });
+      } else {
+        res.status(404).send("no session cookie");
+      }
     }
   }
 }
