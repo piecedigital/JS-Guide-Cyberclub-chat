@@ -315,7 +315,7 @@ sass.render({
 							            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "admin-chat" : "chat";
 					            			////console.log(keyVars);
 
-						  							res.render(dest, { "title" : "Guide Cyberclub Chat", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "disable" : "disabled", "rooms" : keyVars.rooms, "levelColors" : keyVars.levelColors });
+						  							res.render(dest, { "title" : "Guide Cyberclub Chat", "disable" : "disabled", "rooms" : keyVars.rooms, "levelColors" : keyVars.levelColors });
 					            		}
 					            	}
 
@@ -453,7 +453,7 @@ sass.render({
 
 							            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "admin-chat" : "chat";
 
-						  							res.render(dest, { "title" : "GCC Admin Panel", "username" : userQDoc.usernameFull, "accessLevel" : (userQDoc.accessLevel.replace(/\s/gi, "-")), "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedEmotes" : keyVars.bannedEmotes, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "levelColors" : keyVars.levelColors, "chatOptions" : chatOptions });
+						  							res.render(dest, { "title" : "GCC Admin Panel", "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedEmotes" : keyVars.bannedEmotes, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "levelColors" : keyVars.levelColors, "chatOptions" : chatOptions });
 					            		}
 					            	}
 
@@ -743,6 +743,7 @@ sass.render({
 			.post("/signup", account(db).signup)
 			.post("/login", account(db).login)
 			.post("/adjust-user", account(db).updateUser)
+			.post("/query-user", account(db).queryUser)
 			.post("/populate-users", function(req, res, next) {
 				Room.find({}, { "_id" : 0, "roomname" : 1, "users" : 1 }).toArray(function(roomQErr, roomQDoc) {
       		if(roomQErr) throw roomQErr;
@@ -899,26 +900,35 @@ sass.render({
 					ip = ip.join(".");
 				}
 				//console.log("IP address: ", ip, typeof ip);
+
 				if(ip) {
-					var updateObj = {
-					};
-					updateObj[op] = { "list" : { "ip" : ip, "reason" : reason } } 
+					var banIp = function() {
+						var updateObj = {
+						};
+						updateObj[op] = { "list" : { "ip" : ip, "reason" : reason } } 
 
 
-					Chat.update({ "optionName" : "bannedAddrs" }, updateObj, { "upsert" : true }, function(chatQErr, chatQDoc) {
+						Chat.update({ "optionName" : "bannedAddrs" }, updateObj, { "multi" : true, "upsert" : true }, function(chatQErr, chatQDoc) {
+							if(chatQErr) throw chatQErr;
+
+							if(chatQDoc && chatQDoc.result.ok) {
+								res.status(200).send({
+									"msg": "success",
+									"action": "callback",
+									"callback": "updateBannedAddrs",
+									"data": ip,
+									"op": op
+								});
+							}
+						});
+					}
+					Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [{ "ip" : ip }] } }, function(chatQErr, chatQDoc) {
 						if(chatQErr) throw chatQErr;
 
-						if(chatQDoc && chatQDoc.result.ok) {
-							res.status(200).send({
-								"msg": "success",
-								"action": "callback",
-								"callback": "updateBannedAddrs",
-								"data": ip,
-								"op": op
-							});
+						if(!chatQDoc) {
+							banIp();
 						}
 					});
-
 				} else {
 					res.status(417).send("Unacceptable IP address name");
 				}
@@ -993,7 +1003,7 @@ sass.render({
 				}
 			})
 			.post("*", function(req, res) {
-				console.log(req.headers);
+				res.status(404).send('Error 404: page not found');
 			})
 			;
 

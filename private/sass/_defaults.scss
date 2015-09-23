@@ -97,9 +97,58 @@ $darkBlue: #004B6E;
 	background: -webkit-linear-gradient($deg, $colors);
 }
 //default reset
+$em: 16px;
+
 *, *:before, *:after {
-  font-size: 16px;
+  font-size: $em;
   box-sizing: border-box;
   font-family: sans-serif;
   transition: all .5s;
+}
+.alert-box {
+	z-index: 10;
+	position: fixed;
+	top: 50%;
+	left : 50%;
+	@include transformT(-50%, -50%);
+	box-shadow: 0 0 .2*$em .1*$em $darkBlue;
+	.alert {
+	  position: relative;
+	  width: 20*$em;
+	  margin: 0;
+	  padding: 1*$em 1*$em 5*$em;
+	  background: $dimBlue;
+	  box-shadow: inset 0 0 0 2px $darkBlue;
+	  border-radius: 3px;
+	  text-align: center;
+	  & .commands {
+	    position: absolute;
+	    bottom: 1em;
+	    left: 0;
+	    width: 100%;
+	    text-align: center;
+	    & form {
+	      display: inline-block;
+	      margin: 0 .5em;
+	      & input {
+	      	display: block;
+	      	width: 100%;
+	      	border-radius: 3px;
+	  			margin: 0;
+	  			padding: .5em;
+	  			background: $veryLightBlue;
+	  			box-shadow: inset 0 0 0 2px $darkBlue;
+	  			border-radius: 3px;
+	  			text-align: center;
+	  			border: none;
+	      }
+	      & button {
+	        border: 2px solid $darkBlue;
+	        background: $midBlue;
+	        border-radius: 3px;
+	        cursor: pointer;
+	      }
+	    }
+	  }
+	}
 }
