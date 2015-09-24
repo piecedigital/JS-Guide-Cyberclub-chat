@@ -905,8 +905,10 @@ sass.render({
 					var banIp = function() {
 						var updateObj = {
 						};
-						updateObj[op] = { "list" : { "ip" : ip, "reason" : reason } } 
-
+						updateObj[op] = { "list" : { "ip" : ip } }
+						if(op === "$push") {
+							updateObj[op].list.reason = reason;
+						}
 
 						Chat.update({ "optionName" : "bannedAddrs" }, updateObj, { "multi" : true, "upsert" : true }, function(chatQErr, chatQDoc) {
 							if(chatQErr) throw chatQErr;
@@ -922,13 +924,19 @@ sass.render({
 							}
 						});
 					}
-					Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$in" : [{ "ip" : ip }] } }, function(chatQErr, chatQDoc) {
-						if(chatQErr) throw chatQErr;
+					if(op === "$push"){
+						Chat.findOne({ "optionName" : "bannedAddrs", "list" : { "$elemMatch" : { "ip" : ip } } }, function(chatQErr, chatQDoc) {
+							if(chatQErr) throw chatQErr;
 
-						if(!chatQDoc) {
-							banIp();
-						}
-					});
+							if(chatQDoc) {
+								res.status(417).send("IP is already banned");
+							} else {
+								banIp();
+							}
+						});
+					} else {
+						banIp();
+					}
 				} else {
 					res.status(417).send("Unacceptable IP address name");
 				}
