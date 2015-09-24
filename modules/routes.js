@@ -225,7 +225,7 @@ sass.render({
 				            	}
 				            } else {
 				            	res.clearCookie("sessId");
-				        			res.redirect("/signup");
+				        			res.redirect("/admin-signup");
 				            }
 				          });
 				        } else {
