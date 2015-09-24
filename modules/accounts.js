@@ -17,7 +17,7 @@ module.exports = function(db) {
       IPA = db.collection("bannedIPs"),
       Chat = db.collection("chatOptions");
 
-  var generateKey = function(host, Save, dbObj, email, usernameFull, msgToUser, res) {
+  var generateKey = function(cb) {
     //console.log("creating match ID...");
 
     // creates a library of characters to crea a key from
@@ -52,7 +52,7 @@ module.exports = function(db) {
           tries++; 
           makeKey("re");
         } else {
-          saveAccount(host, Save, dbObj, email, usernameFull, msgToUser, res, key);
+          return cb(key);
         }
       });
 
@@ -60,22 +60,6 @@ module.exports = function(db) {
 
     makeKey();
   }// end generateId
-
-  var saveAccount = function(host, Save, dbObj, email, usernameFull, msgToUser, res, validationId) {
-    dbObj.validationId = validationId;
-
-    Pending.insert(dbObj, function(insertErr, insertedDoc) {
-      if(insertErr) throw insertErr;
-
-      if(insertedDoc) {
-        //console.log("account created \n\r");
-        console.log(host);
-        mailer("Confirm admin profile", email, usernameFull, "<img width=1 height=1 src='http://" + host + "/tracker'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://" + host + "/validate?key=" + validationId + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://" + host + "/cancel?key=" + validationId).mailPost();
-
-        res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked" });
-      }
-    });
-  };
 
   return {
     signup: function(req, res, next) {
@@ -134,13 +118,32 @@ module.exports = function(db) {
                         "created": new Date().getTime(),
                         "accessLevel": "regular"
                       };
-                      var msgToUser = "Your account has been created. You may now login",
-                          validationId = "";
+                      var msgToUser = "Your account has been created. You may now login";
 
                       if(Save === "admin") {
                         dbObj.accessLevel = "admin";
                         msgToUser = "Your admin account has been created. You account is now awaiting approval";
-                        generateKey(req.headers.host, Save, dbObj, email, usernameFull, msgToUser, res);
+                        generateKey(function(key) {
+                          if(key) {
+                            dbObj.validationId = key;
+
+                            Pending.insert(dbObj, function(insertErr, insertedDoc) {
+                              if(insertErr) throw insertErr;
+
+                              if(insertedDoc) {
+                                //console.log("account created \n\r");
+                                var host = req.headers.host;
+                                console.log(host);
+                                mailer("Confirm admin profile", email, usernameFull, "<img width=1 height=1 src='http://" + host + "/tracker'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://" + host + "/validate?key=" + key + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://" + host + "/cancel?key=" + key).mailPost();
+
+                                res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked" });
+                              }
+                            });
+                          } else {
+                            res.render("admin-signup", { "title" : "Admin Sign Up", "msg" : "There was a problem creating your account", "sign-checked" : "", "log-checked" : "checked" });
+                            console.log("key was not created");
+                          }
+                        });
                       } else {
                         User.insert(dbObj, function(insertErr, insertedDoc) {
                           if(insertErr) throw insertErr;
