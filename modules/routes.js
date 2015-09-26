@@ -734,14 +734,14 @@ sass.render({
 				console.log('PIXEL TRACKER WORKED!')
 			})
 			.get('/app-check', function(req, res) {
-				res.status(400).send('Server is off');
+				if(serverOn) {
+					res.status(200).send({"message" : "Server is online"});
+				} else {
+					res.status(404).send('Server is offline');
+				}
 			})
 			.get('*', function(req, res, next) {
-				if(serverOn) {
-					res.status(200).send({"message" : "Server is on"});
-				} else {
-					res.status(404).send('Error 404: page not found<br><br><a href="/">return Home</a>');
-				}
+				res.status(404).send('Error 404: page not found<br><br><a href="/">return Home</a>');
 			})
 			;
 
