@@ -1,5 +1,7 @@
 console.log("required routes module\r\n");
 
+var serverOn = true;
+
 var app = require('express')(),
 		fs = require("fs"),
 		bcrypt = require("bcryptjs"),
@@ -731,8 +733,15 @@ sass.render({
 				res.status(200).send('pixel tracker');
 				console.log('PIXEL TRACKER WORKED!')
 			})
+			.get('/app-check', function(req, res) {
+				res.status(400).send('Server is off');
+			})
 			.get('*', function(req, res, next) {
-				res.status(404).send('Error 404: page not found<br><br><a href="/">return Home</a>');
+				if(serverOn) {
+					res.status(200).send({"message" : "Server is on"});
+				} else {
+					res.status(404).send('Error 404: page not found<br><br><a href="/">return Home</a>');
+				}
 			})
 			;
 
