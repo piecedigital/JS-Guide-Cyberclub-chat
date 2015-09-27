@@ -17,6 +17,12 @@ $em: 16px;
 	-moz-column-width: $val;
 }
 
+@mixin appearance($val) {
+	appearance: $val;
+	-webkit-appearance: $val;
+	-moz-appearance: $val;
+}
+
 a {
 	text-decoration: none;
 	color: inherit;
@@ -617,7 +623,7 @@ label[for="admin-tab"] {
 								position: absolute;
 								top: 0;
 								left: .5*$em;
-								transition: all 0s;
+								@include transition(all 0s);
 							}
 							&:after {
 								content: "\2610";
@@ -676,7 +682,7 @@ label[for="admin-tab"] {
 							&.draggable {
 								position: fixed;
 								box-shadow: 0 0 .2*$em .1*$em white;
-								transition: 0s all;
+								@include transition(0s all);
 							}
 						}
 					}
@@ -692,8 +698,19 @@ label[for="admin-tab"] {
 			}
 			& input {
 				height: 100%;
-				width: 1.5*$em;
+				width: 2*$em;
 				margin: 0;
+				@include appearance(none);
+				border-radius: 100%;
+				background-color: $veryLightBlue;
+				box-shadow:
+					inset 0 0 0 .25*$em $darkBlue;
+				&:checked {
+					background: $dimBlue;
+					box-shadow:
+						inset 0 0 0 .25*$em $darkBlue,
+						inset 0 0 0 .5*$em $veryLightBlue;
+				}
 			}
 			& label {
 				padding: 1.5% 0;
@@ -975,7 +992,7 @@ label[for="admin-tab"] {
 }
 #new-context-menu {
 	z-index: 1;
-	transition: 0s all;
+	@include transition(0s all);
 	position: fixed;
 	display: none;
 	padding: 0;
@@ -996,6 +1013,12 @@ label[for="admin-tab"] {
 		&:hover {
 			background-color: $midBlue;
 		}
+		&:first-child {
+			border-radius: .5*$em .5*$em 0 0;
+		}
+		&:last-child {
+			border-radius: 0 0 .5*$em .5*$em;
+		}
 	}
 }
 
@@ -1006,7 +1029,7 @@ label[for="admin-tab"] {
 	bottom: 0;
 	left: 0;
 	display: inline-block;
-	transition: all 0s;
+	@include transition(all 0s);
 	width: 25*$em;
 	max-width: 100vw;
 	height: 20*$em;
