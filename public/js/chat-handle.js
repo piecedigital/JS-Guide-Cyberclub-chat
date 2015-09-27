@@ -737,30 +737,6 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 				}, 250);
 			}
 		});
-		// $("#room-list").on("click", ".room .name", function(e) {
-		// 	e.stopPropagation();
-		// 	if(click = "click")
-		// 	if(currentRoom === $(this).parent().attr("data-roomname")) {
-		// 		console.log("current: ", currentRoom);
-		// 		currentRoom = null;
-				
-		// 		contextRoomname = $(this).parent().attr("data-roomname");
-		// 		if(room !== "door") {
-		// 			options.leave();
-		// 		}
-		// 		options.join();
-		// 		// cancel = true;
-		// 	} else {
-		// 		$(this).parent().toggleClass("open");
-		// 		currentRoom = $(this).parent().attr("data-roomname");
-			
-		// 		// cancel = true;
-		// 		setTimeout(function() {
-		// 			currentRoom = null;
-		// 		}, 250);
-		// 		console.log("current: ", currentRoom);
-		// 	}
-		// });
 		$("#room-list").on("contextmenu", ".room .name", function(e) {
 			e.stopPropagation();
 			e.preventDefault();
@@ -770,17 +746,11 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 				coordX = e.pageX || e.originalEvent.touches[0].pageX,
 				coordY = e.pageY || e.originalEvent.touches[0].pageY;
 
-			console.log(coordY);
 			$("#new-context-menu").css({
 				"top": coordY,
 				"left": coordX,
 				"display": "block"
 			});
-		
-			// cancel = false;
-			// setTimeout(function() {
-			// 	cancel = true;
-			// }, 10);
 		});
 		
 		
@@ -804,31 +774,14 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 				"left": coordX,
 				"display": "block"
 			});
-
-			//cancel = false;
-			// setTimeout(function() {
-			// 	cancel = true;
-			// }, 10);
+			
+			document.oncontextmenu = function() {
+				return false;
+			}
+			setTimeout(function() {
+				document.oncontextmenu = null;
+			}, 100);
 		});
-		// $("#room-list").on("mousedown", ".user", function(e) {
-		// 	e.stopPropagation();
-		// 	contextUsername = $(this).attr("data-usernamefull");
-		// 	contextUserdisp = $(this).attr("data-displayname");
-		// 	populateContext(userOpts);
-		// 	console.log("user right clicked", this);
-
-		// 	$("#new-context-menu").css({
-		// 		"top": e.clientY,
-		// 		"left": e.clientX,
-		// 		"display": "block"
-		// 	});
-
-		// 	// cancel = false;
-		// 	// setTimeout(function() {
-		// 	// 	cancel = true;
-		// 	// 	socketLog(cancel);
-		// 	// }, 10);
-		// });
 		
 		$("#messages").on("touchstart mousedown", ".user", function(e) {
 			e.stopPropagation();
@@ -851,37 +804,13 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 				"display": "block"
 			});
 
-			//cancel = false;
-			// setTimeout(function() {
-			// 	cancel = true;
-			// }, 10);
+			document.oncontextmenu = function() {
+				return false;
+			}
+			setTimeout(function() {
+				document.oncontextmenu = null;
+			}, 100);
 		});
-		// $("#messages").on("mousedown", ".user", function(e) {
-		// 	e.stopPropagation();
-		// 	e.preventDefault();
-		// 	contextUsername = $(this).attr("data-usernamefull");
-		// 	contextUserdisp = $(this).attr("data-displayname");
-		// 	populateContext(userOpts);
-		// 	var coordX, coordY;
-		// 	if(e.originalEvent.touches[0].pageX) {
-		// 		coordX = e.originalEvent.touches[0].pageX;
-		// 		coordY = e.originalEvent.touches[0].pageY;
-		// 	} else {
-		// 		coordX = e.clientX;
-		// 		coordY = e.clientY;
-		// 	}
-
-		// 	$("#new-context-menu").css({
-		// 		"top": coordY,
-		// 		"left": coordX,
-		// 		"display": "block"
-		// 	});
-
-		// 	// cancel = false;
-		// 	// setTimeout(function() {
-		// 	// 	cancel = true;
-		// 	// }, 10);
-		// });
 
 		$("#new-context-menu").on("touchstart mousedown", "li", function(e) {
 			e.stopPropagation();
@@ -890,24 +819,12 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 
 			options[opt.toLowerCase()]();
 		});
-		// $("#new-context-menu").on("mousedown", "li", function(e) {
-		// 	e.stopPropagation();
-		// 	var opt = $(this).attr("data-option");
-		// 	console.log(opt);
-
-		// 	options[opt.toLowerCase()]();
-		// });
 
 		$("#chat-box .tab").on("touchstart mousedown", function(e) {
 			e.stopPropagation();
 			e.preventDefault();
 			$("#chat-box").toggleClass("open-side");
 		});
-		// $("#chat-box .tab").on("mousedown", function(e) {
-		// 	e.stopPropagation();
-		// 	e.preventDefault();
-		// 	$("#chat-box").toggleClass("open-side");
-		// });
 
 		$("#chat-box div #tools").on("touchstart mousedown", "#timestamp", function(e) {
 			e.stopPropagation();
@@ -924,13 +841,6 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 				$("#messages").addClass("show-time");
 			}
 		});
-		// $("#chat-box div #tools").on("mousedown", "#timestamp", function(e) {
-		// 	e.stopPropagation();
-		// 	e.preventDefault();
-		// 	var checked = $(this).prop("checked");
-		// 	$("#messages").removeClass("show-time");
-		// 	$("#messages").addClass("show-time");
-		// });
 
 	}
 	$.ajax({
