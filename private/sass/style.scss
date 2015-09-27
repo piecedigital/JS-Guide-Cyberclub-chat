@@ -55,12 +55,14 @@ section {
 	position: relative;
 	padding: 5*$em 0;
 	z-index: 1;
+	pointer-events: none;
 }
 .page-wrap {
 	position: relative;
 	display: block;
 	max-width: 1200px;
 	margin: 0 auto;
+	pointer-events: auto;
 }
 .img-contain img{
 	max-width: 100%;
