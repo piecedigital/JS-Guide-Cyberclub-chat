@@ -64,7 +64,9 @@
   font-size: 16px;
   box-sizing: border-box;
   font-family: sans-serif;
-  transition: all 0.5s;
+  transition: 0.5s all;
+  -webkit-transition: 0.5s all;
+  -moz-transition: 0.5s all;
 }
 
 .alert-box {
@@ -1830,6 +1832,8 @@ label[for="admin-tab"] {
   top: 0;
   left: 8px;
   transition: all 0s;
+  -webkit-transition: all 0s;
+  -moz-transition: all 0s;
 }
 
 #chat-box > div #side-bar .parent .parent #room-list .room:after {
@@ -1899,6 +1903,8 @@ label[for="admin-tab"] {
   position: fixed;
   box-shadow: 0 0 3.2px 1.6px white;
   transition: 0s all;
+  -webkit-transition: 0s all;
+  -moz-transition: 0s all;
 }
 
 #chat-box > div #tools {
@@ -1913,8 +1919,19 @@ label[for="admin-tab"] {
 
 #chat-box > div #tools input {
   height: 100%;
-  width: 24px;
+  width: 32px;
   margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border-radius: 100%;
+  background-color: #e8f8ff;
+  box-shadow: inset 0 0 0 4px #004B6E;
+}
+
+#chat-box > div #tools input:checked {
+  background: #017ab1;
+  box-shadow: inset 0 0 0 4px #004B6E, inset 0 0 0 8px #e8f8ff;
 }
 
 #chat-box > div #tools label {
@@ -2228,6 +2245,8 @@ label[for="admin-tab"] {
 #new-context-menu {
   z-index: 1;
   transition: 0s all;
+  -webkit-transition: 0s all;
+  -moz-transition: 0s all;
   position: fixed;
   display: none;
   padding: 0;
@@ -2254,6 +2273,14 @@ label[for="admin-tab"] {
   background-color: #00a2eb;
 }
 
+#new-context-menu li:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+#new-context-menu li:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
 /* private messaging box*/
 .pm-box {
   z-index: 4;
@@ -2262,6 +2289,8 @@ label[for="admin-tab"] {
   left: 0;
   display: inline-block;
   transition: all 0s;
+  -webkit-transition: all 0s;
+  -moz-transition: all 0s;
   width: 400px;
   max-width: 100vw;
   height: 320px;

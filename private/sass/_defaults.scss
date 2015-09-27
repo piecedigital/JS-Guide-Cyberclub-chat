@@ -96,6 +96,11 @@ $darkBlue: #004B6E;
 	background: -moz-linear-gradient($deg, $colors);
 	background: -webkit-linear-gradient($deg, $colors);
 }
+@mixin transition($val...) {
+	transition: $val;
+  -webkit-transition: $val;
+  -moz-transition: $val;
+}
 //default reset
 $em: 16px;
 
@@ -103,7 +108,7 @@ $em: 16px;
   font-size: $em;
   box-sizing: border-box;
   font-family: sans-serif;
-  transition: all .5s;
+  @include transition(.5s all);
 }
 .alert-box {
 	z-index: 10;

@@ -605,21 +605,19 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 			}
 		};
 
-		var cancel = true, currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
+		var click = "", currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
 		var options = {
 			join: function() {
 				socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
-				document.oncontextmenu = null;
 			},
 			leave: function() {
 				socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
-				document.oncontextmenu = null;
 			},
 			mention: function() {
 				var val = $("#chat-val").val();
@@ -628,7 +626,6 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
-				document.oncontextmenu = null;
 			},
 			message: function() {
 				if(myLevel === "admin" || myLevel === "moderator") {
@@ -647,7 +644,6 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
-				document.oncontextmenu = null;
 			},
 			mute: function() {
 				var cxtLC = contextUsername.toLowerCase();
@@ -662,7 +658,6 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
-				document.oncontextmenu = null;
 			},
 			unmute: function() {
 				myMutes.splice( (myMutes.indexOf(contextUsername.toLowerCase())), 1 );
@@ -671,303 +666,272 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
-				document.oncontextmenu = null;
 			},
 			cancel: function() {
 				console.log("cancel", cancel);
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
-				document.oncontextmenu = null;
 			}
 		};
 
 		$(document).on({
 			mousedown:  function(e) {
-				if(e.buttons) {
-					console.log("doc first")
-					if(cancel) {
-						$("#new-context-menu").css({
-							"display": "none"
-						}).html("");
-						document.oncontextmenu = null;
-					}
-				}
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
 			},
 			touchstart:  function(e) {
-				if(!e.buttons) {
-					console.log("doc first")
-					if(cancel) {
-						$("#new-context-menu").css({
-							"display": "none"
-						}).html("");
-						document.oncontextmenu = null;
-					}
-				}
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
 			},
 			scroll:  function(e) {
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
-				document.oncontextmenu = null;
 			},
 			touchmove:  function(e) {
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
-				document.oncontextmenu = null;
 			},
 			mouseup: function(e) {
-				if(e.buttons) {
-				
-					console.log("up");
-					setTimeout(function() {
-						currentRoom = null;
-						console.log("current: ", currentRoom);
-					}, 250);
-				}
+				console.log("up");
+				setTimeout(function() {
+					currentRoom = null;
+					console.log("current: ", currentRoom);
+				}, 250);
 			},
 			touchend:  function(e) {
-				if(!e.buttons) {
-					//socketLog("touche end")
-				
-					console.log("up");
-					setTimeout(function() {
-						currentRoom = null;
-						console.log("current: ", currentRoom);
-					}, 250);
-				}
+				console.log("up");
+				setTimeout(function() {
+					currentRoom = null;
+					console.log("current: ", currentRoom);
+				}, 250);
 			}
 		});
 
-		$("#room-list").on("mousedown", ".room .name", function(e) {
+		$("#room-list").on("touchstart mousedown", ".room .name", function(e) {
 			e.stopPropagation();
-			if(e.buttons) {
-				if(e.buttons === 2) {
-					document.oncontextmenu = function() {
-						return false;
-					};
-					contextRoomname = $(this).parent().attr("data-roomname");
-					populateContext(roomOpts);
-					
-					$("#new-context-menu").css({
-						"top": e.clientY,
-						"left": e.clientX,
-						"display": "block"
-					});
+			e.preventDefault();
+			if(currentRoom === $(this).parent().attr("data-roomname")) {
+				console.log("current: ", currentRoom);
+				currentRoom = null;
 				
-					// cancel = false;
-					// setTimeout(function() {
-					// 	cancel = true;
-					// }, 10);
-				} else {
-					if(currentRoom === $(this).parent().attr("data-roomname")) {
-						console.log("current: ", currentRoom);
-						currentRoom = null;
-						
-						contextRoomname = $(this).parent().attr("data-roomname");
-						if(room !== "door") {
-							options.leave();
-						}
-						options.join();
-						// cancel = true;
-					} else {
-						$(this).parent().toggleClass("open");
-						currentRoom = $(this).parent().attr("data-roomname");
-					
-						// cancel = true;
-						setTimeout(function() {
-							currentRoom = null;
-						}, 250);
-						console.log("current: ", currentRoom);
-					}
-				}			
+				contextRoomname = $(this).parent().attr("data-roomname");
+				if(room !== "door") {
+					options.leave();
+				}
+				options.join();
+				// cancel = true;
+			} else {
+				$(this).parent().toggleClass("open");
+				currentRoom = $(this).parent().attr("data-roomname");
+				// cancel = false;
+				console.log("current: ", currentRoom);
+				setTimeout(function() {
+					// cancel = true;
+					currentRoom = null;
+					console.log("current: ", currentRoom);
+				}, 250);
 			}
+		});
+		// $("#room-list").on("click", ".room .name", function(e) {
+		// 	e.stopPropagation();
+		// 	if(click = "click")
+		// 	if(currentRoom === $(this).parent().attr("data-roomname")) {
+		// 		console.log("current: ", currentRoom);
+		// 		currentRoom = null;
+				
+		// 		contextRoomname = $(this).parent().attr("data-roomname");
+		// 		if(room !== "door") {
+		// 			options.leave();
+		// 		}
+		// 		options.join();
+		// 		// cancel = true;
+		// 	} else {
+		// 		$(this).parent().toggleClass("open");
+		// 		currentRoom = $(this).parent().attr("data-roomname");
+			
+		// 		// cancel = true;
+		// 		setTimeout(function() {
+		// 			currentRoom = null;
+		// 		}, 250);
+		// 		console.log("current: ", currentRoom);
+		// 	}
+		// });
+		$("#room-list").on("contextmenu", ".room .name", function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			contextRoomname = $(this).parent().attr("data-roomname");
+			populateContext(roomOpts);
+			var
+				coordX = e.pageX || e.originalEvent.touches[0].pageX,
+				coordY = e.pageY || e.originalEvent.touches[0].pageY;
+
+			console.log(coordY);
+			$("#new-context-menu").css({
+				"top": coordY,
+				"left": coordX,
+				"display": "block"
+			});
+		
+			// cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// }, 10);
 		});
 		
-		$("#room-list").on("touchstart", ".room .name", function(e) {
-			if(!e.buttons) {
-				if(currentRoom === $(this).parent().attr("data-roomname")) {
-					console.log("current: ", currentRoom);
-					currentRoom = null;
-					
-					contextRoomname = $(this).parent().attr("data-roomname");
-					if(room !== "door") {
-						options.leave();
-					}
-					options.join();
-					// cancel = true;
-				} else {
-					$(this).parent().toggleClass("open");
-					currentRoom = $(this).parent().attr("data-roomname");
-					// cancel = false;
-					console.log("current: ", currentRoom);
-					setTimeout(function() {
-						// cancel = true;
-						currentRoom = null;
-						console.log("current: ", currentRoom);
-					}, 250);
-				}
-			}
-		});
-
-		$("#room-list").on("mousedown", ".user", function(e) {
+		
+		$("#room-list").on("touchstart mousedown", ".user", function(e) {
 			e.stopPropagation();
-			if(e.buttons) {
-				document.oncontextmenu = function() {
-					return false;
-				};
-				contextUsername = $(this).attr("data-usernamefull");
-				contextUserdisp = $(this).attr("data-displayname");
-				populateContext(userOpts);
-				console.log("user right clicked", this);
-
-				$("#new-context-menu").css({
-					"top": e.clientY,
-					"left": e.clientX,
-					"display": "block"
-				});
-
-				// cancel = false;
-				// setTimeout(function() {
-				// 	cancel = true;
-				// 	socketLog(cancel);
-				// }, 10);
-			}
-		});
-
-		$(document).on("touchstart", "#room-list .user", function(e) {
 			e.preventDefault();
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
+			populateContext(userOpts);
+			var coordX, coordY;
+			if(e.clientX) {
+				coordX = e.clientX;
+				coordY = e.clientY;
+			} else {
+				coordX = e.originalEvent.touches[0].pageX;
+				coordY = e.originalEvent.touches[0].pageY;
+			}
+
+			$("#new-context-menu").css({
+				"top": coordY,
+				"left": coordX,
+				"display": "block"
+			});
+
+			//cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// }, 10);
+		});
+		// $("#room-list").on("mousedown", ".user", function(e) {
+		// 	e.stopPropagation();
+		// 	contextUsername = $(this).attr("data-usernamefull");
+		// 	contextUserdisp = $(this).attr("data-displayname");
+		// 	populateContext(userOpts);
+		// 	console.log("user right clicked", this);
+
+		// 	$("#new-context-menu").css({
+		// 		"top": e.clientY,
+		// 		"left": e.clientX,
+		// 		"display": "block"
+		// 	});
+
+		// 	// cancel = false;
+		// 	// setTimeout(function() {
+		// 	// 	cancel = true;
+		// 	// 	socketLog(cancel);
+		// 	// }, 10);
+		// });
+		
+		$("#messages").on("touchstart mousedown", ".user", function(e) {
 			e.stopPropagation();
-			if(!e.buttons) {
-				document.oncontextmenu = function() {
-					return false;
-				};
-				contextUsername = $(this).attr("data-usernamefull");
-				contextUserdisp = $(this).attr("data-displayname");
-				populateContext(userOpts);
-				var touchX = e.originalEvent.touches[0].pageX;
-				var touchY = e.originalEvent.touches[0].pageY;
-
-				socketLog("coords", touchX, touchY);
-				console.log("coords", touchX, touchY);
-
-				$("#new-context-menu").css({
-					"top": touchY,
-					"left": touchX,
-					"display": "block"
-				});
-
-				//cancel = false;
-				// setTimeout(function() {
-				// 	cancel = true;
-				// }, 10);
+			e.preventDefault();
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
+			populateContext(userOpts);
+			var coordX, coordY;
+			if(e.clientX) {
+				coordX = e.clientX;
+				coordY = e.clientY;
+			} else {
+				coordX = e.originalEvent.touches[0].pageX;
+				coordY = e.originalEvent.touches[0].pageY;
 			}
-		});
 
-		$("#messages").on("mousedown", ".user", function(e) {
+			$("#new-context-menu").css({
+				"top": coordY,
+				"left": coordX,
+				"display": "block"
+			});
+
+			//cancel = false;
+			// setTimeout(function() {
+			// 	cancel = true;
+			// }, 10);
+		});
+		// $("#messages").on("mousedown", ".user", function(e) {
+		// 	e.stopPropagation();
+		// 	e.preventDefault();
+		// 	contextUsername = $(this).attr("data-usernamefull");
+		// 	contextUserdisp = $(this).attr("data-displayname");
+		// 	populateContext(userOpts);
+		// 	var coordX, coordY;
+		// 	if(e.originalEvent.touches[0].pageX) {
+		// 		coordX = e.originalEvent.touches[0].pageX;
+		// 		coordY = e.originalEvent.touches[0].pageY;
+		// 	} else {
+		// 		coordX = e.clientX;
+		// 		coordY = e.clientY;
+		// 	}
+
+		// 	$("#new-context-menu").css({
+		// 		"top": coordY,
+		// 		"left": coordX,
+		// 		"display": "block"
+		// 	});
+
+		// 	// cancel = false;
+		// 	// setTimeout(function() {
+		// 	// 	cancel = true;
+		// 	// }, 10);
+		// });
+
+		$("#new-context-menu").on("touchstart mousedown", "li", function(e) {
 			e.stopPropagation();
-			if(e.buttons) {
-				document.oncontextmenu = function() {
-					return false;
-				};
-				contextUsername = $(this).attr("data-usernamefull");
-				contextUserdisp = $(this).attr("data-displayname");
-				populateContext(userOpts);
-				console.log("user right clicked", this);
+			e.preventDefault();
+			var opt = $(this).attr("data-option");
 
-				$("#new-context-menu").css({
-					"top": e.clientY,
-					"left": e.clientX,
-					"display": "block"
-				});
-
-				// cancel = false;
-				// setTimeout(function() {
-				// 	cancel = true;
-				// }, 10);
-			}
+			options[opt.toLowerCase()]();
 		});
+		// $("#new-context-menu").on("mousedown", "li", function(e) {
+		// 	e.stopPropagation();
+		// 	var opt = $(this).attr("data-option");
+		// 	console.log(opt);
 
-		$("#messages").on("touchstart", ".user", function(e) {
+		// 	options[opt.toLowerCase()]();
+		// });
+
+		$("#chat-box .tab").on("touchstart mousedown", function(e) {
 			e.stopPropagation();
-			if(!e.buttons) {
-				document.oncontextmenu = function() {
-					return false;
-				};
-				contextUsername = $(this).attr("data-usernamefull");
-				contextUserdisp = $(this).attr("data-displayname");
-				populateContext(userOpts);
-				console.log("user right clicked", this);
-
-				$("#new-context-menu").css({
-					"top": e.clientY,
-					"left": e.clientX,
-					"display": "block"
-				});
-
-				//cancel = false;
-				// setTimeout(function() {
-				// 	cancel = true;
-				// }, 10);
-			}
+			e.preventDefault();
+			$("#chat-box").toggleClass("open-side");
 		});
+		// $("#chat-box .tab").on("mousedown", function(e) {
+		// 	e.stopPropagation();
+		// 	e.preventDefault();
+		// 	$("#chat-box").toggleClass("open-side");
+		// });
 
-		$("#new-context-menu").on("mousedown", "li", function(e) {
-			if(e.buttons) {
-				var opt = $(this).attr("data-option");
-				console.log(opt);
-
-				options[opt.toLowerCase()]();
-			}
-		});
-
-		$("#new-context-menu").on("touchstart", "li", function(e) {
-			if(!e.buttons) {
-				var opt = $(this).attr("data-option");
-				console.log(opt);
-
-				options[opt.toLowerCase()]();
-			}
-		});
-
-		$("#chat-box .tab").on("mousedown", function(e) {
-			if(e.buttons) {
-				if(e.buttons === 1) {
-					$("#chat-box").toggleClass("open-side");
+		$("#chat-box div #tools").on("touchstart mousedown", "#timestamp", function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			if( $(this).prop("checked") ) {
+				if(e.type === "touchstart") {
+					$(this)[0].checked = false;
 				}
-			}
-		});
-
-		$("#chat-box .tab").on("touchstart", function(e) {
-			if(!e.buttons) {
-				$("#chat-box").toggleClass("open-side");
-			}
-		});
-
-		$("#chat-box div #tools").on("mousedown", "#timestamp", function(e) {
-			if(e.buttons) {
-				if(e.buttons === 1) {
-					var checked = $(this).prop("checked");
-					if(checked) {
-						$("#messages").removeClass("show-time");
-					} else {
-						$("#messages").addClass("show-time");
-					}
+				$("#messages").removeClass("show-time");
+			} else {
+				if(e.type === "touchstart") {
+					$(this)[0].checked = true;
 				}
+				$("#messages").addClass("show-time");
 			}
 		});
+		// $("#chat-box div #tools").on("mousedown", "#timestamp", function(e) {
+		// 	e.stopPropagation();
+		// 	e.preventDefault();
+		// 	var checked = $(this).prop("checked");
+		// 	$("#messages").removeClass("show-time");
+		// 	$("#messages").addClass("show-time");
+		// });
 
-		$("#chat-box div #tools").on("touchstart", "#timestamp", function(e) {
-			if(!e.buttons) {
-				var checked = $(this).prop("checked");
-				if(checked) {
-					$("#messages").removeClass("show-time");
-				} else {
-					$("#messages").addClass("show-time");
-				}
-			}
-		});
 	}
 	$.ajax({
 		"url": "/query-user",
