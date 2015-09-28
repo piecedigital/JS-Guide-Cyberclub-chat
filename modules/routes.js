@@ -18,7 +18,7 @@ var sass = require('node-sass');
 sass.render({
   file: "./private/sass/style.scss",
   outputStyle: "expanded",
-  outFile: "./public/css/styl.css"
+  outFile: "./public/css/style.css"
 }, function(err, result) {
 	if(err) throw err;
 
