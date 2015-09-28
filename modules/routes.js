@@ -702,7 +702,7 @@ sass.render({
 					if(userQDoc) {
 						if(userQDoc.banned) {
 							res.clearCookie("sessId");
-							res.status(200).send('Your account ' + username + ' has been banned.<br><br>Reason: ' + userQDoc.banned + '.<br><br>Contact the administrator directly to resolve this issue.<br><br><a href="/">return Home</a>');
+							res.status(200).send('Your account ' + username + ' has been banned.<br><br>Reason: ' + userQDoc.banned + '.<br><br>Contact the administrator directly to resolve this issue.<br><br><a href="http://guidemagazine.org">Go to Guide Magazine</a><br><br><a href="/">return Home</a>');
 						} else {
 							res.redirect('/');
 						}
@@ -723,7 +723,7 @@ sass.render({
 						var ipData = chatQDoc.list[0];
 
 						res.clearCookie("sessId");
-						res.status(200).send('Your IP has been banned.<br><br>Reason: ' + ipData.reason + '<br><br>This type of ban is due to a very serious offense.<br><br>Contact the administrator directly to resolve this issue.<br><br><a href="/">return Home</a>');
+						res.status(200).send('Your IP has been banned.<br><br>Reason: ' + ipData.reason + '<br><br>This type of ban is due to a very serious offense.<br><br>Contact the administrator directly to resolve this issue.<br><br><a href="http://guidemagazine.org">Go to Guide Magazine</a><br><br><a href="/">return Home</a>');
 					} else {
 						res.redirect("/");
 					}
