@@ -3,6 +3,7 @@ console.log("required routes module\r\n");
 var serverOn = true;
 
 var app = require('express')(),
+		fs = require("fs"),
 		bcrypt = require("bcryptjs"),
 		MongoClient  = require("mongodb"),
 		ObjectId = require("mongodb").ObjectID,
@@ -11,6 +12,23 @@ var app = require('express')(),
 var priVar = require("./private-variables"),
 		account = require("./accounts"),
 		getIP = require("./acquire-ip");
+
+//sass compile
+var sass = require('node-sass');
+sass.render({
+  file: "./private/sass/style.scss",
+  outputStyle: "expanded",
+  outFile: "./public/css/style.css"
+}, function(err, result) {
+	if(err) throw err;
+
+	////console.log(result.css.toString());
+	fs.writeFile('./public/css/style.css', result.css.toString(), function (err) {
+	  if (err) throw err;
+
+	  //console.log('CSS rendered and saved');
+	});
+});
 
 // mongodb config
  MongoClient.connect(priVar.mongolabURL
