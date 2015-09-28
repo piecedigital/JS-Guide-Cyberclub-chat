@@ -2,3 +2,5 @@ node_modules
 modules/private-variables.js
 public/js/side-code-chat-handler.js
 desk-app
+public/css/style.css
+public/css/style.css.map

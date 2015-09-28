@@ -252,6 +252,31 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 	}
 });
 
+// request permission on page load
+document.addEventListener('DOMContentLoaded', function () {
+  if (Notification.permission !== "granted")
+    Notification.requestPermission();
+});
+
+var notifyMe = function(person, text) {
+  if (!Notification) {
+    alert('Desktop notifications not available in your browser. Try Chromium.'); 
+    return;
+  }
+
+  if (Notification.permission !== "granted")
+    Notification.requestPermission();
+  else {
+    var notification = new Notification(person + ' Mentioned You', {
+      icon: 'favicon.ico',
+      body: text.substring(0, 140),
+    });
+
+    notification.onclick = function () {
+      window.focus();
+    };
+  }
+}
 
 ~(function () {
 	var runApp = function(userData) {
@@ -298,7 +323,7 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 		originalTitle = $("title").html(),
 		showTitle = originalTitle;
 		room = "door",
-		myColor = "red",
+		myColor = "black",
 		myLevel = userData.accessLevel.toLowerCase().replace(/\s/, "-"),
 		myMutes = [];
 
@@ -522,6 +547,7 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 		});
 		//filter chat for links and emites
 		function regexFilter(filter, person){
+			var originalText = filter;
 
 			//smiles
 			filter = filter.replace(/((http(s)?[:\/\/]*))?([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig, "[deleted link]")
@@ -556,6 +582,7 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 				if(windowFocus) {
 					$("title").html(originalTitle);
 				} else {
+					notifyMe(person, originalText);
 					unread++;
 					$("title").text( "(" + unread + ") " + showTitle);
 				}
