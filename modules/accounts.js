@@ -80,9 +80,9 @@ module.exports = function(db) {
       if(email && username && password && passwordConf) {
         //checks for valid password
         if(email.match(/([a-z0-9])*([.][a-z0-9]*)?([@][a-z0-9]*[.][a-z]{1,3})([.][a-z]{1,2})?/i)) {
-          var underscoreMatch = username.match(/_/gi) || [];
-          if(username.match(/^[a-z0-9_]*$/gi)
-            && underscoreMatch.length <= 2
+          var underDashMatch = username.match(/_-/gi) || [];
+          if(username.match(/^[a-z0-9_-]*$/gi)
+            && underDashMatch.length <= 2
             && username.length >= 4
             && username.length <= 20) {
             if(password === passwordConf) {
@@ -96,8 +96,8 @@ module.exports = function(db) {
                   //regCheck is a Regular Expression check for unwanted characters
                   //in the username. if they don't exist then the next operation
                   // continues. if they do exist then the user is notified
-                  var regCheck = username.match(/[\\~`!@#\$%\^&\*()+=|\/\.,<>]/gi);
-                  if(!regCheck) {
+                  var regCheck = username.match(/^[a-z0-9_-]*$/gi);
+                  if(regCheck) {
                     //generates a random salt number between 0 and 10
                     var salt = Math.round( (Math.random() + 4) + (Math.round(Math.random() * 6)) );
                     salt = (salt < 4) ? 4 : salt;
@@ -170,7 +170,7 @@ module.exports = function(db) {
               res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords do not match", "sign-checked" : "checked", "log-checked" : "" });
             }
           } else {
-            var charMatchMsg = (!username.match(/^[a-z0-9_]*$/gi)) ? "username contains illegal characters" : (underscoreMatch.length > 2) ? "username contains too many underscores" : null;
+            var charMatchMsg = (!username.match(/^[a-z0-9_-]*$/gi)) ? "username contains illegal characters" : (underDashMatch.length > 2) ? "username contains too many underscores" : null;
             var lengthMsg = (username.length < 4) ? "username is too short" : (username.length > 20) ? "username is too long" : null;
             var errsMsg = [charMatchMsg, lengthMsg].filter(function(elem, ind) {
               if(elem) {
