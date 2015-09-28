@@ -90,6 +90,24 @@ db = MongoClient.connect(priVar.mongolabURL
     // initiation stuff
     if(true) {
       sockets(io, db).populateBans("null");
+      //sass compile
+      var sass = require('node-sass'),
+        fs = require("fs");
+        
+      sass.render({
+        file: "./private/sass/style.scss",
+        outputStyle: "expanded",
+        outFile: "./public/css/style.css"
+      }, function(err, result) {
+        if(err) throw err;
+
+        ////console.log(result.css.toString());
+        fs.writeFile('./public/css/style.css', result.css.toString(), function (err) {
+          if (err) throw err;
+
+          //console.log('CSS rendered and saved');
+        });
+      });
     }
 
 });
