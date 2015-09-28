@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "browser-sync": "^2.7.13",
+    "electron-prebuilt": "^0.33.3",
     "gulp": "^3.9.0",
     "gulp-nodemon": "^2.0.3"
   }
