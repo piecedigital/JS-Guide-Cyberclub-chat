@@ -209,7 +209,6 @@ module.exports = function(io, db) {
 					} else
 					if(obj.msg.match(/^\/.*$/i)) {
 						io.to(socket.id).emit("plain", { "msg" : "Not a command" });
-						});
 					} else {
 						io.in(obj.room).emit("chat response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					}
