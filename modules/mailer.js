@@ -20,7 +20,8 @@ module.exports = function(type, email, name, message) {
 	return {
 		mailPost: function() {
 			var messageDetails = {
-				title: "Confirm your email",
+				title: type,
+				name: name,
 				subject: type,
 				body: message,
 				email: email
@@ -47,7 +48,7 @@ function sendMail(data, details) {
 	transporter.sendMail({
 		sender: sender,
 		from: {
-			name: "Darryl Dixon",
+			name: details.name,
 			address: sender
 		},
 		to: details.email,

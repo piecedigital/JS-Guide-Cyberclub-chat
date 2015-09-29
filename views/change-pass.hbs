@@ -1,0 +1,21 @@
+<section>
+	<div class="page-wrap">
+		<div class="form-box x-pad-1_0 y-pad-1_0 center-justify mid-blue-bg border-radius-0_5">
+			<h1 class="very-light-blue">{{title}}</h1>
+			<div id="sign-up-in" class="border-radius-0_5">
+				<div>
+					<form action="/update-pass" method="POST" class="x-pad-0_5">
+						<label for="" class="bold dark-blue">New Password</label>
+						<input type="password" name="password" placeholder="Enter new password">
+						<label for="" class="bold dark-blue">Re-enter Password</label>
+						<input type="password" name="password2" placeholder="Re-enter new password">
+						<button>Submit</button>
+					</form>
+				</div>
+			</div>
+			<span id="err-msg">{{msg}}</span>
+		</div>
+	</div>
+</section>
+<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="js/touch.js"></script>

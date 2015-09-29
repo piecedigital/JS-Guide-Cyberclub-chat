@@ -86,7 +86,7 @@ module.exports = function(db) {
             && username.length >= 4
             && username.length <= 20) {
             if(password === passwordConf) {
-              User.findOne({ "username" : username }, function(userQErr, userQDoc) {
+              User.findOne({ "username" : username, "email" : email }, function(userQErr, userQDoc) {
                 if(userQErr) throw userQErr;
 
                 //if there is no doc returned then the username is not taken, the next actions proveed.
@@ -287,7 +287,7 @@ module.exports = function(db) {
         res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Please fill out the form", "sign-checked" : "", "log-checked" : "checked" });
       }
     },
-    updateUser: function(req, res, next){
+    updateUser: function(req, res, next) {
       //console.log("update user function");
       //console.log(req.body);
       var newUsername = req.body.newUsername || "",
@@ -365,37 +365,86 @@ module.exports = function(db) {
         }
       }
     },
-    updatePass: function(req, res, next) {
-      var key = req.query.key;
-      //console.log(key)
+    requestPass: function(req, res, next) {
+      var email = req.body.email.toLowerCase();
 
-      if(key) {
-        Pending.findOne({ "validationId" : key }, function(pendQErr, pendQDoc) {
-          if(pendQErr) throw pendQErr;
+      if(email && email.match(/([a-z0-9])*([.][a-z0-9]*)?([@][a-z0-9]*[.][a-z]{1,3})([.][a-z]{1,2})?/i)) {
+        User.findOne({ "email" : email }, function(userQErr, userQDoc) {
+          if(userQErr) throw userQErr;
 
-          if(pendQDoc) {
-            bcrypt.hash(password, salt, function(hashErr, hash) {
-              if(hashErr) throw hashErr;
-
-              User.update({ "usernameFull" : pendQDoc.usernameFull }, { "$set" : { "password" : hash } }, function(userQErr, userQDoc) {
-                if(userQErr) throw userQErr;
-
-                if(userQDoc) {
-                  Pending.remove({ "validationId" : key }, function(remQErr, remQDoc) {
-                    if(remQErr) throw remQErr;
-
-                    res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Your password has been changed successfully", "sign-checked" : "", "log-checked" : "checked" });
-                  });
-                } else {
-                  res.render("signupin", { "title" : "Sign Up/Login", "msg" :"There was an internal server error", "sign-checked" : "", "log-checked" : "checked" });
-                  console.log("user not found");
+          if(userQDoc) {
+            generateKey(function(key) {
+              if(key) {
+                var dbObj = {
+                  "validationId" : key,
+                  "email": email
                 }
-              });
-            });
+
+                Pending.insert(dbObj, function(insertErr, insertedDoc) {
+                  if(insertErr) throw insertErr;
+
+                  if(insertedDoc) {
+                    //console.log("account created \n\r");
+                    var host = req.headers.host;
+                    console.log(host);
+                    mailer("Confirm password change", email, null, "Click the link below to change your password:<br><br>http://" + host + "/change-pass?key=" + key).mailPost();
+
+                    res.render("signupin", { "title" : "Sign Up/Login", "msg" : "Your password change request was successful. An email has been sent to you to proceed with the change.", "sign-checked" : "", "log-checked" : "checked" });
+                  } else {
+                    res.render("signupin", { "title" : "Sign Up/Login", "msg" : "There was a problem creating your account", "sign-checked" : "", "log-checked" : "checked" });
+                    console.log("pending insertion failure");
+                  }
+                });
+              } else {
+                res.render("signupin", { "title" : "Sign Up/Login", "msg" : "There was a problem creating your account", "sign-checked" : "", "log-checked" : "checked" });
+                console.log("key was not created");
+              }
+            }); 
           } else {
-            res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "" });
+            res.render("request-pass", { "title" : "Request password change", "msg" : "Email does not match an account on our records." });
           }
         });
+      } else {
+        res.render("request-pass", { "title" : "Request password change", "msg" : "Please enter a valid email" });
+      }
+    }
+    updatePass: function(req, res, next) {
+      var
+        key = req.query.key,
+        password = req.body.password,
+        passwordConf = req.body.password2;
+
+      if(key) {
+        if(password && password2 && (password === password2)) {
+          Pending.findOne({ "validationId" : key }, function(pendQErr, pendQDoc) {
+            if(pendQErr) throw pendQErr;
+
+            if(pendQDoc) {
+              bcrypt.hash(password, salt, function(hashErr, hash) {
+                if(hashErr) throw hashErr;
+
+                User.update({ "email" : pendQDoc.email }, { "$set" : { "password" : hash } }, function(userQErr, userQDoc) {
+                  if(userQErr) throw userQErr;
+
+                  if(userQDoc) {
+                    Pending.remove({ "validationId" : key }, function(remQErr, remQDoc) {
+                      if(remQErr) throw remQErr;
+
+                      res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Your password has been changed successfully", "sign-checked" : "", "log-checked" : "checked" });
+                    });
+                  } else {
+                    res.render("signupin", { "title" : "Sign Up/Login", "msg" :"There was an internal server error. Password could not be reset", "sign-checked" : "", "log-checked" : "checked" });
+                    console.log("user not found and written to");
+                  }
+                });
+              });
+            } else {
+              res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "" });
+            }
+          });
+        } else {
+          res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Invalid password. Password has not ben reset", "sign-checked" : "checked", "log-checked" : "" });
+        }
       } else {
         res.redirect("/login");
       }

@@ -1,0 +1,19 @@
+<section>
+	<div class="page-wrap">
+		<div class="form-box x-pad-1_0 y-pad-1_0 center-justify mid-blue-bg border-radius-0_5">
+			<h1 class="very-light-blue">{{title}}</h1>
+			<div id="sign-up-in" class="border-radius-0_5">
+				<div>
+					<form action="/request-pass" method="POST" class="x-pad-0_5">
+						<label for="" class="bold dark-blue">Enter the email of your account</label>
+						<input type="email" name="email" placeholder="Enter your email">
+						<button>Submit</button>
+					</form>
+				</div>
+			</div>
+			<span id="err-msg">{{msg}}</span>
+		</div>
+	</div>
+</section>
+<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="js/touch.js"></script>

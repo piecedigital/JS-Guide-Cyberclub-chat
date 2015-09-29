@@ -16,7 +16,7 @@ var priVar = require("./private-variables"),
 //sass compile
 var sass = require('node-sass');
 sass.render({
-  file: "./private/sass/_style.scss",
+  file: "./private/sass/style.scss",
   outputStyle: "expanded",
   outFile: "./public/css/styl.css"
 }, function(err, result) {
@@ -594,8 +594,64 @@ sass.render({
 					res.redirect("/login");
 				}
 			})
+			.get("/request-pass", function(req, res, next) {
+				var session = req.cookies["sessId"] || "";
+				var IP = getIP.getIP3(req);
+				
+				Chat.findOne({ 'optionName' : 'bannedAddrs', 'list' : { "$elemMatch" : { "ip" : IP } } }, function(chatQErr, chatQDoc) {
+					if(chatQErr) throw chatQErr;
+
+					if(!chatQDoc) {
+						if(session) {
+				      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
+				        if(sessQErr) throw sessQErr;
+
+				        if(sessQDoc) {
+									User.findOne({ "username" : sessQDoc.user }, function(userQErr, userQDoc) {
+										if(userQErr) throw userQErr;
+
+										if(userQDoc) {
+											if(!userQDoc.banned) {
+												var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "/admin-chat" : "/chat";
+												
+												res.redirect(dest);
+											} else {
+												res.redirect('/banned/account/' + userQDoc.usernameFull)
+											}
+										} else {
+											res.render("request-pass", { "title" : "Request password change"});
+										}
+									});
+				        } else {
+				        	res.clearCookie("sessId");
+									res.render("request-pass", { "title" : "Request password change" });
+				        }
+				      });
+						} else {
+							res.render("request-pass", { "title" : "Request password change" });
+						}
+					} else {
+						res.redirect('/banned/ip');
+					}
+				});
+			})
 			.get("/change-pass", function(req, res, next) {
-				res.render("change-pass", { "title" : "Change your password" });
+				var key = req.query.key;
+	      //console.log(key)
+
+	      if(key) {
+	        Pending.findOne({ "validationId" : key }, function(pendQErr, pendQDoc) {
+	          if(pendQErr) throw pendQErr;
+
+	          if(pendQDoc) {
+	            res.render("change-pass", { "title" : "Change your password" });
+	          } else {
+	            res.redirect("/login");
+	          }
+	        });
+	      } else {
+	        res.redirect("/login");
+	      }
 			})
 			.get('/cancel', function(req, res, next) {
 				var key = req.query.key;
@@ -641,7 +697,6 @@ sass.render({
 						res.redirect('/');
 					}
 				})
-
 			})
 			.get('/banned/ip', function(req, res, next) {
 				var IP = getIP.getIP3(req);
@@ -681,6 +736,7 @@ sass.render({
 		app
 			.post("/signup", account(db).signup)
 			.post("/login", account(db).login)
+			.get("/request-pass", account(db).requestPass)
 			.get("/update-pass", account(db).updatePass)
 			.post("/adjust-user", account(db).updateUser)
 			.post("/query-user", account(db).queryUser)
