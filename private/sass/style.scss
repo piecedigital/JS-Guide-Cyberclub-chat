@@ -429,6 +429,9 @@ label[for="admin-tab"] {
 	position: relative;
 	background: $lightBlue;
 	z-index: 1;
+	& button {
+		margin: 0;
+	}
 }
 /*chat*/
 .notification {

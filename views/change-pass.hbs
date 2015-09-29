@@ -4,11 +4,12 @@
 			<h1 class="very-light-blue">{{title}}</h1>
 			<div id="sign-up-in" class="border-radius-0_5">
 				<div>
-					<form action="/update-pass" method="POST" class="x-pad-0_5">
+					<form action="/update-pass" method="POST" class="x-pad-0_5 y-pad-0_5">
 						<label for="" class="bold dark-blue">New Password</label>
 						<input type="password" name="password" placeholder="Enter new password">
 						<label for="" class="bold dark-blue">Re-enter Password</label>
-						<input type="password" name="password2" placeholder="Re-enter new password">
+						<input type="password" name="passwordconfirm" placeholder="Re-enter new password">
+						<input type="hidden" name="key" value="{{key}}">
 						<button>Submit</button>
 					</form>
 				</div>

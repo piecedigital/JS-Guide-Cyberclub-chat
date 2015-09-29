@@ -647,7 +647,7 @@ sass.render({
 	          if(pendQErr) throw pendQErr;
 
 	          if(pendQDoc) {
-	            res.render("change-pass", { "title" : "Change your password" });
+	            res.render("change-pass", { "title" : "Change your password", "key" : key });
 	          } else {
 	            res.redirect("/login");
 	          }
@@ -739,8 +739,8 @@ sass.render({
 		app
 			.post("/signup", account(db).signup)
 			.post("/login", account(db).login)
-			.get("/request-pass", account(db).requestPass)
-			.get("/update-pass", account(db).updatePass)
+			.post("/request-pass", account(db).requestPass)
+			.post("/update-pass", account(db).updatePass)
 			.post("/adjust-user", account(db).updateUser)
 			.post("/query-user", account(db).queryUser)
 			.post("/populate-users", function(req, res, next) {
