@@ -365,6 +365,41 @@ module.exports = function(db) {
         }
       }
     },
+    updatePass: function(req, res, next) {
+      var key = req.query.key;
+      //console.log(key)
+
+      if(key) {
+        Pending.findOne({ "validationId" : key }, function(pendQErr, pendQDoc) {
+          if(pendQErr) throw pendQErr;
+
+          if(pendQDoc) {
+            bcrypt.hash(password, salt, function(hashErr, hash) {
+              if(hashErr) throw hashErr;
+
+              User.update({ "usernameFull" : pendQDoc.usernameFull }, { "$set" : { "password" : hash } }, function(userQErr, userQDoc) {
+                if(userQErr) throw userQErr;
+
+                if(userQDoc) {
+                  Pending.remove({ "validationId" : key }, function(remQErr, remQDoc) {
+                    if(remQErr) throw remQErr;
+
+                    res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Your password has been changed successfully", "sign-checked" : "", "log-checked" : "checked" });
+                  });
+                } else {
+                  res.render("signupin", { "title" : "Sign Up/Login", "msg" :"There was an internal server error", "sign-checked" : "", "log-checked" : "checked" });
+                  console.log("user not found");
+                }
+              });
+            });
+          } else {
+            res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "" });
+          }
+        });
+      } else {
+        res.redirect("/login");
+      }
+    },
     queryUser: function(req, res, next) {
       var session = req.cookies["sessId"] || "";
         

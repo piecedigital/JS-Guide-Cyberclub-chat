@@ -535,77 +535,6 @@ sass.render({
 					            			checkVars(keyVars);
 					            		}
 					            	});
-					            	/*
-					            	var rooms = {
-					            		"lobby": {
-					            			"roomName": "Lobby",
-					            			"minMods": 1,
-					            			"topic": "Nothing",
-					            			"users": [{
-					            				"username": "user1"
-					            			},
-					            			{
-					            				"username": "user2"
-					            			},
-					            			{
-					            				"username": "user3"
-					            			}]
-					            		},
-					            		"main": {
-					            			"roomName": "Main",
-					            			"minMods": 2,
-					            			"topic": "Nothing",
-					            			"users": [{
-					            				"username": "user"
-					            			}]
-					            		}
-					            	}
-					            	*/
-
-					            	/*
-					            	var chatOptions = [{
-					            		"emoticons": true,
-					            		"name": "Emoticons",
-					            		"items": [{
-					            			"name": "smile",
-					            			"path": "/",
-					            			"stringMatch": [":)", ":smile:"]
-					            		},
-					            		{
-					            			"name": "frown",
-					            			"path": "/",
-					            			"stringMatch": [":(", ":frown:"]
-					            		}]
-					            	},
-					            	{
-					            		"bannedWords": true,
-					            		"name": "Banned Words",
-					            		"items": ["fuck", "fucker", "fucking", "shitter", "shitting", "shit", "damnit", "damn it", "dammit", "cunt", "nig", "nigger", "asshole"]
-					            	}];
-												*/
-												/*
-												var chatOptions = [{
-					            		"bannedWords": true,
-					            		"name": "Banned Words"
-					            	}];
-												*/
-												/*
-					            	var users = [{
-					            		"username": "user1",
-					            		"color": "red",
-					            		"accessLevel": "regular"
-					            	},
-					            	{
-					            		"username": "user2",
-					            		"color": "blue",
-					            		"accessLevel": "regular"
-					            	},
-					            	{
-					            		"username": "user3",
-					            		"color": "green",
-					            		"accessLevel": "regular"
-					            	}]
-												*/
 											} else {
 												res.clearCookie("sessId");
 				        				res.redirect('/banned/account/' + userQDoc.usernameFull);
@@ -653,9 +582,7 @@ sass.render({
 		      				Pending.remove({ "validationId" : key }, function(remQErr, remQDoc) {
 		      					if(remQErr) throw remQErr;
 
-		      					if(remQDoc) {
-		      						res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Account confirmed. Please login", "sign-checked" : "", "log-checked" : "checked" });
-		      					}
+	      						res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Account confirmed. Please login", "sign-checked" : "", "log-checked" : "checked" });
 		      				});
 		      			}
 		      		});
@@ -666,6 +593,9 @@ sass.render({
 				} else {
 					res.redirect("/login");
 				}
+			})
+			.get("/change-pass", function(req, res, next) {
+				res.render("change-pass", { "title" : "Change your password" });
 			})
 			.get('/cancel', function(req, res, next) {
 				var key = req.query.key;
@@ -751,6 +681,7 @@ sass.render({
 		app
 			.post("/signup", account(db).signup)
 			.post("/login", account(db).login)
+			.get("/update-pass", account(db).updatePass)
 			.post("/adjust-user", account(db).updateUser)
 			.post("/query-user", account(db).queryUser)
 			.post("/populate-users", function(req, res, next) {
