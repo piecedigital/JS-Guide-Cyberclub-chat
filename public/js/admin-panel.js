@@ -7,7 +7,7 @@ var getData = function (data) {
   return obj;
 }
 
-var confirm2 = function(msg, cb) {
+var alert2 = function(msg, cb) {
   $("body").append(
     $("<div>").addClass("alert-box").html(
     	$("<div>").addClass("alert").attr({
@@ -39,7 +39,7 @@ var confirm2 = function(msg, cb) {
     return null;
   });
 }
-var alert2 = function(msg, cb) {
+var confirm2 = function(msg, cb) {
   $("body").append(
     $("<div>").addClass("alert-box").html(
     	$("<div>").addClass("alert").attr({
@@ -264,7 +264,7 @@ var prompt2 = function(msg, defaultVal, cb) {
 		var action = functions.parseAction(e);
 
 		if(dataObj.ban) {
-			alert2("Are you sure you want to ban " + thisUsername + "?", function(res) {
+			confirm2("Are you sure you want to ban " + thisUsername + "?", function(res) {
 				if(res.action === "true") {
 					prompt2("Please provide a reason for this account ban.", "Your behavior did not align with the rules of the chat room.", function(res) {
 						if(res.action === "true") {
@@ -275,23 +275,23 @@ var prompt2 = function(msg, defaultVal, cb) {
 										dataObj.reasonIp = res.response;
 										functions.ajax(action, "POST", "json", dataObj);
 									} else {
-										confirm2("Operation cancelled");
+										alert2("Operation cancelled");
 									}
 								});
 							} else {
 								functions.ajax(action, "POST", "json", dataObj);
 							}
 						} else {
-							confirm2("Operation cancelled");
+							alert2("Operation cancelled");
 						}
 					});
 				} else {
-					confirm2("Operation cancelled");
+					alert2("Operation cancelled");
 				}
 			})
 		} else 
 		if(dataObj.op) {
-			var conf = confirm("Are you sure you want to remove " + dataObj.roomname + "?");
+			var conf = alert2("Are you sure you want to remove " + dataObj.roomname + "?");
 			if(conf) {
 				functions.ajax(action, "POST", "json", dataObj);
 			}
@@ -327,7 +327,7 @@ var prompt2 = function(msg, defaultVal, cb) {
 				data: dataObj,
 				success: function(data) {
 					console.log(data);
-					confirm2(data.msg);
+					alert2(data.msg);
 
 					if(data.action === "callback") {
 						if(typeof data.callback === "object") {
@@ -344,7 +344,7 @@ var prompt2 = function(msg, defaultVal, cb) {
 					console.log(error2);
 					console.log(error3);
 					console.log(error1.responseText);
-					confirm2(error1.responseText);
+					alert2(error1.responseText);
 				}
 			});
 		},
