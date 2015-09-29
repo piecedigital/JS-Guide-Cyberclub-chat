@@ -43,6 +43,9 @@ sass.render({
 
 		// clears the users in rooms on server start
 		Room.update({}, { "$set" : { "users" : [] } }, { "multi" : true });
+		Sess.remove({}, { "multi" : true });
+		var hour = 60 * 60;
+		//Sess.log_events.createIndex({ "creationTime" : 1 }, { "expiresAfterSeconds" : hour });
 
 		//////////////////////
 		//// GET requests ////

@@ -227,7 +227,7 @@ module.exports = function(db) {
 
                   if(bcSuccess) {
                     //console.log("password matches");
-                    Sess.insert({ "user" : username, "time" : new Date().getTime() }, function(sessQErr, sessQDoc) {
+                    Sess.insert({ "user" : username, "creationTime" : new Date().getTime() }, function(sessQErr, sessQDoc) {
                       if(sessQErr) throw sessQErr;
                       
                       //sets the coookie sessId
