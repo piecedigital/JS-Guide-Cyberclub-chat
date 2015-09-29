@@ -27,7 +27,7 @@ var getData = function (data) {
   return obj;
 }
 
-var confirm2 = function(msg, cb) {
+var alert2 = function(msg, cb) {
   $("body").append(
     $("<div>").addClass("alert-box").html(
     	$("<div>").addClass("alert").attr({
@@ -60,7 +60,7 @@ var confirm2 = function(msg, cb) {
   });
 }
 
-var alert2 = function(msg, cb) {
+var confirm2 = function(msg, cb) {
   $("body").append(
     $("<div>").addClass("alert-box").html(
     	$("<div>").addClass("alert").attr({
