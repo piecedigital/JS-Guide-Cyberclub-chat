@@ -394,6 +394,10 @@ var notifyMe = function(person, text) {
 			$("#messages").append($("<li class='update'>").html("[UPDATE] " + data.msg) );
 			scrollToBottom();
 		});
+		socket.on("plain", function(data){
+			$("#messages").append($("<li class='plain'>").html(data.msg) );
+			scrollToBottom();
+		});
 		
 		//socket responses on room entry
 		socket.on("enter room", function(data){
@@ -415,12 +419,19 @@ var notifyMe = function(person, text) {
 		});
 		socket.on("kick", function(data){
 			console.log("kick", data, room);
-			socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
-			scrollToBottom();
+			if(myLevel !== "admin" || myLevel !== "moderator") {
+				socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
+				$("#messages").append($("<li class='plain'>").html("There are an insufficient number of mods in this room. You will now be moved out of this room. Try joining another.") );
+				scrollToBottom();
+			}
 		});
 		socket.on("new entry", function(data){
 			$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").remove();
-			$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
+			if(data.accessLevel === "admin" || data.accessLevel === "moderator") {
+				$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").prepend("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
+			} else {
+				$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
+			}
 			if(data.usernameFull === usernameFull) {
 				displayName = data.usernameFull;
 			}

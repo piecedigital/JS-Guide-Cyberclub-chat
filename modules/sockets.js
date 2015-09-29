@@ -130,9 +130,6 @@ module.exports = function(io, db) {
 							};
 
 							if(currentMods < roomQDoc.minMods) {
-								io.to(socket.id).emit("update", {
-									"msg": "There are an insufficient number of mods in this room. You will now be moved out of this room."
-								});
 								io.in(obj.room).emit("kick", { "roomname" : obj.room });
 							}
 						}
@@ -175,7 +172,7 @@ module.exports = function(io, db) {
 
 							if(roomQDoc) {
 								obj.msg = obj.msg.replace(/^\/topic$/gi, "");
-								io.in(obj.room).emit("update", { "msg" : "The topic for " + roomQDoc.roomname + " is <span class='bold'>" + roomQDoc.topic + "</span>" });
+								io.to(socket.id).emit("plain", { "msg" : "The topic for " + roomQDoc.roomname + " is <span class='bold'>" + roomQDoc.topic + "</span>" });
 							}
 						});
 
@@ -186,16 +183,33 @@ module.exports = function(io, db) {
 						obj.msg = obj.msg
 							.replace(/^\/CDN\s/i, "")
 							.replace(/^\/changeDisplayName\s/i, "");
+						if(msg.match(/^[a-z0-9_-]*$/gi)){
+							Room.update({ 'roomname' : obj.room, 'users.usernameFull' : obj.usernameFull }, { '$set' : { 'users.$.displayName' : obj.msg } }, function(roomQErr, roomQDoc) {
+								if(roomQErr) throw roomQErr;
 
-						Room.update({ 'roomname' : obj.room, 'users.usernameFull' : obj.usernameFull }, { '$set' : { 'users.$.displayName' : obj.msg } }, function(roomQErr, roomQDoc) {
+								if(roomQDoc) {
+									obj.msg = obj.msg.replace(/^(\/topic)[\s]*/gi, '');
+									io.emit('update display name', { 'displayName' : obj.msg.substr(0, 20), 'usernameFull' : obj.usernameFull });
+								}
+							});
+						} else {
+							io.to(socket.id).emit("plain", { "msg" : "Invalid name" });
+						}
+
+					} else
+					if(obj.msg.match(/^\/help$/i)) {
+						Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
 							if(roomQErr) throw roomQErr;
 
 							if(roomQDoc) {
-								obj.msg = obj.msg.replace(/^(\/topic)(\s)?/gi, '');
-								io.emit('update display name', { 'displayName' : obj.msg.substr(0, 20), 'usernameFull' : obj.usernameFull });
+								obj.msg = obj.msg.replace(/^\/help[\s]*$/gi, "");
+								io.to(socket.id).emit("plain", { "msg" : "<span class='bold'>Commands:</span><br>/ChangeDisplayName or /CDN - changes your display name (temporary),<br>/topic - shows the room topic,<br>/me - chat detached (talk in 3rd person, express feelings, current status, etc),<br>" });
 							}
 						});
-
+					} else
+					if(obj.msg.match(/^\/.*$/i)) {
+						io.to(socket.id).emit("plain", { "msg" : "Not a command" });
+						});
 					} else {
 						io.in(obj.room).emit("chat response", { "msg" : obj.msg, "usernameFull" : obj.usernameFull, "displayName" : obj.displayName, "color" : obj.color, "level" : obj.level });
 					}
