@@ -16,7 +16,7 @@ var priVar = require("./private-variables"),
 //sass compile
 var sass = require('node-sass');
 sass.render({
-  file: "./private/sass/style.scss",
+  file: "./private/sass/_style.scss",
   outputStyle: "expanded",
   outFile: "./public/css/styl.css"
 }, function(err, result) {
