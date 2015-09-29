@@ -407,19 +407,22 @@ module.exports = function(db) {
       } else {
         res.render("request-pass", { "title" : "Request password change", "msg" : "Please enter a valid email" });
       }
-    }
+    },
     updatePass: function(req, res, next) {
       var
-        key = req.query.key,
+        key = req.body.key,
         password = req.body.password,
-        passwordConf = req.body.password2;
+        passwordConf = req.body.passwordconfirm;
 
       if(key) {
-        if(password && password2 && (password === password2)) {
+        if(password && passwordConf && password === passwordConf) {
           Pending.findOne({ "validationId" : key }, function(pendQErr, pendQDoc) {
             if(pendQErr) throw pendQErr;
 
             if(pendQDoc) {
+              var salt = Math.round( (Math.random() + 4) + (Math.round(Math.random() * 6)) );
+                  salt = (salt < 4) ? 4 : salt;
+
               bcrypt.hash(password, salt, function(hashErr, hash) {
                 if(hashErr) throw hashErr;
 
@@ -443,7 +446,7 @@ module.exports = function(db) {
             }
           });
         } else {
-          res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Invalid password. Password has not ben reset", "sign-checked" : "checked", "log-checked" : "" });
+          res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Invalid password. Password has not been reset", "sign-checked" : "checked", "log-checked" : "" });
         }
       } else {
         res.redirect("/login");

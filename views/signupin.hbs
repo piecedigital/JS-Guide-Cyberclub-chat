@@ -19,16 +19,18 @@
 						<label for="" class="bold dark-blue">Confirm Password</label>
 						<input type="password" name="passwordconfirm" placeholder="Confirm password" value="">
 						<input type="hidden" name="formtype" value="regular">
-						<a href="/request-pass">Forgor password?</a>
 						<button>Submit</button>
 					</form>
 				</div>
 				<div id="login">
-					<form action="/login" method="POST" class="x-pad-0_5">
+					<form action="/login" method="POST" class="x-pad-0_5 y-pad-0_5">
 						<label for="" class="bold dark-blue">Username</label>
 						<input type="text" name="username" placeholder="username">
 						<label for="" class="bold dark-blue">Password</label>
 						<input type="password" name="password" placeholder="Password">
+						<div class="right-justify">
+							<a href="/request-pass">Forgot password?</a>
+						</div>
 						<button>Submit</button>
 					</form>
 				</div>
