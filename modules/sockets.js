@@ -58,7 +58,11 @@ module.exports = function(io, db) {
 									"accessLevel": obj.accessLevel
 								};
 
-								Room.update({ "roomname" : obj.room }, { "$push" : { "users" : userObj } }, { "multi" : true });
+								Room.update({}, { "$pull" : { "users" : { "username" : obj.usernameFull.toLowerCase() } } }, { "multi" : true }, function(roomQErr, roomQDoc) {
+									if(roomQErr) throw roomQErr;
+									
+									Room.update({ "roomname" : obj.room }, { "$push" : { "users" : userObj } }, { "multi" : true });
+								});
 								
 								io.to(socket.id).emit("enter room", {
 									"msg": "Joined " + obj.room,

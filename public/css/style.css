@@ -1602,6 +1602,7 @@ label[for="admin-tab"] {
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   padding-bottom: 64px;
+  pointer-events: none;
 }
 
 .pm-layout #app {
@@ -1620,6 +1621,7 @@ label[for="admin-tab"] {
   background-color: #00a2eb;
   border-radius: 8px;
   box-shadow: 0 0 0 3.2px #004B6E;
+  pointer-events: auto;
   /*private message box styling*/
 }
 
@@ -1931,6 +1933,7 @@ label[for="admin-tab"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   border-radius: 100%;
+  border: none;
   background-color: #e8f8ff;
   box-shadow: inset 0 0 0 4px #004B6E;
 }
@@ -2011,12 +2014,13 @@ label[for="admin-tab"] {
   min-width: 640px;
   max-width: 640px;
   height: 100%;
-  padding: 32px 0 0;
+  padding: 16.96px 0 16.96px;
   margin: 0 auto;
   background: #00a2eb;
   border-radius: 8px;
   box-shadow: 0 0 0 3.2px #004B6E;
   text-align: center;
+  pointer-events: auto;
 }
 
 #admin #chat-box {
@@ -2317,7 +2321,7 @@ label[for="admin-tab"] {
 .pm-box .tools .tool {
   position: relative;
   display: inline-block;
-  margin: 0 4px 0 0;
+  margin: 0 0px 0 0;
   background-color: #00a2eb;
   box-shadow: 0 0 0 1.6px #004B6E;
   padding: 0 12px;
@@ -2383,7 +2387,7 @@ label[for="admin-tab"] {
   position: fixed;
   bottom: 0;
   left: 0;
-  height: 48px;
+  height: 56px;
   width: 100%;
 }
 
@@ -2406,6 +2410,7 @@ label[for="admin-tab"] {
   column-width: 70.4px;
   -webkit-column-width: 70.4px;
   -moz-column-width: 70.4px;
+  pointer-events: auto;
 }
 
 /* footer ----------------------------*/
@@ -2434,9 +2439,6 @@ footer {
 
 @media screen and (max-width: 800px) {
   /* prereqs ----------------------------*/
-  *, *:before, *:after {
-    font-size: 15px;
-  }
   .col-4-3-2-1 {
     display: inline-block;
     width: 50%;
@@ -2473,9 +2475,6 @@ footer {
 
 @media screen and (max-width: 480px) {
   /* prereqs ----------------------------*/
-  *, *:before, *:after {
-    font-size: 14px;
-  }
   /* header ----------------------------*/
   /* body ----------------------------*/
   #chat-box > div {
