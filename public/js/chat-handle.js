@@ -252,15 +252,22 @@ $(document).on("touchend", ".pm-box .mover", function(e) {
 	}
 });
 
+// creating variable to exist
+var Notification = Notification || null;
 // request permission on page load
 document.addEventListener('DOMContentLoaded', function () {
-  if (Notification.permission !== "granted")
-    Notification.requestPermission();
+	if(Notification) {
+	  if (Notification.permission !== "granted") {
+	    Notification.requestPermission();
+	  }
+	} else {
+		alert2('Desktop notifications not available in your browser. Try Chromium.'); 
+	}
 });
 
 var notifyMe = function(person, text) {
   if (!Notification) {
-    alert('Desktop notifications not available in your browser. Try Chromium.'); 
+    //alert2('Desktop notifications not available in your browser. Try Chromium.'); 
     return;
   }
 
@@ -556,12 +563,15 @@ var notifyMe = function(person, text) {
 
 			callbacks[data.callback]();
 		});
-		//filter chat for links and emites
+
+		////////////////////////////////////
+		//filter chat for links and emites//
+		////////////////////////////////////
 		function regexFilter(filter, person){
 			var originalText = filter;
 
 			//smiles
-			filter = filter.replace(/((http(s)?[:\/\/]*))?([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig, "[deleted link]")
+			filter = filter.replace(/((http(s)?[:\/\/]*))?([a-z0-9\-]*[.])([a-z0-9\-]*[.])?([a-z]{2,3})(.*)?/ig, "[deleted link]")
 				.replace(/[a-z]{1,}([._-]*)?[a-z]{1,}@[a-z]*.[a-z]*/ig, "[deleted email]");
 
 
@@ -615,6 +625,7 @@ var notifyMe = function(person, text) {
 		$('#chat-form').submit(function(){
 			socket.emit("chat message", { "room" : room, "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
 			$("#chat-val").val("");
+			$("#chat-val").focus();
 			$("#chat-form button").removeClass("full");
 			$("#chat-val button").removeClass("full");
 			return false;

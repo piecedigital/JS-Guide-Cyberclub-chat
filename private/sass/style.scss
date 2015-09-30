@@ -450,6 +450,7 @@ label[for="admin-tab"] {
 	height: 100%;
 	@include transformT(-50%, -50%);
 	padding-bottom: 4*$em;
+	pointer-events: none;
 }
 .pm-layout {
 	& #app {
@@ -468,6 +469,7 @@ label[for="admin-tab"] {
 	background-color: $midBlue;
 	border-radius: .5*$em;
 	box-shadow: 0 0 0 .2*$em $darkBlue;
+	pointer-events: auto;
 	&.no-time .time-code {
 		display: none;
 	}
@@ -705,6 +707,7 @@ label[for="admin-tab"] {
 				margin: 0;
 				@include appearance(none);
 				border-radius: 100%;
+				border: none;
 				background-color: $veryLightBlue;
 				box-shadow:
 					inset 0 0 0 .25*$em $darkBlue;
@@ -782,12 +785,13 @@ label[for="admin-tab"] {
 	min-width: 40*$em;
 	max-width: 40*$em;
 	height: 100%;
-	padding: 2*$em 0 0;
+	padding: 1.06*$em 0 1.06*$em;
 	margin: 0 auto;
 	background: $midBlue;
 	border-radius: .5*$em;
 	box-shadow: 0 0 0 .2*$em $darkBlue;
 	text-align: center;
+	pointer-events: auto;
 	& #chat-box {
 		position: relative;
 		top: 0;
@@ -1049,7 +1053,7 @@ label[for="admin-tab"] {
 	  & .tool {
 	  	position: relative;
 	  	display: inline-block;
-	  	margin: 0 .25*$em 0 0;
+	  	margin: 0 0*$em 0 0;
 	  	background-color: $midBlue;
 	  	box-shadow: 0 0 0 .1*$em $darkBlue;
 	  	padding: 0 .75*$em;
@@ -1106,7 +1110,7 @@ label[for="admin-tab"] {
 	position: fixed;
 	bottom: 0;
 	left: 0;
-	height: 3*$em;
+	height: 3.5*$em;
 	width: 100%;
 	& > div {
 		position: relative;
@@ -1121,6 +1125,7 @@ label[for="admin-tab"] {
 				display: inline-block;
 				height: 100%;
 				@include columnWidth(4.4*$em);
+				pointer-events: auto;
 			}
 		}
 	}
@@ -1150,9 +1155,6 @@ footer {
 }
 @include media-max(800px) {
 	/* prereqs ----------------------------*/
-	*, *:before, *:after {
-	  font-size: 15px;
-	}
 	.col-4-3-2-1 {
 		display: inline-block;
 		width: 50%;
@@ -1187,9 +1189,6 @@ footer {
 }
 @include media-max(480px) {
 	/* prereqs ----------------------------*/
-	*, *:before, *:after {
-	  font-size: 14px;
-	}
 	/* header ----------------------------*/
 	/* body ----------------------------*/
 	#chat-box {
