@@ -144,7 +144,8 @@ module.exports = function(db) {
                             console.log("key was not created");
                           }
                         });
-                      } else {
+                      } else
+                      if(Save === "regular") {
                         User.insert(dbObj, function(insertErr, insertedDoc) {
                           if(insertErr) throw insertErr;
 
@@ -154,6 +155,9 @@ module.exports = function(db) {
                             res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked" });
                           }
                         });
+                      } else {
+                        res.render("signupin", { "title" : "Sign Up/Login", "msg" : "Internal server error", "sign-checked" : "", "log-checked" : "checked" });
+                        console.log("Error creating new user. form has been tampered with")
                       }
                     }
                   } else {
@@ -362,11 +366,14 @@ module.exports = function(db) {
               res.status(417).send("User not found");
             }
           });
+        } else {
+          res.status(500).send("tampered form");
+          console.log("variable error. data has been tampered with")
         }
       }
     },
     requestPass: function(req, res, next) {
-      var email = req.body.email.toLowerCase();
+      var email = req.body.email.toLowerCase() || "";
 
       if(email && email.match(/([a-z0-9])*([.][a-z0-9]*)?([@][a-z0-9]*[.][a-z]{1,3})([.][a-z]{1,2})?/i)) {
         User.findOne({ "email" : email }, function(userQErr, userQDoc) {
@@ -410,9 +417,9 @@ module.exports = function(db) {
     },
     updatePass: function(req, res, next) {
       var
-        key = req.body.key,
-        password = req.body.password,
-        passwordConf = req.body.passwordconfirm;
+        key = req.body.key || "",
+        password = req.body.password || "",
+        passwordConf = req.body.passwordconfirm || "";
 
       if(key) {
         if(password && passwordConf && password === passwordConf) {
