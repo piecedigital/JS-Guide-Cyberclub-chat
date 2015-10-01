@@ -795,6 +795,13 @@ var notifyMe = function(person, text) {
 				coordX = e.pageX || e.originalEvent.touches[0].pageX,
 				coordY = e.pageY || e.originalEvent.touches[0].pageY;
 
+			if( (coordY + $("#new-context-menu").height()) > $(window.top).height ) {
+				coordY = $(window.top).height - $("#new-context-menu").height();
+			}
+			if( (coordX + $("#new-context-menu").width()) > $(window.left).width ) {
+				coordX = $(window.left).width() - $("#new-context-menu").width();
+			}
+
 			$("#new-context-menu").css({
 				"top": coordY,
 				"left": coordX,
@@ -809,13 +816,15 @@ var notifyMe = function(person, text) {
 			contextUsername = $(this).attr("data-usernamefull");
 			contextUserdisp = $(this).attr("data-displayname");
 			populateContext(userOpts);
-			var coordX, coordY;
-			if(e.clientX) {
-				coordX = e.clientX;
-				coordY = e.clientY;
-			} else {
-				coordX = e.originalEvent.touches[0].pageX;
-				coordY = e.originalEvent.touches[0].pageY;
+			var
+				coordX = e.pageX || e.originalEvent.touches[0].pageX,
+				coordY = e.pageY || e.originalEvent.touches[0].pageY;
+
+			if( (coordY + $("#new-context-menu").height()) > $(window.top).height ) {
+				coordY = $(window.top).height - $("#new-context-menu").height();
+			}
+			if( (coordX + $("#new-context-menu").width()) > $(window.left).width ) {
+				coordX = $(window.left).width() - $("#new-context-menu").width();
 			}
 
 			$("#new-context-menu").css({
@@ -838,13 +847,15 @@ var notifyMe = function(person, text) {
 			contextUsername = $(this).attr("data-usernamefull");
 			contextUserdisp = $(this).attr("data-displayname");
 			populateContext(userOpts);
-			var coordX, coordY;
-			if(e.clientX) {
-				coordX = e.clientX;
-				coordY = e.clientY;
-			} else {
-				coordX = e.originalEvent.touches[0].pageX;
-				coordY = e.originalEvent.touches[0].pageY;
+			var
+				coordX = e.pageX || e.originalEvent.touches[0].pageX,
+				coordY = e.pageY || e.originalEvent.touches[0].pageY;
+
+			if( (coordY + $("#new-context-menu").height()) > $(window.top).height ) {
+				coordY = $(window.top).height - $("#new-context-menu").height();
+			}
+			if( (coordX + $("#new-context-menu").width()) > $(window.left).width ) {
+				coordX = $(window.left).width() - $("#new-context-menu").width();
 			}
 
 			$("#new-context-menu").css({
