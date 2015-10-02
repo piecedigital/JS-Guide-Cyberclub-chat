@@ -132,7 +132,7 @@ module.exports = function(io, db) {
 									currentMods++;
 								}
 							};
-
+							console.log("curren mods", currentMods)
 							if(currentMods < roomQDoc.minMods) {
 								io.in(obj.room).emit("kick", { "roomname" : obj.room });
 							}
@@ -187,7 +187,7 @@ module.exports = function(io, db) {
 						obj.msg = obj.msg
 							.replace(/^\/CDN\s/i, "")
 							.replace(/^\/changeDisplayName\s/i, "");
-						if(msg.match(/^[a-z0-9_-]*$/gi)){
+						if(obj.msg.match(/^[a-z0-9_-]*$/gi)){
 							Room.update({ 'roomname' : obj.room, 'users.usernameFull' : obj.usernameFull }, { '$set' : { 'users.$.displayName' : obj.msg } }, function(roomQErr, roomQDoc) {
 								if(roomQErr) throw roomQErr;
 
@@ -229,12 +229,12 @@ module.exports = function(io, db) {
 						}
 						if(obj.op === "$pull") {
 							bannedWords.splice(bannedWords.indexOf(obj.word), 1);
-							bannedWords = bannedWords.sort(function(a, b) {
-								aS = a.toString();
-								bS = b.toString();
-							  return bS.length - aS.length;
-							});
 						}
+						bannedWords = bannedWords.sort(function(a, b) {
+							aS = a.toString();
+							bS = b.toString();
+						  return bS.length - aS.length;
+						});
 					},
 					updateBannedEmotes: function() {
 						if(obj.op === "$push") {
@@ -242,12 +242,12 @@ module.exports = function(io, db) {
 						}
 						if(obj.op === "$pull") {
 							bannedEmotes.splice(bannedEmotes.indexOf(obj.emote), 1);
-							bannedEmotes = bannedEmotes.sort(function(a, b) {
-								aS = a.toString();
-								bS = b.toString();
-							  return bS.length - aS.length;
-							});
 						}
+						bannedEmotes = bannedEmotes.sort(function(a, b) {
+							aS = a.toString();
+							bS = b.toString();
+						  return bS.length - aS.length;
+						});
 					},
 					updateRooms: function() {
 						io.emit("real time update", obj);
