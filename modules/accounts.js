@@ -86,7 +86,7 @@ module.exports = function(db) {
             && username.length >= 4
             && username.length <= 20) {
             if(password === passwordConf) {
-              User.findOne({ "username" : username, "email" : email }, function(userQErr, userQDoc) {
+              User.findOne({ "$or" : [{ "username" : username }, { "email" : email }] }, function(userQErr, userQDoc) {
                 if(userQErr) throw userQErr;
 
                 //if there is no doc returned then the username is not taken, the next actions proveed.
@@ -167,7 +167,7 @@ module.exports = function(db) {
                   }
                 } else {
                   //error message to the user if their desired username is taken
-                  res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username is already taken", "sign-checked" : "checked", "log-checked" : "" });
+                  res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username or email is already in use", "sign-checked" : "checked", "log-checked" : "" });
                 }
               });
             } else {
@@ -335,7 +335,7 @@ module.exports = function(db) {
               });
             }
           });
-        }
+        } else
         if(ban === "IP") {
           User.findOne({ "usernameFull" : usernameFull }, function(userQErr, userQDoc) {
             if(userQErr) throw userQErr;

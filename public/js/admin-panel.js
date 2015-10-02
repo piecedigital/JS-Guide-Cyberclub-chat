@@ -7,162 +7,6 @@ var getData = function (data) {
   return obj;
 }
 
-var alert2 = function(msg, cb) {
-  $("body").append(
-    $("<div>").addClass("alert-box").html(
-    	$("<div>").addClass("alert").attr({
-      "type": "post"
-	    }).append(
-	      $("<p>").text(msg),
-	      $("<div>").addClass("commands").append(
-	        $("<form>").append(
-	          $("<input>").attr({
-	            "type": "hidden",
-	            "name": "action",
-	            "value": true,
-	          }),
-	          $("<button>").text("OK")
-	        )
-	      )
-	    )
-    )
-  );
-
-  $(document).on("click", ".alert form button", function(e) {
-    e.preventDefault();
-    
-    var data = getData( $(this).parent() );
-    $(".alert").parent().remove();
-    if(typeof cb === "function") {
-    	return cb(data);
-    }
-    return null;
-  });
-}
-var confirm2 = function(msg, cb) {
-  $("body").append(
-    $("<div>").addClass("alert-box").html(
-    	$("<div>").addClass("alert").attr({
-      "type": "post"
-	    }).append(
-	      $("<p>").text(msg),
-	      $("<div>").addClass("commands").append(
-	        $("<form>").append(
-	          $("<input>").attr({
-	            "type": "hidden",
-	            "name": "action",
-	            "value": true,
-	          }),
-	          $("<button>").text("OK")
-	        ),
-	        $("<form>").append(
-	          $("<input>").attr({
-	            "type": "hidden",
-	            "name": "action",
-	            "value": false,
-	          }),
-	          $("<button>").text("Cancel")
-	        )
-	      )
-	    )
-    )
-  );
-
-  $(document).on("click", ".alert form button", function(e) {
-    e.preventDefault();
-    
-    var data = getData( $(this).parent() );
-    $(".alert").parent().remove();
-    if(typeof cb === "function") {
-    	return cb(data);
-    }
-    return null;
-  });
-}
-var prompt2 = function(msg, defaultVal, cb) {
-  $("body").append(
-    $("<div>").addClass("alert-box").html(
-    	$("<div>").addClass("alert").attr({
-      "type": "post"
-	    }).append(
-	      $("<p>").text(msg),
-	      $("<div>").addClass("commands").html(
-	      	$("<form>").addClass("top-form").append(
-	      		$("<input>").attr({
-	      			"type": "text",
-	      			"name": "response",
-	      			"value": defaultVal || ""
-	      		}),
-		        $("<form>").addClass("true").append(
-		          $("<input>").attr({
-		            "type": "hidden",
-		            "name": "action",
-		            "value": true,
-		          }),
-		          $("<button>").text("OK")
-		        ),
-		        $("<form>").addClass("false").append(
-		          $("<input>").attr({
-		            "type": "hidden",
-		            "name": "action",
-		            "value": false,
-		          }),
-		          $("<button>").text("Cancel")
-		        )
-	      	)
-	      )
-	    )
-    )
-  );
-
-  $(document).on("keydown", ".alert .top-form", function(e) {
-  	if(e.keyCode === 13) {
-	  	return false;
-  	}
-  	return false;
-  });
-
-  $(document).on("submit", ".alert form form.true", function(e) {
-    e.preventDefault();
-  	var data = getData( $(this).parent() );
-  	data.action = "true";
-  	$(".alert-box").remove();
-  	if(typeof cb === "function") {
-    	return cb(data);
-    }
-    return null;
-  });
-  $(document).on("click", ".alert form form.true button", function(e) {
-    e.preventDefault();
-  	var data = getData( $(this).parent().parent() );
-  	data.action = "true";
-  	$(".alert-box").remove();
-  	if(typeof cb === "function") {
-    	return cb(data);
-    }
-    return null;
-  });
-
-  $(document).on("submit", ".alert form form.false", function(e) {
-    e.preventDefault();
-    var data = getData( $(this) );
-  	$(".alert-box").remove();
-  	if(typeof cb === "function") {
-    	return cb(data);
-    }
-    return null;
-  });
-  $(document).on("submit", ".alert form form.false button", function(e) {
-    e.preventDefault();
-    var data = getData( $(this).parent() );
-  	$(".alert-box").remove();
-  	if(typeof cb === "function") {
-    	return cb(data);
-    }
-    return null;
-  });
-}
-
 ~(function(){
 	var socket = io();
 
@@ -291,13 +135,17 @@ var prompt2 = function(msg, defaultVal, cb) {
 			})
 		} else 
 		if(dataObj.op) {
-			var conf = alert2("Are you sure you want to remove " + dataObj.roomname + "?");
-			if(conf) {
-				functions.ajax(action, "POST", "json", dataObj);
-			}
+			confirm2("Are you sure you want to remove " + dataObj.roomname + "?", function(res) {
+				conf = res.action;
+				console.log(conf)
+				if(res.action === "true") {
+					functions.ajax(action, "POST", "json", dataObj);
+				} else {
+					alert2("Operation cancelled");
+				}
+			});
 		} else {
 			functions.ajax(action, "POST", "json", dataObj);
-		
 		}
 
 		// don't send the form so the page doesn't reload
