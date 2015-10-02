@@ -143,7 +143,7 @@ String.prototype.multiply = function(times) {
 	function regexFilter(filter, person){
 
 		//smiles
-		filter = filter.replace(/((http(s)?[:\/\/]*))?([a-z0-9\-]*)([.][a-z0-9\-]*)([.][a-z]{2,3})?([\/a-z0-9?=%_\-&#]*)?/ig, "[deleted link]")
+		filter = filter.replace(/((http(s)?[:\/\/]*))?([a-z0-9\-]*[.])([a-z0-9\-]*[.])?([a-z]{2,3})(.*)?/ig, "[deleted link]")
 			.replace(/[a-z]{1,}([._-]*)?[a-z]{1,}@[a-z]*.[a-z]*/ig, "[deleted email]");
 
 

@@ -382,6 +382,7 @@ sass.render({
 				        				res.redirect('/banned/account/' + userQDoc.usernameFull);
 				            	}
 				            } else {
+				            	res.clearCookie("sessId");
 				        			res.redirect("/signup");
 				            }
 				          });

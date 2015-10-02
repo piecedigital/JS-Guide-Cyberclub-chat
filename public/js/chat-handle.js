@@ -29,6 +29,9 @@ var getData = function (data) {
 
 // generate private message window
 var generatePM = function(initName, reciName) {
+	// disallow self messaging
+	if(reciName === initName) return false;
+
 	var frameName = reciName + "-frame";
 
 	$(".pm-box[data-id='" + frameName + "']").remove();
@@ -274,6 +277,9 @@ var notifyMe = function(person, text) {
 				socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
 				$("#messages").append($("<li class='plain'>").html("There are an insufficient number of mods in this room. You will now be moved out of this room. Try joining another.") );
 				scrollToBottom();
+			} else {
+				$("#messages").append($("<li class='update'>").html("[UPDATE] There are an insufficient number of mods in this room. All users under admin and moderator levels have been removed.") );
+				scrollToBottom();
 			}
 		});
 		socket.on("new entry", function(data){
@@ -364,23 +370,23 @@ var notifyMe = function(person, text) {
 				},
 				updateColors: function() {
 					var css =
-					".regular {\n\r"+
+					".chat > .regular {\n\r"+
 						"box-shadow: inset 0 -.4em 0 0 " + data.colorData.regular + ",\n\r"+
 						"inset 0 .4em 0 0 " + data.colorData.regular + " !important;\n\r"+
 					"}\n\r"+
-					".teen-mod {\n\r"+
+					".chat > .teen-mod {\n\r"+
 						"box-shadow: inset 0 -.4em 0 0 " + data.colorData.teenMod + ",\n\r"+
 						"inset 0 .4em 0 0 " + data.colorData.teenMod + " !important;\n\r"+
 					"}\n\r"+
-					".junior-mod {\n\r"+
+					".chat > .junior-mod {\n\r"+
 						"box-shadow: inset 0 -.4em 0 0 " + data.colorData.juniorMod + ",\n\r"+
 						"inset 0 .4em 0 0 " + data.colorData.juniorMod + " !important;\n\r"+
 					"}\n\r"+
-					".moderator {\n\r"+
+					".chat > .moderator {\n\r"+
 						"box-shadow: inset 0 -.4em 0 0 " + data.colorData.moderator + ",\n\r"+
 						"inset 0 .4em 0 0 " + data.colorData.moderator + " !important;\n\r"+
 					"}\n\r"+
-					".admin {\n\r"+
+					".chat > .admin {\n\r"+
 						"box-shadow: inset 0 -.4em 0 0 " + data.colorData.admin + ",\n\r"+
 						"inset 0 .4em 0 0 " + data.colorData.admin + " !important;\n\r"+
 					"}"+
