@@ -771,7 +771,8 @@ sass.render({
 						topic = req.body.topic || "nothing",
 						op = req.body.op || false;
 
-				if(roomname && !roomname.match(/^(door)$/i) && !roomname.match(/[\/\\ \-\9\0\[\]\\[\]\s`~!@#$%^&*=+\?<>,.]/gi)) {
+				if(roomname && !roomname.match(/^(door)$/i) && roomname.match(/[a-z0-9\s]*/gi) && !roomname.match(/^[\s]*$/gi)) {
+
 					var sendRes = function() {
 						res.status(200).send({
 							"msg": "success",
@@ -796,7 +797,7 @@ sass.render({
 							}
 						});
 					} else {
-						Room.remove({ "roomnameHyph" : roomnameHyph }, function(roomQErr, roomQDoc) {
+						Room.remove({ "roomnameHyph" : originalNameHyph }, function(roomQErr, roomQDoc) {
 							if(err) throw err;
 
 							if(roomQDoc && roomQDoc.result.ok) {
