@@ -44,7 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.disable("x-powered-by");
 app.use(helmet());
 app.use(helmet.hidePoweredBy());
-app.use(helmet.frameguard("allow-from", "http://localhost:8080"));
+app.use(helmet.frameguard("allow-from", "*"));
 app.use(helmet.contentSecurityPolicy({
   defaultSrc: ["'self'"],
   scriptSrc: ["'self'", "'unsafe-inline'","*.jsdelivr.net", "'unsafe-eval'"],

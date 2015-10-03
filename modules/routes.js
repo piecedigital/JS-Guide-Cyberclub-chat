@@ -729,6 +729,9 @@ sass.render({
 					res.status(404).send('Server is offline');
 				}
 			})
+			.get("/downloads", function(req, res, next) {
+				res.render("downloads", { "title" : "Download for your system" });
+			})
 			.get('*', function(req, res, next) {
 				res.status(404).send('Error 404: page not found<br><br><a href="/">return Home</a>');
 			})
