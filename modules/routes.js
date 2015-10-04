@@ -1,6 +1,6 @@
 console.log("required routes module\r\n");
 
-var serverOn = true;
+var serverOn = false;
 
 var app = require('express')(),
 		fs = require("fs"),
@@ -286,6 +286,12 @@ sass.render({
 
 				            if(userQDoc) {
 				            	if(!userQDoc.banned) {
+				            		if(!serverOn) {
+				            			if(userQDoc.accessLevel !== "admin" && userQDoc.accessLevel !== "moderator") {
+					            			res.render("offline", {});
+					            			return false;
+				            			}
+				            		}
 					            	// key variables needed before rendering the page
 					            	var keyVars = {
 					            		"rooms": null,
@@ -417,7 +423,12 @@ sass.render({
 
 				            if(userQDoc) {
 				            	if(!userQDoc.banned){ 
-
+				            		if(!serverOn) {
+				            			if(userQDoc.accessLevel !== "admin" && userQDoc.accessLevel !== "moderator") {
+					            			res.render("offline", {});
+					            			return false;
+				            			}
+				            		}
 					            	// key variables needed before rendering the page
 					            	var keyVars = {
 					            		"rooms": null,
@@ -443,12 +454,17 @@ sass.render({
 					            	{
 					            		"levelColors": true,
 					            		"name": "Access Level Colors"
+					            	},
+					            	{
+					            		"chatStatus": true,
+					            		"name": "Chat Status",
+					            		"status": serverOn
 					            	}];
 					            	// check a given object of variables
 					            	var checkVars = function(obj) {
 					            		var clear = true;
 					            		for(var key in obj) {
-					            			if(!keyVars[key]) {
+					            			if(!obj[key]) {
 					            				clear = false;
 					            				////console.log(obj);
 					            			}
@@ -741,6 +757,29 @@ sass.render({
 		//// POST requests ////
 		///////////////////////
 		app
+			.post("/update-server", function(req, res, next) {
+				var status = req.body.status.toLowerCase();
+
+				if(status === "online") {
+					serverOn = true;
+					res.status(200).send({
+						"msg": "success"
+					})
+
+					return false;
+				}
+				if(status === "offline") {
+					serverOn = false;
+					res.status(200).send({
+						"msg": "success"
+					})
+
+					return false;
+				}
+
+				res.status(404).send("Error setting the chat status");
+				console.log("Possibly a tempered form");
+			})
 			.post("/signup", account(db).signup)
 			.post("/login", account(db).login)
 			.post("/request-pass", account(db).requestPass)
