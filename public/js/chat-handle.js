@@ -493,7 +493,7 @@ var notifyMe = function(person, text) {
 		///////////////////////////
 		$("body").append("<ul id='new-context-menu'></ul>");
 		var roomOpts = ["Join", "Leave"];
-		var userOpts = ["Mention", "Message", "Mute", "Unmute", "cancel"];
+		var userOpts = ["Mention", "Message", "Mute", "Unmute"];
 
 		function populateContext(arr) {
 			if(arr) {
@@ -562,12 +562,6 @@ var notifyMe = function(person, text) {
 				myMutes.splice( (myMutes.indexOf(contextUsername.toLowerCase())), 1 );
 				$("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon").removeClass("muted");
 				contextUsername = null;
-				$("#new-context-menu").css({
-					"display": "none"
-				}).html("");
-			},
-			cancel: function() {
-				console.log("cancel", cancel);
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
