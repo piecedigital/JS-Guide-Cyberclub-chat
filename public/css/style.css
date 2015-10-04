@@ -2272,6 +2272,7 @@ label[for="admin-tab"] {
   padding: 8px;
   color: #004B6E;
   background-color: #e8f8ff;
+  cursor: pointer;
 }
 
 #new-context-menu li:not(:last-child) {
