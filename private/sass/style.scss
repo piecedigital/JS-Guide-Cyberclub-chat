@@ -1011,6 +1011,7 @@ label[for="admin-tab"] {
 		padding: .5*$em;
 		color: $darkBlue;
 		background-color: $veryLightBlue;
+		cursor: pointer;
 		&:not(:last-child) {
 			box-shadow: 0 .6*$em 0 -.5*$em $darkBlue;
 		}
