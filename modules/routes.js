@@ -730,7 +730,7 @@ sass.render({
 				}
 			})
 			.get("/downloads", function(req, res, next) {
-				res.render("downloads", { "title" : "Download for your system" });
+				res.render("downloads", { "title" : "Download the desktop client for your system of choice" });
 			})
 			.get('*', function(req, res, next) {
 				res.status(404).send('Error 404: page not found<br><br><a href="/">return Home</a>');
