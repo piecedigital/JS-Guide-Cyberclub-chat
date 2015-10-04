@@ -184,6 +184,23 @@
 											</div>
 										</form>
 									{{/if}}
+									{{#if chatStatus}}
+										<h1 class="title font-size-1_2">Chat Server Status</h1>
+										<form class="add-window" action="/update-server">
+											<div class="col-2 left-justify align-middle">
+												<label>Server Status: </label>
+											</div><!--
+											--><div class="col-2 left-justify">
+												<select name="status">
+													<option {{#if status}}selected{{/if}}>Online</option>
+													<option {{#if status}}{{else}}selected{{/if}}>Offline</option>
+												</select>
+											</div>
+											<div class="center-justify x-pad-3_9">
+												<button>Submit</button>
+											</div>
+										</form>
+									{{/if}}
 								</div>
 							{{/each}}
 						</div>
