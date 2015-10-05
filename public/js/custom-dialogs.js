@@ -115,7 +115,6 @@ var prompt2 = function(msg, defaultVal, cb) {
   	if(e.keyCode === 13) {
 	  	return false;
   	}
-  	return false;
   });
 
   $(document).on("submit", ".alert form form.true", function(e) {
