@@ -23,6 +23,13 @@ $em: 16px;
 	-moz-appearance: $val;
 }
 
+* {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
 a {
 	text-decoration: none;
 	color: inherit;
@@ -492,6 +499,12 @@ label[for="admin-tab"] {
 				list-style: none;
 				& .time-code {
 					display: none;
+				}
+				& > p {
+					user-select: text;
+					-moz-user-select: text;
+					-webkit-user-select: text;
+					-ms-user-select: text;
 				}
 				& p {
 					display: inline-block;
