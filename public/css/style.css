@@ -126,6 +126,13 @@
 }
 
 /*///////////////////////// prerequisites /////////////////////////*/
+* {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -1655,6 +1662,13 @@ label[for="admin-tab"] {
 
 #chat-box > div #messages .chat .time-code, #chat-box > div #messages .update .time-code, #chat-box > div #messages .command .time-code, #chat-box > div #messages .plain .time-code {
   display: none;
+}
+
+#chat-box > div #messages .chat > p, #chat-box > div #messages .update > p, #chat-box > div #messages .command > p, #chat-box > div #messages .plain > p {
+  user-select: text;
+  -moz-user-select: text;
+  -webkit-user-select: text;
+  -ms-user-select: text;
 }
 
 #chat-box > div #messages .chat p, #chat-box > div #messages .update p, #chat-box > div #messages .command p, #chat-box > div #messages .plain p {
