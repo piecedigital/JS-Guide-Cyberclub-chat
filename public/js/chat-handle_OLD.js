@@ -496,14 +496,23 @@ var notifyMe = function(person, text) {
 		var options = {
 			join: function() {
 				socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
 			},
 			leave: function() {
 				socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
 			},
 			mention: function() {
 				var val = $("#chat-val").val();
 				$("#chat-val").val( val + "@" + contextUserdisp + " ");
 				contextUserdisp = null;
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
 			},
 			message: function() {
 				if(myLevel === "admin" || myLevel === "moderator") {
@@ -519,6 +528,9 @@ var notifyMe = function(person, text) {
 						scrollToBottom();
 					}
 				}
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
 			},
 			mute: function() {
 				var cxtLC = contextUsername.toLowerCase();
@@ -530,154 +542,198 @@ var notifyMe = function(person, text) {
 					}
 				}
 				contextUsername = null;
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
 			},
 			unmute: function() {
 				myMutes.splice( (myMutes.indexOf(contextUsername.toLowerCase())), 1 );
 				$("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon").removeClass("muted");
 				contextUsername = null;
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
 			}
 		};
 
-		// on touch/mousedown
-		$(document).on("touchstart click", function(e) {
-			var thisInstance = e.target;//#room-list .room .name
-
-			//console.log($(thisInstance), $(thisInstance).parent().attr("id"));
-
-			// if thisInstance is ".name" under ".room"
-			if($(thisInstance).hasClass("name")
-				&&
-				$(thisInstance).parent().hasClass("room")) {
-				console.log("target found");
-				if(currentRoom === $(thisInstance).parent().attr("data-roomname")) {
-					//console.log("current: ", currentRoom);
+		$(document).on({
+			mousedown:  function(e) {
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
+			},
+			touchstart:  function(e) {
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
+			},
+			scroll:  function(e) {
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
+			},
+			touchmove:  function(e) {
+				$("#new-context-menu").css({
+					"display": "none"
+				}).html("");
+			},
+			mouseup: function(e) {
+				console.log("up");
+				setTimeout(function() {
 					currentRoom = null;
-					
-					contextRoomname = $(thisInstance).parent().attr("data-roomname");
-					if(room !== "door") {
-						options.leave();
-					}
-					options.join();
+					console.log("current: ", currentRoom);
+				}, 250);
+			},
+			touchend:  function(e) {
+				console.log("up");
+				setTimeout(function() {
+					currentRoom = null;
+					console.log("current: ", currentRoom);
+				}, 250);
+			}
+		});
+
+		$("#room-list").on("touchstart mousedown", ".room .name", function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			if(currentRoom === $(this).parent().attr("data-roomname")) {
+				console.log("current: ", currentRoom);
+				currentRoom = null;
+				
+				contextRoomname = $(this).parent().attr("data-roomname");
+				if(room !== "door") {
+					options.leave();
+				}
+				options.join();
+				// cancel = true;
+			} else {
+				$(this).parent().toggleClass("open");
+				currentRoom = $(this).parent().attr("data-roomname");
+				// cancel = false;
+				console.log("current: ", currentRoom);
+				setTimeout(function() {
 					// cancel = true;
-				} else {
-					$(thisInstance).parent().toggleClass("open");
-					currentRoom = $(thisInstance).parent().attr("data-roomname");
-					// cancel = false;
-					//console.log("current: ", currentRoom);
-					setTimeout(function() {
-						// cancel = true;
-						currentRoom = null;
-						//console.log("current: ", currentRoom);
-					}, 250);
+					currentRoom = null;
+					console.log("current: ", currentRoom);
+				}, 250);
+			}
+		});
+		$("#room-list").on("contextmenu", ".room .name", function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			contextRoomname = $(this).parent().attr("data-roomname");
+			populateContext(roomOpts);
+			var
+				coordX = e.pageX || e.originalEvent.touches[0].pageX,
+				coordY = e.pageY || e.originalEvent.touches[0].pageY;
+
+			if( (coordY + $("#new-context-menu").height()) > $(document.top).height ) {
+				coordY = $(document.top).height - $("#new-context-menu").height();
+			}
+			if( (coordX + $("#new-context-menu").width()) > $(document.left).width ) {
+				coordX = $(document.left).width() - $("#new-context-menu").width();
+			}
+
+			$("#new-context-menu").css({
+				"top": coordY,
+				"left": coordX,
+				"display": "block"
+			});
+		});
+		
+		
+		$("#room-list").on("touchstart mousedown", ".user", function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
+			populateContext(userOpts);
+			var
+				coordX = e.pageX || e.originalEvent.touches[0].pageX,
+				coordY = e.pageY || e.originalEvent.touches[0].pageY;
+
+			if( (coordY + $("#new-context-menu").height()) > $(document.top).height ) {
+				coordY = $(document.top).height - $("#new-context-menu").height();
+			}
+			if( (coordX + $("#new-context-menu").width()) > $(document.left).width ) {
+				coordX = $(document.left).width() - $("#new-context-menu").width();
+			}
+
+			$("#new-context-menu").css({
+				"top": coordY,
+				"left": coordX,
+				"display": "block"
+			});
+			
+			document.oncontextmenu = function() {
+				return false;
+			}
+			setTimeout(function() {
+				document.oncontextmenu = null;
+			}, 100);
+		});
+		
+		$("#messages").on("touchstart mousedown", ".user", function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			contextUsername = $(this).attr("data-usernamefull");
+			contextUserdisp = $(this).attr("data-displayname");
+			populateContext(userOpts);
+			var
+				coordX = e.pageX || e.originalEvent.touches[0].pageX,
+				coordY = e.pageY || e.originalEvent.touches[0].pageY;
+
+			if( (coordY + $("#new-context-menu").height()) > $(document.top).height ) {
+				coordY = $(document.top).height - $("#new-context-menu").height();
+			}
+			if( (coordX + $("#new-context-menu").width()) > $(document.left).width ) {
+				coordX = $(document.left).width() - $("#new-context-menu").width();
+			}
+
+			$("#new-context-menu").css({
+				"top": coordY,
+				"left": coordX,
+				"display": "block"
+			});
+
+			document.oncontextmenu = function() {
+				return false;
+			}
+			setTimeout(function() {
+				document.oncontextmenu = null;
+			}, 100);
+		});
+
+		$("#new-context-menu").on("touchstart mousedown", "li", function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			var opt = $(this).attr("data-option");
+
+			options[opt.toLowerCase()]();
+		});
+
+		$("#chat-box .tab").on("touchstart mousedown", function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			$("#chat-box").toggleClass("open-side");
+		});
+
+		$("#chat-box div #tools").on("touchstart mousedown", "#timestamp", function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			if( $(this).prop("checked") ) {
+				if(e.type === "touchstart") {
+					$(this)[0].checked = false;
 				}
-			} else
-
-			// thisInstance is under ".user"
-			if($(thisInstance).parent().hasClass("user")) {
-				contextUsername = $(thisInstance).parent().attr("data-usernamefull");
-				contextUserdisp = $(thisInstance).parent().attr("data-displayname");
-				populateContext(userOpts);
-				var
-					coordX = e.pageX || e.originalEvent.touches[0].pageX,
-					coordY = e.pageY || e.originalEvent.touches[0].pageY;
-
-				if( (coordY + $("#new-context-menu").height()) > $(document.top).height ) {
-					coordY = $(document.top).height - $("#new-context-menu").height();
-				}
-				if( (coordX + $("#new-context-menu").width()) > $(document.left).width ) {
-					coordX = $(document.left).width() - $("#new-context-menu").width();
-				}
-
-				$("#new-context-menu").css({
-					"top": coordY,
-					"left": coordX,
-					"display": "block"
-				});
-			} else
-
-			// thisInstance is under "#new-context-menu"
-			if($(thisInstance).parent().attr("id") === "new-context-menu") {
-				var opt = $(thisInstance).attr("data-option");
-
-				options[opt.toLowerCase()]();
-				$("#new-context-menu").css({
-					"display": "none"
-				}).html("");
-			} else
-
-			// thisInstance is under ".tab"
-			if($(thisInstance).parent().hasClass("tab")) {
-				$("#chat-box").toggleClass("open-side");
-			} else
-
-			// thisInstance is ".tab"
-			if($(thisInstance).attr("id") === "timestamp") {
-				if( $(thisInstance).prop("checked") ) {
-					if(e.type === "touchstart") {
-						$(thisInstance)[0].checked = false;
-					}
-					$("#messages").removeClass("show-time");
-				} else {
-					if(e.type === "touchstart") {
-						$(thisInstance)[0].checked = true;
-					}
-					$("#messages").addClass("show-time");
-				}
+				$("#messages").removeClass("show-time");
 			} else {
-				// no important UI elements clicked/tapped
-				$("#new-context-menu").css({
-					"display": "none"
-				}).html("");
+				if(e.type === "touchstart") {
+					$(this)[0].checked = true;
+				}
+				$("#messages").addClass("show-time");
 			}
 		});
 
-		// on context menu
-		$(document).on("contextmenu", function(e) {
-			var thisInstance = e.target;//#room-list .room .name
-
-			//console.log($(thisInstance));
-
-			var replaceContext = function(opts) {
-				e.preventDefault();
-
-				contextUsername = $(thisInstance).parent().attr("data-usernamefull") || "";
-				contextUserdisp = $(thisInstance).parent().attr("data-displayname") || "";
-				contextRoomname = $(thisInstance).parent().attr("data-roomname") || "";
-				populateContext(opts);
-				var
-					coordX = e.pageX || e.originalEvent.touches[0].pageX,
-					coordY = e.pageY || e.originalEvent.touches[0].pageY;
-
-				if( (coordY + $("#new-context-menu").height()) > $(document.top).height ) {
-					coordY = $(document.top).height - $("#new-context-menu").height();
-				}
-				if( (coordX + $("#new-context-menu").width()) > $(document.left).width ) {
-					coordX = $(document.left).width() - $("#new-context-menu").width();
-				}
-
-				$("#new-context-menu").css({
-					"top": coordY,
-					"left": coordX,
-					"display": "block"
-				});
-			}
-
-			// if thisInstance is ".name" under ".room"
-			if($(thisInstance).hasClass("name")
-				&&
-				$(thisInstance).parent().hasClass("room")) {
-				replaceContext(roomOpts);
-			} else
-
-			// thisInstance is under ".user"
-			if($(thisInstance).parent().hasClass("user")) {
-				replaceContext(userOpts);
-			} else {
-				$("#new-context-menu").css({
-					"display": "none"
-				}).html("");
-			}
-		});
 	}
 	$.ajax({
 		"url": "/query-user",
