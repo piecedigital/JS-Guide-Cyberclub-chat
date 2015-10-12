@@ -1968,10 +1968,11 @@ label[for="admin-tab"] {
   width: 64px;
   vertical-align: bottom;
   display: inline-block;
-  margin: 0 0 3.2px;
+  margin: 0 0 6.4px;
   background-color: white;
   list-style: none;
   padding: 0;
+  bottom: 0;
   overflow: hidden;
   -ms-border-radius: 8px;
   -moz-border-radius: 8px;
@@ -1999,12 +2000,13 @@ label[for="admin-tab"] {
   color: #e8f8ff;
   cursor: pointer;
   display: inline-block;
+  font-weight: bold;
 }
 
 #chat-box > div #tools #emotes.open {
   height: 160px;
   width: 128px;
-  bottom: 128px;
+  bottom: 134.4px;
   overflow-x: hidden;
   overflow-y: auto;
 }

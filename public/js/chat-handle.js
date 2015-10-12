@@ -430,7 +430,7 @@ var notifyMe = function(person, text) {
 					if(data.op === "$push") {
 						var filteredEmote = regexFilter(data.emote, "");
 
-						var emoteOpt = $("<li>").attr("data-emote", data.emote).html(filteredEmote, data.emote);
+						var emoteOpt = $("<li>").attr("data-emote", data.emote).append(filteredEmote, data.emote);
 
 						console.log("emote", emoteOpt);
 
