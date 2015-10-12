@@ -110,6 +110,7 @@ var getData = function (data) {
 		if(dataObj.roomname) {
 			dataObj.originalName = thisRoomname || dataObj.roomname;
 		}
+		console.log(e)
 		var action = functions.parseAction(e);
 
 		if(dataObj.ban) {
@@ -170,7 +171,7 @@ var getData = function (data) {
 			return obj;
 		},
 		parseAction: function(e) {
-			return e.target.action.split(/(http(s)?[:\/\/][a-z]*[.:][a-z0-9]*)/i).pop();
+			return e.currentTarget.action.split(/(http(s)?[:\/\/][a-z]*[.:][a-z0-9]*)/i).pop();
 		},
 		ajax: function(url, method, dType, dataObj) {
 			$.ajax({
