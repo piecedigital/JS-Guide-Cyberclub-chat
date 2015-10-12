@@ -34,6 +34,11 @@ var getData = function (data) {
 		var emote = $(this).parent().data("emote");
 		functions.ajax("/update-emotes", "POST", "json", { "emote" : emote, "op" : "$pull" });
 	});
+	// recommened emote deletion
+	panels.chatOpt.find("#item-options .option-box[data-section='Recommended Emotes']").on("click", ".close", function() {
+		var emote = $(this).parent().data("emote");
+		functions.ajax("/update-recommended-emotes", "POST", "json", { "emote" : emote, "op" : "$pull" });
+	});
 	// banned word deletion
 	panels.chatOpt.find("#item-options .option-box[data-section='Banned Words']").on("click", ".close", function() {
 		var word = $(this).parent().data("word");
@@ -211,6 +216,22 @@ var getData = function (data) {
 				panels.chatOpt.find("#item-options .option-box[data-section='Banned Emotes'] #banned-list").append("<li class='emote' data-emote='" + data + "'>" + data + "<div class='close'>x</div></li>");
 			}
 			socket.emit("live update", { "callback" : "updateBannedEmotes", "op" : operation, "emote" : data });
+		},
+		updateRecommendedEmotes: function(data, operation) {
+			console.log(data, operation);
+			if(operation === "$pull") {
+				console.log("removing");
+
+				panels.chatOpt.find("#item-options .option-box[data-section='Recommended Emotes'] #recommended-list").find(".emote[data-emote='" + data + "']").remove();
+				
+			}
+			if(operation === "$push") {
+				console.log("adding");
+				console.log(data);
+
+				panels.chatOpt.find("#item-options .option-box[data-section='Recommended Emotes'] #recommended-list").append("<li class='emote' data-emote='" + data + "'>" + data + "<div class='close'>x</div></li>");
+			}
+			socket.emit("live update", { "callback" : "updateRecommendedEmotes", "op" : operation, "emote" : data });
 		},
 		updateBannedWords: function(data, operation) {
 			console.log(data, operation);

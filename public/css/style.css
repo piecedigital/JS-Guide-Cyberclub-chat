@@ -301,7 +301,6 @@ section {
 
 .fullheight {
   height: 100%;
-  width: 0px;
 }
 
 .unset {
@@ -845,7 +844,7 @@ section {
   padding-bottom: 3.9em;
 }
 
-/* padding styles */
+/* margin styles */
 /* x-axis */
 .x-marg-0_0 {
   margin-left: 0em;
@@ -1963,6 +1962,53 @@ label[for="admin-tab"] {
   color: #e8f8ff;
 }
 
+#chat-box > div #tools #emotes {
+  position: relative;
+  height: 16px;
+  width: 64px;
+  vertical-align: bottom;
+  display: inline-block;
+  margin: 0 0 3.2px;
+  background-color: white;
+  list-style: none;
+  padding: 0;
+  overflow: hidden;
+  -ms-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+}
+
+#chat-box > div #tools #emotes li {
+  width: 100%;
+  min-width: 128px;
+}
+
+#chat-box > div #tools #emotes li img {
+  height: 16px;
+}
+
+#chat-box > div #tools #emotes li:hover {
+  background-color: #058BC7;
+}
+
+#chat-box > div #tools #emotes + #opener {
+  width: 16px;
+  height: 16px;
+  margin: 0 0 8px;
+  color: #e8f8ff;
+  cursor: pointer;
+  display: inline-block;
+}
+
+#chat-box > div #tools #emotes.open {
+  height: 160px;
+  width: 128px;
+  bottom: 128px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 #chat-box > div #chat-form {
   width: 100%;
 }
@@ -2192,12 +2238,12 @@ label[for="admin-tab"] {
   margin: 0 0 16px;
 }
 
-#admin #mgmt #item-options .option-box #banned-list {
+#admin #mgmt #item-options .option-box #banned-list, #admin #mgmt #item-options .option-box #recommended-list {
   padding: 0;
   margin: 0;
 }
 
-#admin #mgmt #item-options .option-box #banned-list .word, #admin #mgmt #item-options .option-box #banned-list .addr, #admin #mgmt #item-options .option-box #banned-list .emote {
+#admin #mgmt #item-options .option-box #banned-list .word, #admin #mgmt #item-options .option-box #banned-list .addr, #admin #mgmt #item-options .option-box #banned-list .emote, #admin #mgmt #item-options .option-box #recommended-list .word, #admin #mgmt #item-options .option-box #recommended-list .addr, #admin #mgmt #item-options .option-box #recommended-list .emote {
   list-style: none;
   display: inline-block;
   margin: 4px;
@@ -2206,7 +2252,7 @@ label[for="admin-tab"] {
   background-color: #017ab1;
 }
 
-#admin #mgmt #item-options .option-box #banned-list .word .close, #admin #mgmt #item-options .option-box #banned-list .addr .close, #admin #mgmt #item-options .option-box #banned-list .emote .close {
+#admin #mgmt #item-options .option-box #banned-list .word .close, #admin #mgmt #item-options .option-box #banned-list .addr .close, #admin #mgmt #item-options .option-box #banned-list .emote .close, #admin #mgmt #item-options .option-box #recommended-list .word .close, #admin #mgmt #item-options .option-box #recommended-list .addr .close, #admin #mgmt #item-options .option-box #recommended-list .emote .close {
   display: inline-block;
   background-color: #004B6E;
   margin: 0 0 0 4px;

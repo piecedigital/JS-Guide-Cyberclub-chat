@@ -165,7 +165,6 @@ section {
 }
 .fullheight {
 	height: 100%;
-	width: 0px;
 }
 .unset {
 	padding: 0;
@@ -247,7 +246,7 @@ section {
 		}
 	}
 }
-/* padding styles */
+/* margin styles */
 /* x-axis */
 @for $i from 0 through 3 {
 	@for $d from 0 through 9 {
@@ -736,6 +735,46 @@ label[for="admin-tab"] {
     		display: inline-block;
     		color: $veryLightBlue;
 			}
+			& #emotes {
+				position: relative;
+				height: 1*$em;
+				width: 4*$em;
+				vertical-align: bottom;
+				display: inline-block;
+		    margin: 0 0 .4*$em;
+		    background-color: white;
+		    list-style: none;
+		    padding: 0;
+		    bottom: 0;
+		    overflow: hidden;
+		    @include border-radius(.5*$em);
+		    & li {
+		    	width: 100%;
+		    	min-width: 8*$em;
+		    	& img {
+		    		height: 1*$em;
+		    	}
+		    	&:hover {
+		    		background-color: $tintedBlue;
+		    	}
+		    }
+		    & + #opener {
+		    	width: 1*$em;
+		    	height: 1*$em;
+		    	margin: 0 0 .5*$em;
+		    	color: $veryLightBlue;
+		    	cursor: pointer;
+		    	display: inline-block;
+		    	font-weight: bold;
+		    }
+				&.open {
+					height: 10*$em;
+					width: 8*$em;
+					bottom: 8.4*$em;
+					overflow-x: hidden;
+					overflow-y: auto;
+				}
+			}
 		}
 		& #chat-form {
 			width: 100%;
@@ -942,7 +981,7 @@ label[for="admin-tab"] {
 				margin: 0 0 1*$em;
 			}
 			& .option-box {
-				& #banned-list {
+				& #banned-list, #recommended-list {
 					padding: 0;
 					margin: 0;
 					& .word, .addr, .emote {

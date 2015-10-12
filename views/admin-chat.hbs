@@ -39,7 +39,12 @@
 							<div id="tools">
 								<div class="inline-block fullheight"></div>
 								<label for="timestamp">Show Time: </label><!--
-								--><input type="checkbox" name="timestamp" id="timestamp">
+								--><input type="checkbox" name="timestamp" id="timestamp"><!--
+								--><div class="inline-block y-marg-0_3">
+									<label for="emotes">Emotes: </label><!--
+									--><ul id="emotes"></ul>
+									<div id="opener">+</div>
+								</div>
 							</div>
 							<form id="chat-form">
 								<div class="fillout parent">
@@ -65,7 +70,7 @@
 							{{#each chatOptions}}
 								<div class="option-box option-{{@key}} {{#if @key}}hidden{{else}}{{/if}}" data-section="{{name}}" >
 									{{#if emoteBans}}
-										<h1 class="title font-size-1_2">Add Banned Emoticon</h1>
+										<h1 class="title font-size-1_2">Add Banned Emoticons</h1>
 										<form class="add-window" action="/update-emotes">
 											<div class="col-2 left-justify">
 												<label>Emote Keyword: </label>
@@ -81,6 +86,28 @@
 											<ul id="banned-list">
 												<h1 class="title font-size-1_2">Current Bans</h1>
 												{{#each ../../bannedEmotes}}
+													<li class="emote" data-emote="{{this}}">{{this}}<div class="close">x</div></li>
+												{{/each}}
+											</ul>
+										</div>
+									{{/if}}
+									{{#if emoteRecs}}
+										<h1 class="title font-size-1_2">Add Recommended Emoticons</h1>
+										<form class="add-window" action="/update-recommended-emotes">
+											<div class="col-2 left-justify">
+												<label>Emote Keyword: </label>
+											</div><!--
+											--><div class="col-2 right-justify">
+												<input type="text" name="emote" placeholder="Enter the emote keyword to add"><br>
+											</div>
+											<div class="center-justify x-pad-3_9">
+												<button>Submit</button>
+											</div>
+										</form>
+										<div class="y-marg-1_0">
+											<ul id="recommended-list">
+												<h1 class="title font-size-1_2">Current Recommendations</h1>
+												{{#each ../../recommendedEmotes}}
 													<li class="emote" data-emote="{{this}}">{{this}}<div class="close">x</div></li>
 												{{/each}}
 											</ul>

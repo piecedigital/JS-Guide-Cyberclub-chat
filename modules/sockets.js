@@ -249,6 +249,9 @@ module.exports = function(io, db) {
 						  return bS.length - aS.length;
 						});
 					},
+					updateRecommendedEmotes: function() {
+						io.emit("real time update", obj);
+					},
 					updateRooms: function() {
 						io.emit("real time update", obj);
 					},
