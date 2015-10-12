@@ -1,7 +1,7 @@
 //////////////////////// Sass Prerequisites //////////////////////////
 // scrollbar and selection restyling
-@import "_scrollbar";
 @import "_defaults";
+@import "_scrollbar";
 ///////////////////// Main Styling /////////////////////////////////
 /*///////////////////////// prerequisites /////////////////////////*/
 $terquis: rgba(0, 255, 160, 1);
@@ -977,6 +977,8 @@ label[for="admin-tab"] {
 			vertical-align: top;
 			display: inline-block;
 			width: 75%;
+			height: 100%;
+			overflow-y: auto;
 			& .title {
 				margin: 0 0 1*$em;
 			}

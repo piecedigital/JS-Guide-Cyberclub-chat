@@ -467,7 +467,7 @@ var notifyMe = function(person, text) {
 					$(emojioneMatches[i]).attr("title", emoteMatches[i]);
 				}
 				var finalHTML = $(emojioneHTML).html();
-				console.log(finalHTML);
+				//console.log(finalHTML);
 				return finalHTML
 			}
 
