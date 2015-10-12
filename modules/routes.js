@@ -319,34 +319,6 @@ sass.render({
 			            			checkVars(keyVars);
 			            		}
 			            	});
-			            	/*
-			            	// pull data for banned words and phrases
-			            	Chat.findOne({ "optionName" : "bannedWords" }, function(chatQErr, chatQDoc) {
-			            		if(chatQErr) throw chatQErr;
-
-			            		////console.log(chatQDoc)
-			            		if(chatQDoc) {
-			            			keyVars.bannedWords = chatQDoc.list;
-			            			checkVars(keyVars);
-			            		} else {
-			            			keyVars.bannedWords = [];
-			            			checkVars(keyVars);
-			            		}
-			            	});
-										// pull data for banned IP addresses
-			            	Chat.findOne({ "optionName" : "bannedAddrs" }, function(chatQErr, chatQDoc) {
-			            		if(chatQErr) throw chatQErr;
-
-			            		//console.log(chatQDoc)
-			            		if(chatQDoc) {
-			            			keyVars.bannedAddrs = chatQDoc.list;
-			            			checkVars(keyVars);
-			            		} else {
-			            			keyVars.bannedAddrs = [];
-			            			checkVars(keyVars);
-			            		}
-			            	});
-			            	*/
 										// pull data for access level color indicators
 			            	Chat.findOne({ "optionName" : "levelColors" }, function(chatQErr, chatQDoc) {
 			            		if(chatQErr) throw chatQErr;
@@ -405,7 +377,8 @@ sass.render({
 			            		"bannedEmotes": null,
 			            		"bannedWords": null,
 			            		"bannedAddrs": null,
-			            		"levelColors": null
+			            		"levelColors": null,
+			            		"recommendedEmotes": null
 			            	};
 			            	// options for handling chat
 			            	var chatOptions = [{
@@ -415,6 +388,10 @@ sass.render({
 			            	{
 			            		"emoteBans": true,
 			            		"name": "Banned Emotes"
+			            	},
+			            	{
+			            		"emoteRecs": true,
+			            		"name": "Recommended Emotes"
 			            	},
 			            	{
 			            		"addresses": true,
@@ -444,7 +421,7 @@ sass.render({
 
 					            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "admin-chat" : "chat";
 
-				  							res.render(dest, { "title" : "GCC Admin Panel", "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedEmotes" : keyVars.bannedEmotes, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "levelColors" : keyVars.levelColors, "chatOptions" : chatOptions });
+				  							res.render(dest, { "title" : "GCC Admin Panel", "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedEmotes" : keyVars.bannedEmotes, "recommendedEmotes" : keyVars.recommendedEmotes, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "levelColors" : keyVars.levelColors, "chatOptions" : chatOptions });
 			            		}
 			            	}
 
@@ -482,6 +459,19 @@ sass.render({
 			            			checkVars(keyVars);
 			            		} else {
 			            			keyVars.bannedEmotes = [];
+			            			checkVars(keyVars);
+			            		}
+			            	});
+			            	// pull data for recommended emotes
+			            	Chat.findOne({ "optionName" : "recommendedEmotes" }, function(chatQErr, chatQDoc) {
+			            		if(chatQErr) throw chatQErr;
+
+			            		////console.log(chatQDoc)
+			            		if(chatQDoc) {
+			            			keyVars.recommendedEmotes = chatQDoc.list;
+			            			checkVars(keyVars);
+			            		} else {
+			            			keyVars.recommendedEmotes = [];
 			            			checkVars(keyVars);
 			            		}
 			            	});
@@ -755,6 +745,28 @@ sass.render({
       		}
       	});
 			})
+			.post("/get-app-data", function(req, res, next) {
+				var request = req.body.request || "";
+
+				var requests = {
+					emotes: function() {
+						// pull data for recommended emotes
+          	Chat.findOne({ "optionName" : "recommendedEmotes" }, function(chatQErr, chatQDoc) {
+          		if(chatQErr) throw chatQErr;
+
+          		if(chatQDoc) {
+          			res.status(200).send({
+          				"data": chatQDoc.list
+          			});
+          		} else {
+          			res.status(404).send("Collection doesn't exist");
+          		}
+          	});
+					}
+				}
+
+				requests[request]();
+			})
 			.post("/update-rooms", function(req, res, next) {
 				//console.log("update rooms function")
 				//console.log(req.body);
@@ -831,6 +843,38 @@ sass.render({
 								"msg": "success",
 								"action": "callback",
 								"callback": "updateBannedEmotes",
+								"data": emote,
+								"op": op
+							});
+						}
+					});
+
+				} else {
+					res.status(417).send("Unacceptable emote keyword");
+				}
+			})
+			.post("/update-recommended-emotes", function(req, res, next) {
+				var emote = req.body.emote || "",
+						op = req.body.op || "$push";
+
+				if(emote) {
+					emote = emote.replace(/[:]/gi, "");
+					emote = ":" + emote + ":";
+
+					var updateObj = {
+					};
+					updateObj[op] = { "list" : emote }
+
+
+
+					Chat.update({ "optionName" : "recommendedEmotes" }, updateObj, { "upsert" : true }, function(chatQErr, chatQDoc) {
+						if(chatQErr) throw chatQErr;
+
+						if(chatQDoc && chatQDoc.result.ok) {
+							res.status(200).send({
+								"msg": "success",
+								"action": "callback",
+								"callback": "updateRecommendedEmotes",
 								"data": emote,
 								"op": op
 							});

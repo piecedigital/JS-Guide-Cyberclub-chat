@@ -153,6 +153,32 @@ var notifyMe = function(person, text) {
 			})
 		});
 		
+		// load recommended emotes
+		$.ajax({
+			url: "/get-app-data",
+			type: "POST",
+			"data": {
+				"request": "emotes"
+			},
+			dataType: "json",
+			success: function(data) {
+				for(var i = 0; i < data.data.length; i++) {
+					var filteredEmote = regexFilter(data.data[i], "");
+
+					var emoteOpt = $("<li>").attr("data-emote", data.data[i]).append(filteredEmote, data.data[i]);
+
+					$("#tools #emotes").append( emoteOpt );
+				}
+			},
+			error: function(err1, err2, err3) {
+				alert("There was an error gatherig app data. Please refresh or alert the admin.")
+				console.log(err1);
+				console.log(err1.status);
+				console.log(err2);
+				console.log(err3.message);
+			}
+		});
+
 		var socket = io(),
 		usernameFull = userData.usernameFull,
 		username = usernameFull.toLowerCase(),
@@ -396,6 +422,20 @@ var notifyMe = function(person, text) {
 					"}";
 
 					$("#level-colors").text(css);
+				},
+				updateRecommendedEmotes: function() {
+					if(data.op === "$pull") {
+						$("#tools #emotes").find("option[data-emote='" + data.emote + "']").remove();
+					};
+					if(data.op === "$push") {
+						var filteredEmote = regexFilter(data.emote, "");
+
+						var emoteOpt = $("<li>").attr("data-emote", data.emote).html(filteredEmote, data.emote);
+
+						console.log("emote", emoteOpt);
+
+						$("#tools #emotes").append( emoteOpt );
+					};
 				}
 			};
 
@@ -542,7 +582,7 @@ var notifyMe = function(person, text) {
 		$(document).on("touchstart click", function(e) {
 			var thisInstance = e.target;//#room-list .room .name
 
-			//console.log($(thisInstance), $(thisInstance).parent().attr("id"));
+			console.log($(thisInstance), $(thisInstance).parent().attr("id"));
 
 			// if thisInstance is ".name" under ".room"
 			if($(thisInstance).hasClass("name")
@@ -610,7 +650,7 @@ var notifyMe = function(person, text) {
 				$("#chat-box").toggleClass("open-side");
 			} else
 
-			// thisInstance is ".tab"
+			// thisInstance is ".timestamp"
 			if($(thisInstance).attr("id") === "timestamp") {
 				if( $(thisInstance).prop("checked") ) {
 					if(e.type === "touchstart") {
@@ -623,11 +663,34 @@ var notifyMe = function(person, text) {
 					}
 					$("#messages").addClass("show-time");
 				}
-			} else {
-				// no important UI elements clicked/tapped
+			} else
+
+			// thisInstance is "#opener"
+			if($(thisInstance).attr("id") === "opener") {
+				$(thisInstance).parent().find("#emotes").toggleClass("open");
+			} else
+
+			// thisInstance is under "#emotes"
+			if($(thisInstance).parent().attr("id") === "emotes") {
+				var emote = $(thisInstance).data("emote"),
+					val = $("#chat-val").val(),
+					space = " ";
+
+				if(val.match(/\s$/)) {
+					space = "";
+				}
+
+				$("#chat-val").val( val + space + emote + " ");
+
+				$(thisInstance).parent().removeClass("open");
+			} else
+
+			// no important UI elements clicked/tapped
+			{
 				$("#new-context-menu").css({
 					"display": "none"
 				}).html("");
+				$("#tools #emotes").removeClass("open");
 			}
 		});
 
