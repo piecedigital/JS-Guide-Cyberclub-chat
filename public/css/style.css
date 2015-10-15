@@ -128,13 +128,6 @@
 }
 
 /*///////////////////////// prerequisites /////////////////////////*/
-* {
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-}
-
 a {
   text-decoration: none;
   color: inherit;
@@ -2486,7 +2479,6 @@ footer {
   bottom: 0;
   left: 0;
   width: 100%;
-  font-size: 14px;
 }
 
 /* hover events ----------------------------*/
@@ -2515,6 +2507,9 @@ footer {
   }
   /* header ----------------------------*/
   /* body ----------------------------*/
+  #chat-box > div #tools div.no-mob {
+    display: none;
+  }
   /* footer ----------------------------*/
   /* hover events ----------------------------*/
 }
