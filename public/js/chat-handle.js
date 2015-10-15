@@ -579,7 +579,7 @@ var notifyMe = function(person, text) {
 		};
 
 		// on touch/mousedown
-		$(document).on("touchstart click", function(e) {
+		$(document).on("touchend click", function(e) {
 			var thisInstance = e.target;//#room-list .room .name
 
 			console.log($(thisInstance), $(thisInstance).parent().attr("id"));
