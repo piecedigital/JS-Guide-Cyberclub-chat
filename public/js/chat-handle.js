@@ -9,6 +9,22 @@ String.prototype.multiply = function(times) {
 	return arr.join("");
 };
 
+function emojify(str) {
+	var emoteMatches = str.match(/[:][a-z\_]*[:]/gi) || [];
+	var str = emojione.toImage(str);
+	var emojioneHTML = document.createElement('span');
+	emojioneHTML.innerHTML = str;
+	emojioneMatches = $(emojioneHTML).find(".emojione");
+	//console.log($(d).find(".emojione"));
+	for(var i = 0; i < emojioneMatches.length; i++) {
+		//console.log("of match: ", emojioneMatches)
+		$(emojioneMatches[i]).attr("title", emoteMatches[i]);
+	}
+	var finalHTML = $(emojioneHTML).html();
+	//console.log(finalHTML);
+	return finalHTML
+};
+
 function checkMutes(myMutes, user) {	
 	var userReg = new RegExp(user, "gi");
 	for(var i = 0; i < myMutes.length; i++) {
@@ -245,7 +261,7 @@ var notifyMe = function(person, text) {
 				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text' style='color:" + data.color + "'>" + regexFilter(data.msg, data.displayName) + "</p>" ) );
 				scrollToBottom();
 			}
-			console.log(data)
+			//console.log(data)
 		});
 
 		//socket response on chat me response
@@ -255,7 +271,7 @@ var notifyMe = function(person, text) {
 				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text' style='color: " + data.color + "'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.displayName) + "</p>" ) );
 				scrollToBottom();
 			}
-			console.log(data)
+			//console.log(data)
 		});
 		//socket response on update
 		socket.on("update", function(data){
@@ -274,7 +290,7 @@ var notifyMe = function(person, text) {
 			$("#room-list").find(".room[data-roomname='" + data.room + "']").addClass("inside");
 			$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", false);
 			room = data.room;
-			console.log(data, room);
+			//console.log(data, room);
 			scrollToBottom();
 		});
 		socket.on("leave room", function(data){
@@ -282,11 +298,11 @@ var notifyMe = function(person, text) {
 			$("#room-list").find(".room").removeClass("inside");
 			$("#chat-box #chat-form").find("#chat-val, button").attr("disabled", true);
 			room = data.room;
-			console.log(data, room);
+			//console.log(data, room);
 			scrollToBottom();
 		});
 		socket.on("kick", function(data){
-			console.log("kick", data, room);
+			//console.log("kick", data, room);
 			if(myLevel !== "admin" || myLevel !== "moderator") {
 				socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
 				$("#messages").append($("<li class='plain'>").html("There are an insufficient number of mods in this room. You will now be moved out of this room. Try joining another.") );
@@ -306,7 +322,7 @@ var notifyMe = function(person, text) {
 			if(data.usernameFull === usernameFull) {
 				displayName = data.usernameFull;
 			}
-			console.log(data);
+			//console.log(data);
 			scrollToBottom();
 		});
 		socket.on("update display name", function(data){
@@ -329,12 +345,12 @@ var notifyMe = function(person, text) {
 
 		//socket responses on room entry
 		socket.on("real time update", function(data){
-			console.log(data);
+			//console.log(data);
 
 			var callbacks = {
 				updateRooms: function() {
 					if(data.op === "remove") {
-						console.log("remove room", data);
+						//console.log("remove room", data);
 
 						$("#room-list").find(".room[data-roomname='" + data.originalName + "']").remove();
 						if(room === data.originalName) {
@@ -343,7 +359,7 @@ var notifyMe = function(person, text) {
 						}
 					};
 					if(data.op === "update") {
-						console.log("update room", data);
+						//console.log("update room", data);
 						var currTopic = $("#room-list").find(".room[data-roomname='" + data.originalName + "']").attr("data-topic");
 
 						$("#room-list").find(".room[data-roomname='" + data.originalName + "']").attr({
@@ -356,7 +372,7 @@ var notifyMe = function(person, text) {
 						}
 					};
 					if(data.op === "add") {
-						console.log("add room", data);
+						//console.log("add room", data);
 
 						$("#room-list > ul").append( $("<li>").attr({
 							"data-roomname": data.roomname,
@@ -432,7 +448,7 @@ var notifyMe = function(person, text) {
 
 						var emoteOpt = $("<li>").attr("data-emote", data.emote).append(filteredEmote, data.emote);
 
-						console.log("emote", emoteOpt);
+						//console.log("emote", emoteOpt);
 
 						$("#tools #emotes").append( emoteOpt );
 					};
@@ -454,23 +470,39 @@ var notifyMe = function(person, text) {
 
 
 			//emoticons/////////////
+			// convert conventional emotes to emojione strings
+			//console.log(filter)
+			filter = filter
+				.replace(/(:\|)/g, ":neutral_face:")
+				.replace(/(:\-\|)/g, ":neutral_face:")
+				.replace(/(\B:l\b)/g, ":neutral_face:")
+				.replace(/(\B:\-l\b)/g, ":neutral_face:")
+				.replace(/(\-_\-)/g, ":expressionless:")
+				.replace(/(\-_\-)/g, ":expressionless:")
+				.replace(/(:\))/g, ":slight_smile:")
+				.replace(/(:\-\))/g, ":slight_smile:")
+				.replace(/(:D)/g, ":grinning:")
+				.replace(/(:\-D)/g, ":grinning:")
+				.replace(/(:P)/g, ":stuck_out_tongue:")
+				.replace(/(:\-P)/g, ":stuck_out_tongue:")
+				.replace(/(B\))/g, ":sunglasses:")
+				.replace(/(B\-\))/g, ":sunglasses:")
+				.replace(/(:\()/g, ":slight_frown:")
+				.replace(/(:\-\()/g, ":slight_frown:")
+				.replace(/(:O)/g, ":open_mouth:")
+				.replace(/(:\-O)/g, ":open_mouth:")
+				.replace(/(:'\()/g, ":cry:")
+				.replace(/(:'\-\()/g, ":cry:")
+				.replace(/(D:)/g, ":frowning:")
+				.replace(/(D\-:)/g, ":frowning:")
+				.replace(/(\(:\()/g, ":worried:")
+				.replace(/(\(:\-\()/g, ":worried:")
+				.replace(/(>:\()/g, ":angry:")
+				.replace(/(>:\-\()/g, ":angry:")
+				.replace(/(X\()/g, ":confonded:")
+				.replace(/(X\-\()/g, ":confonded:");
+			//console.log(filter)
 			// convert emoji string matches to images
-			function emojify(str) {
-				var emoteMatches = str.match(/[:][a-z\_]*[:]/gi) || [];
-				var str = emojione.toImage(str);
-				var emojioneHTML = document.createElement('span');
-				emojioneHTML.innerHTML = str;
-				emojioneMatches = $(emojioneHTML).find(".emojione");
-				//console.log($(d).find(".emojione"));
-				for(var i = 0; i < emojioneMatches.length; i++) {
-					//console.log("of match: ", emojioneMatches)
-					$(emojioneMatches[i]).attr("title", emoteMatches[i]);
-				}
-				var finalHTML = $(emojioneHTML).html();
-				//console.log(finalHTML);
-				return finalHTML
-			}
-
 			filter = emojify(filter);
 
 			//match mentions////////////
@@ -582,13 +614,13 @@ var notifyMe = function(person, text) {
 		$(document).on("touchend click", function(e) {
 			var thisInstance = e.target;//#room-list .room .name
 
-			console.log($(thisInstance), $(thisInstance).parent().attr("id"));
+			//console.log($(thisInstance), $(thisInstance).parent().attr("id"));
 
 			// if thisInstance is ".name" under ".room"
 			if($(thisInstance).hasClass("name")
 				&&
 				$(thisInstance).parent().hasClass("room")) {
-				console.log("target found");
+				//console.log("target found");
 				if(currentRoom === $(thisInstance).parent().attr("data-roomname")) {
 					//console.log("current: ", currentRoom);
 					currentRoom = null;
