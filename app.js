@@ -1,3 +1,5 @@
+console.log(this);
+
 var express 		 = require("express"),
     app          = express(),
     server       = require("http").Server(app),
