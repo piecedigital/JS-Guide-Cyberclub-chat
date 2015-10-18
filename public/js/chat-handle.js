@@ -505,6 +505,7 @@ var notifyMe = function(person, text) {
 				.replace(/(:'\-\()/g, ":cry:")
 				.replace(/(D:)/g, ":frowning:")
 				.replace(/(D\-:)/g, ":frowning:")
+				.replace(/(\(y\))/g, ":thumbsup:")
 			//console.log(filter)
 			// convert emoji string matches to images
 			filter = emojify(filter);
