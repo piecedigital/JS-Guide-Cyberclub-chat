@@ -43,6 +43,20 @@ var getData = function (data) {
   return obj;
 }
 
+function getCaretPos(input) {
+// Internet Explorer Caret Position (TextArea)
+  if (document.selection && document.selection.createRange) {
+      var range = document.selection.createRange();
+      var bookmark = range.getBookmark();
+      var caret_pos = bookmark.charCodeAt(2) - 2;
+  } else {
+      // Firefox Caret Position (TextArea)
+      if (input.setSelectionRange)
+        var caret_pos = input.selectionStart;
+  }
+  return caret_pos;
+}
+
 // generate private message window
 var generatePM = function(initName, reciName) {
 	// disallow self messaging
@@ -155,7 +169,7 @@ var notifyMe = function(person, text) {
 							// console.log("applying user: ", users[user])
 							users[user].displayName = users[user].displayName || users[user].usernameFull;
 
-							$("#room-list").find(".room[data-roomname='" + roomName + "'] ul").append("<li class='user parent' data-usernameFull='" + users[user].usernameFull + "' data-username='" + (users[user].usernameFull.toLowerCase()) + "' data-displayname='" + users[user].displayName + "'><span class='icon " + users[user].accessLevel + "'></span><span class='username'>" + users[user].displayName + "</span></li>");
+							$("#room-list").find(".room[data-roomname='" + roomName + "'] ul").append("<li class='user parent' data-usernamefull='" + users[user].usernameFull + "' data-username='" + (users[user].usernameFull.toLowerCase()) + "' data-displayname='" + users[user].displayName + "'><span class='icon " + users[user].accessLevel + "'></span><span class='username'>" + users[user].displayName + "</span></li>");
 						}
 					}
 				},
@@ -258,7 +272,7 @@ var notifyMe = function(person, text) {
 		socket.on("chat response", function(data){
 			var matchedUser = checkMutes(myMutes, data.usernameFull);
 			if(!matchedUser) {
-				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text' style='color:" + data.color + "'>" + regexFilter(data.msg, data.displayName) + "</p>" ) );
+				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernamefull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text' style='color:" + data.color + "'>" + regexFilter(data.msg, data.displayName) + "</p>" ) );
 				scrollToBottom();
 			}
 			//console.log(data)
@@ -268,7 +282,7 @@ var notifyMe = function(person, text) {
 		socket.on("chat me response", function(data){
 			var matchedUser = checkMutes(myMutes, data.usernameFull);
 			if(!matchedUser) {
-				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text' style='color: " + data.color + "'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernameFull='" + data.usernameFull + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.displayName) + "</p>" ) );
+				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text' style='color: " + data.color + "'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernamefull='" + data.usernameFull + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.displayName) + "</p>" ) );
 				scrollToBottom();
 			}
 			//console.log(data)
@@ -315,9 +329,9 @@ var notifyMe = function(person, text) {
 		socket.on("new entry", function(data){
 			$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").remove();
 			if(data.accessLevel === "admin" || data.accessLevel === "moderator") {
-				$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").prepend("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
+				$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").prepend("<li class='user parent' data-usernamefull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
 			} else {
-				$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernameFull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
+				$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernamefull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
 			}
 			if(data.usernameFull === usernameFull) {
 				displayName = data.usernameFull;
@@ -383,14 +397,14 @@ var notifyMe = function(person, text) {
 				},
 				updateUsers: function() {
 					if(data.op === "remove") {
-						$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").remove();
+						$("#room-list").find(".room .user[data-usernamefull='" + data.usernameFull + "']").remove();
 						if(usernameFull === data.usernameFull) {
 							window.location.href = "/banned/account/" + usernameFull;
 						}
 					};
 					if(data.op === "update") {
-						$("#room-list").find(".room .user[data-usernameFull='" + data.usernameFull + "']").attr({
-							"data-usernameFull": data.newName
+						$("#room-list").find(".room .user[data-usernamefull='" + data.usernameFull + "']").attr({
+							"data-usernamefull": data.newName
 						});
 						if(data.usernameFull === usernameFull) {
 							alert("your username has been changed. You browser must now be refreshed.");
@@ -536,6 +550,77 @@ var notifyMe = function(person, text) {
 			return filter;
 		}
 
+		/////////////////////////////////////
+		//chat area//////////////////////////
+		/////////////////////////////////////
+		var text = "", caret = 0, listMenu = false, atPos = 0, listInd = 1, listUser = "";
+
+		$("#chat-val").on({
+			keydown: function(e) {
+				//navigate list menu
+				if(e.keyCode === 38) {
+					listInd--;
+					if( listInd < 1 ) {
+						listInd = $("#list-box").size() + 1;
+					}
+					e.preventDefault()
+				}
+				if(e.keyCode === 40) {
+					listInd++;
+					if( listInd > $("#list-box").size() + 1 ) {
+						listInd = 1;
+					}
+					e.preventDefault()
+				}
+
+				//replace username in text
+				if(e.keyCode === 13 && listMenu === true) {
+					textArr = text.split("");
+					
+					textArr.splice(atPos, (caret - atPos), listUser);
+
+					$("#chat-val").val( textArr.join("") + " " );
+					listMenu = false;
+					$("#list-box").hide().html("");
+
+					return false;
+				}
+			},
+			keyup: function(e){
+				text = $(this).val();
+				caret = getCaretPos(this);
+				var char = text[caret-1] || "";
+
+				if(!char.match(/[a-z0-9\-\_@]/i)) {
+					listMenu = false;
+					$("#list-box").hide().html("");
+					return false;
+				}
+				if(char === "@") {
+					listMenu = true;
+					atPos = caret;
+					//$("#list-box").show().html("");
+				}
+				if(listMenu) {
+					var subStr = text.substring(atPos, caret)//.match(/^([a-z0-9\-\_]*)/i).pop();
+					console.log(subStr);
+					var regexUser = new RegExp(subStr, "gi");
+
+					$("#list-box").show().html("");
+					
+					$("#room-list").find(".room .user").map(function(ind, elem) {
+						if( $(elem).data("usernamefull").match(regexUser) ) {
+							$("#list-box").append( $("<li>").text( $(elem).data("usernamefull") ) );
+						}
+					});
+				}
+
+				listUser = $("#list-box li:nth-of-type(" + listInd + ")").addClass("hovered").text();
+				if(e.keyCode !== 38 && e.keyCode !== 40) {
+					listInd = 1;
+				}
+			}
+		});
 		//chat message submission
 		$('#chat-form').submit(function(){
 			socket.emit("chat message", { "room" : room, "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
@@ -551,7 +636,7 @@ var notifyMe = function(person, text) {
 			if (!result) {
 				event.preventDefault();
 			}
-		})
+		});
 
 		///////////////////////////
 		// interface interactions//

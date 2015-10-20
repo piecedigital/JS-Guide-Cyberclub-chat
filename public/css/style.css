@@ -2014,11 +2014,33 @@ label[for="admin-tab"] {
   position: absolute;
   bottom: 100%;
   left: 0;
-  padding: 1.6px;
+  padding: 0;
   margin: 0;
   border-radius: 8px;
   background-color: #004B6E;
   display: none;
+  box-shadow: 0 0 0 1.6px #9be0ff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#chat-box > div #chat-form #list-box li {
+  list-style: none;
+  color: #004B6E;
+  background-color: #9be0ff;
+}
+
+#chat-box > div #chat-form #list-box li:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+#chat-box > div #chat-form #list-box li:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+#chat-box > div #chat-form #list-box li:hover, #chat-box > div #chat-form #list-box li.hovered {
+  color: #e8f8ff;
+  background-color: #017ab1;
 }
 
 #chat-box > div #chat-form .fillout {
