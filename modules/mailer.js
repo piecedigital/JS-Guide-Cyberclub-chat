@@ -9,10 +9,10 @@ var sender = "piecedigitalstudios@gmail.com";
 
 var transporter = nodemailer.createTransport(smtpTransport({
 	host: "smtp.mandrillapp.com",
-	port: priVar.mailerVariables.port,
+	port: process.env["mailPort"] || priVar.mailerVariables.port,
 	auth: {
 		user: sender,
-		pass: priVar.mailerVariables.pass
+		pass: process.env["mailPass"] || priVar.mailerVariables.pass
 	}
 }));
 

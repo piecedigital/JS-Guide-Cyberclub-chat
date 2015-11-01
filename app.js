@@ -81,7 +81,7 @@ var sockets = require("./modules/sockets");
 
 var Server = MongoClient.Server,
 Db = MongoClient.Db,
-db = MongoClient.connect(process.env["mongolabURL"]
+db = MongoClient.connect(process.env["mongolabURL"] || priVar.mongolabURL
   , function(err, db) {
     if(err) throw err;
     //console.log(db)
