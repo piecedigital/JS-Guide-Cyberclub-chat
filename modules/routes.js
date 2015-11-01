@@ -31,7 +31,7 @@ sass.render({
 });
 
 // mongodb config
- MongoClient.connect(priVar.mongolabURL
+ MongoClient.connect(process.env["mongolabURL"]
   , function(err, db) {
   	if(err) throw err;
 

@@ -9,7 +9,7 @@ function renderSass() {
 	sass.render({
 	  file: "./private/sass/style.scss",
 	  outputStyle: "nested",
-	  outFile: "./public/css/styl.css"
+	  outFile: "./public/css/style.css"
 	}, function(err, result) {
 		if(err) throw err;
 
