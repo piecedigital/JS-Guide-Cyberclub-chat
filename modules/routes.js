@@ -26,12 +26,12 @@ sass.render({
 	fs.writeFile('./public/css/style.css', result.css.toString(), function (err) {
 	  if (err) throw err;
 
-	  //console.log('CSS rendered and saved');
+	  console.log('CSS rendered and saved\r\n');
 	});
 });
 
 // mongodb config
- MongoClient.connect(process.env["mongolabURL"]
+ MongoClient.connect(process.env["mongolabURL"] || priVar.mongolabURL
   , function(err, db) {
   	if(err) throw err;
 
