@@ -60,9 +60,8 @@ function getCaretPos(input) {
 // generate private message window
 var generatePM = function(initName, reciName) {
 	// disallow self messaging
-	if(reciName === initName) return false;
 
-	var frameName = reciName + "-frame";
+	var frameName = initName + "-frame";
 
 	$(".pm-box[data-id='" + frameName + "']").remove();
 
@@ -561,13 +560,13 @@ var notifyMe = function(person, text) {
 				if(e.keyCode === 38) {
 					listInd--;
 					if( listInd < 1 ) {
-						listInd = $("#list-box").size() + 1;
+						listInd = $("#list-box li").size();
 					}
 					e.preventDefault()
 				}
 				if(e.keyCode === 40) {
 					listInd++;
-					if( listInd > $("#list-box").size() + 1 ) {
+					if( listInd > $("#list-box li").size()) {
 						listInd = 1;
 					}
 					e.preventDefault()
@@ -735,7 +734,8 @@ var notifyMe = function(person, text) {
 			} else
 
 			// thisInstance is under ".user"
-			if($(thisInstance).parent().hasClass("user")) {
+			if($(thisInstance).parent().hasClass("user") ||
+				$(thisInstance).hasClass("user")) {
 				contextUsername = $(thisInstance).parent().attr("data-usernamefull");
 				contextUserdisp = $(thisInstance).parent().attr("data-displayname");
 				populateContext(userOpts);
@@ -778,12 +778,12 @@ var notifyMe = function(person, text) {
 					if(e.type === "touchstart") {
 						$(thisInstance)[0].checked = false;
 					}
-					$("#messages").removeClass("show-time");
+					$("#messages").addClass("show-time");
 				} else {
 					if(e.type === "touchstart") {
 						$(thisInstance)[0].checked = true;
 					}
-					$("#messages").addClass("show-time");
+					$("#messages").removeClass("show-time");
 				}
 			} else
 
@@ -855,7 +855,8 @@ var notifyMe = function(person, text) {
 			} else
 
 			// thisInstance is under ".user"
-			if($(thisInstance).parent().hasClass("user")) {
+			if($(thisInstance).parent().hasClass("user") ||
+				$(thisInstance).hasClass("user")) {
 				replaceContext(userOpts);
 			} else {
 				$("#new-context-menu").css({

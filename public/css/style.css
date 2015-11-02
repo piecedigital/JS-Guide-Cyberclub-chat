@@ -1458,11 +1458,7 @@ label[for="admin-tab"] {
   color: red;
 }
 
-#signup-tab {
-  display: none;
-}
-
-#signup-tab:not(:checked) ~ #sign-up-in #signup {
+#signup-tab ~ #sign-up-in #signup {
   display: none;
 }
 
@@ -1496,11 +1492,7 @@ label[for="admin-tab"] {
   display: block;
 }
 
-#login-tab {
-  display: none;
-}
-
-#login-tab:not(:checked) ~ #sign-up-in #login {
+#login-tab ~ #sign-up-in #login {
   display: none;
 }
 
@@ -2529,9 +2521,6 @@ footer {
   }
   /* header ----------------------------*/
   /* body ----------------------------*/
-  #chat-box > div #tools div.no-mob {
-    display: none;
-  }
   /* footer ----------------------------*/
   /* hover events ----------------------------*/
 }
@@ -2552,6 +2541,9 @@ footer {
   }
   /* header ----------------------------*/
   /* body ----------------------------*/
+  #chat-box > div #tools div.no-mob {
+    display: none;
+  }
   /* footer ----------------------------*/
   /* hover events ----------------------------*/
 }
