@@ -1,6 +1,6 @@
 console.log("required routes module\r\n");
 
-var serverOn = false;
+var serverOn = true;
 
 var app = require('express')(),
 		fs = require("fs"),
@@ -1292,6 +1292,9 @@ sass.render({
 						}
 					});
 				}
+			})
+			.post("/report-violation", function(req, res) {
+				console.log("report URI", req.body["csp-report"]);
 			})
 			.post("*", function(req, res) {
 				res.status(404).send('Error 404: page not found');
