@@ -99,7 +99,6 @@ sass.render({
 			})
 			.get('/', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP3(req);
 
 				if(session) {
 		      Sess.findOne({ "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
@@ -128,7 +127,6 @@ sass.render({
 			})
 			.get("/login", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP3(req);
 
 				if(session) {
 		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
@@ -161,7 +159,6 @@ sass.render({
 			})
 			.get("/signup", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP3(req);
 				
 				if(session) {
 		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
@@ -196,7 +193,6 @@ sass.render({
 			})
 			.get("/admin-signup", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP3(req);
 				
 				if(session) {
 		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
@@ -254,7 +250,6 @@ sass.render({
 			})
 			.get('/chat', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP3(req);
 				
 				if(session) {
 		      Sess.findOne({ "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
@@ -486,7 +481,6 @@ sass.render({
 			})
 			.get("/request-pass", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				var IP = getIP.getIP3(req);
 				
 				if(session) {
 		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
