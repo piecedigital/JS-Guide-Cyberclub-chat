@@ -54,7 +54,7 @@ sass.render({
 			.get(/\/.*/, function(req, res, next) {
 				var IP = getIP.getIP3(req);
 				console.log("req ip", IP);
-
+				//console.log(req.headers)
 				////console.log(IP, typeof IP);
 				var session = req.cookies["sessId"] || "";
 				
@@ -85,12 +85,14 @@ sass.render({
 
 					if(!chatQDoc) {
 						next();
+						res.setHeader("X-Frame-Options", ["ALLOW-FROM", `http://${req.headers.host}`])
 					} else {
 						if(!req.originalUrl.match(/\/banned\/ip/)) {
 							res.redirect("banned/ip");
 							console.log("foo")
 						} else {
 							next();
+							res.setHeader("X-Frame-Options", ["ALLOW-FROM", `http://${req.headers.host}`])
 							console.log("bar")
 						}
 					}

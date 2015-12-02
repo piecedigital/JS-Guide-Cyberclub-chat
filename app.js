@@ -52,26 +52,26 @@ function start (worker) {
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(cookieParser());
   app.use(express.static(path.join(__dirname, 'public')));
-  app.disable("x-powered-by");
   app.use(helmet());
   app.use(helmet.hidePoweredBy());
-  app.use(helmet.frameguard("allow-from", "*"));
+  //app.use(helmet.frameguard("allow-from", "http://localhost:8080"));
+  //app.use(helmet.frameguard("allow-from", "http://guidemagazine.org"));
   app.use(helmet.contentSecurityPolicy({
     defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "'unsafe-inline'","*.jsdelivr.net", "jsconsole.com", "'unsafe-eval'"],
+    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "*.jsdelivr.net", "jsconsole.com"],
     styleSrc: ["'self'", "'unsafe-inline'", "*.jsdelivr.net"],
     imgSrc: ["'self'", "*.jsdelivr.net"],
-    connectSrc: ["*"],
+    connectSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "ws://*"],
     fontSrc: ["fonts.google.com"],
     objectSrc: ["'self'"],
     mediaSrc: ["'self'"],
-    frameSrc: ["*"],
-    sandbox: ["allow-forms", "allow-scripts", "allow-same-origin"],
+    frameSrc: ["'self'"],
+    //sandbox: ["allow-forms", "allow-scripts", "allow-same-origin"],
     reportUri: '/report-violation',
-    reportOnly: true, // set to true if you only want to report errors 
-    setAllHeaders: false, // set to true if you want to set all headers 
-    disableAndroid: false, // set to true if you want to disable Android (browsers can vary and be buggy) 
-    safari5: false // set to true if you want to force buggy CSP in Safari 5 
+    //reportOnly: true, // set to true if you only want to report errors 
+    //setAllHeaders: false, // set to true if you want to set all headers 
+    //disableAndroid: false, // set to true if you want to disable Android (browsers can vary and be buggy) 
+    //safari5: false // set to true if you want to force buggy CSP in Safari 5 
   }));
 
   // setup DB variable for socket connection

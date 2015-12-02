@@ -79,8 +79,7 @@ var generatePM = function(initName, reciName) {
 				"target": frameName,
 				"action": "/pm/" + initName + "/" + reciName,
 				"method": "post"
-			}).html( $("<input>").attr({ "type": "hidden" }) ),
-			theScript = $("<script>").html("$('#" + frameName + "').submit()");
+			}).html( $("<input>").attr({ "type": "hidden" }) );
 
 	$("#pm-section > div > div > div").append(
 		$("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).html(
@@ -92,11 +91,12 @@ var generatePM = function(initName, reciName) {
 					theMover
 					),
 				theFrame,
-				theForm,
-				theScript
-				)
+				theForm
 			)
-		);
+		)
+	);
+
+	$("form#" + frameName).submit();
 	// var width = (5*16) + ((.2*16) * 1);
 	// var size = $("#pm-section > div > div > div").find(".pm-box").length;
 	// console.log("width", width)
