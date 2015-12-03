@@ -2409,6 +2409,12 @@ label[for="admin-tab"] {
   border-radius: 0 0 8px 0;
 }
 
+.pm-box .tools span {
+  display: inline-block;
+  padding: 0 0.5em;
+  font-weight: bold;
+}
+
 .pm-box .spinner {
   position: absolute;
   top: 50%;
@@ -2434,9 +2440,13 @@ label[for="admin-tab"] {
 .pm-box.closed {
   z-index: 1;
   position: relative;
-  width: 80px;
+  width: 144px;
   height: 22.4px;
   margin: 3.2px 3.2px 0;
+}
+
+.pm-box.closed .tools span {
+  display: none;
 }
 
 .pm-box.closed iframe {
@@ -2480,9 +2490,9 @@ label[for="admin-tab"] {
 #pm-section > div > div > div {
   display: inline-block;
   height: 100%;
-  column-width: 70.4px;
-  -webkit-column-width: 70.4px;
-  -moz-column-width: 70.4px;
+  column-width: 160px;
+  -webkit-column-width: 160px;
+  -moz-column-width: 160px;
   pointer-events: auto;
 }
 
