@@ -84,11 +84,15 @@ sass.render({
 					if(chatQErr) throw chatQErr;
 
 					if(!chatQDoc) {
+						console.log(req.headers.host)
+						res.setHeader("X-Frame-Options", ["ALLOW-FROM", `http://${req.headers.host}`]);
 						next();
 					} else {
 						if(!req.originalUrl.match(/\/banned\/ip/)) {
 							res.redirect("banned/ip");
 						} else {
+							console.log(req.headers.host)
+							res.setHeader("X-Frame-Options", ["ALLOW-FROM", `http://${req.headers.host}`]);
 							next();
 						}
 					}
