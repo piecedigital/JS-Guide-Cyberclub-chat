@@ -489,10 +489,10 @@ label[for="admin-tab"] {
 					display: none;
 				}
 				& > p {
-					user-select: text;
+					/* user-select: text;
 					-moz-user-select: text;
 					-webkit-user-select: text;
-					-ms-user-select: text;
+					-ms-user-select: text; */
 				}
 				& p {
 					display: inline-block;
@@ -1124,6 +1124,11 @@ label[for="admin-tab"] {
 	  		border-radius: 0 0 .5*$em 0;
 	  	}
 	  }
+	  & span {
+	  	display: inline-block;
+	    padding: 0 .5em;
+	    font-weight: bold;
+	  }
   }
   & .spinner {
   	position: absolute;
@@ -1145,9 +1150,14 @@ label[for="admin-tab"] {
   &.closed {
   	z-index: 1;
   	position: relative;
-  	width: 5*$em;
+  	width: 9*$em;
   	height: 1.4*$em;
   	margin: .2*$em .2*$em 0;
+  	& .tools {
+  		& span {
+  			display: none;
+  		}
+  	}
   	& iframe {
   		height: 0%;
   	}
@@ -1183,7 +1193,7 @@ label[for="admin-tab"] {
 			& > div {
 				display: inline-block;
 				height: 100%;
-				@include columnWidth(4.4*$em);
+				@include columnWidth(10*$em);
 				pointer-events: auto;
 			}
 		}

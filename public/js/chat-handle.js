@@ -88,8 +88,9 @@ var generatePM = function(initName, reciName) {
 			}).append(
 				$("<div>").addClass("tools").append(
 					theCloser,
-					theMover
-					),
+					theMover,
+					$("<span>").text(">" + (initName.match(usernameFull)) ? reciName : initName)
+				),
 				theFrame,
 				theForm
 			)
@@ -125,7 +126,7 @@ $(document).ready(function () {
 	    Notification.requestPermission();
 	  }
 	} else {
-		alert2('Desktop notifications not available in your browser. Try Chromium.'); 
+		alert2('Desktop notifications not available in your browser. Try Google Chrome.'); 
 	}
 });
 
@@ -271,7 +272,7 @@ var notifyMe = function(person, text) {
 		socket.on("chat response", function(data){
 			var matchedUser = checkMutes(myMutes, data.usernameFull);
 			if(!matchedUser) {
-				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernamefull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text' style='color:" + data.color + "'>" + regexFilter(data.msg, data.displayName) + "</p>" ) );
+				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernamefull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text' style='color:" + data.color + "'>" + regexFilter(data.msg, data) + "</p>" ) );
 				scrollToBottom();
 			}
 			//console.log(data)
@@ -281,7 +282,7 @@ var notifyMe = function(person, text) {
 		socket.on("chat me response", function(data){
 			var matchedUser = checkMutes(myMutes, data.usernameFull);
 			if(!matchedUser) {
-				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text' style='color: " + data.color + "'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernamefull='" + data.usernameFull + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data.displayName) + "</p>" ) );
+				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <p class='chat-text' style='color: " + data.color + "'><span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernamefull='" + data.usernameFull + "'> " + data.displayName + "</span> " + regexFilter(data.msg, data) + "</p>" ) );
 				scrollToBottom();
 			}
 			//console.log(data)
@@ -474,12 +475,34 @@ var notifyMe = function(person, text) {
 		////////////////////////////////////
 		//filter chat for links and emites//
 		////////////////////////////////////
-		function regexFilter(filter, person){
+		function regexFilter(filter, personData){
+			var person = personData.displayName || "";
 			var originalText = filter;
 
 			//smiles
-			filter = filter.replace(/((http(s)?[:\/\/]*))?([a-z0-9\-]*[.])([a-z0-9\-]*[.])?([a-z]{2,3})(.*)?/ig, "[deleted link]")
-				.replace(/[a-z]{1,}([._-]*)?[a-z]{1,}@[a-z]*.[a-z]*/ig, "[deleted email]");
+			if(personData.level != "admin" && personData.level != "moderator") {
+				filter = filter
+					.replace(/[\w\d]{1,}([\._\-]*)?[\w\d]{1,}@[\w\d]*\.[\w\d]*(\.[\w\d]*)?/ig, "[deleted email]")
+					.replace(/((http(s)?[:\/\/]*))?([\w\d\-]*[\.])([\w\d\-]*[\.])?([\w]*)(\.\w)?/gi, "[deleted link]")
+			} else {
+				//var website = filter.match(/((http(s)?[:\/\/]*))?([\w\d\-]*[\.])([\w\d\-]*[\.])?([\w]*)(\.\w)?/gi),
+					//email = filter.match(/[a-z]{1,}([._-]*)?[a-z]{1,}@[a-z]*.[a-z]*/ig);
+
+				//var jointArray = (website.join(",") + "," + website.join(",")).split(",");
+				//console.log(jointArray);
+
+				filter = filter.split(" ").map(function(elem) {
+					if( elem.match(/[\w\d]{1,}([\._\-]*)?[\w\d]{1,}@[\w\d]*\.[\w\d]*(\.[\w\d]*)?/i) ) {
+						elem = elem.replace(elem, "<a href='mail:" + elem + "'>" + elem + "</a>");
+					} else {
+						elem = elem.replace(elem, "<a href='" + (!elem.match("http") ? "http://" : "") + elem + "' target='_blank'>" + elem + "</a>");
+					}
+					
+					return elem;
+				}).join(" ");
+
+				//email1@gmail.com email2@gmail.com example.com example2.com example.com email1@gmail.com
+			}
 
 
 			//emoticons/////////////
