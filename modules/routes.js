@@ -85,15 +85,11 @@ sass.render({
 
 					if(!chatQDoc) {
 						next();
-						res.setHeader("X-Frame-Options", ["ALLOW-FROM", `http://${req.headers.host}`])
 					} else {
 						if(!req.originalUrl.match(/\/banned\/ip/)) {
 							res.redirect("banned/ip");
-							console.log("foo")
 						} else {
 							next();
-							res.setHeader("X-Frame-Options", ["ALLOW-FROM", `http://${req.headers.host}`])
-							console.log("bar")
 						}
 					}
 				});
@@ -946,7 +942,7 @@ sass.render({
 										||
 										userQDoc.usernameFull === req.params.receiver) {
 										var name = (userQDoc.usernameFull === req.params.initiator) ? req.params.receiver : req.params.initiator;
-
+										
 										res.render("pmsg", { "title" : "Chat w/ " + name, "room" : room, "usernameFull" : userQDoc.usernameFull, "username" : userQDoc.username, "alert" : true, "layout" : "private-layout" });
 									} else {
 										res.status(404).send("incorrect room");

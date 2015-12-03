@@ -61,7 +61,7 @@ function getCaretPos(input) {
 var generatePM = function(initName, reciName) {
 	// disallow self messaging
 
-	var frameName = initName + "-frame";
+	var frameName = initName + "x" + reciName + "-frame";
 
 	$(".pm-box[data-id='" + frameName + "']").remove();
 
@@ -622,11 +622,14 @@ var notifyMe = function(person, text) {
 		});
 		//chat message submission
 		$('#chat-form').submit(function(){
-			socket.emit("chat message", { "room" : room, "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
+			if( !$("#chat-val").val().match(/^[\s]*$/) ) {
+				socket.emit("chat message", { "room" : room, "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
+				$("#chat-val").focus();
+				$("#chat-form button").removeClass("full");
+				$("#chat-val button").removeClass("full");
+			}
 			$("#chat-val").val("");
-			$("#chat-val").focus();
-			$("#chat-form button").removeClass("full");
-			$("#chat-val button").removeClass("full");
+
 			return false;
 		});
 		// link warning
