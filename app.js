@@ -1,5 +1,6 @@
 var workers = process.env.WEB_CONCURRENCY || 1;
 var throng = require("throng");
+var cp = require("child_process");
 
 throng(start, {
   workers: workers,
@@ -54,9 +55,7 @@ function start (worker) {
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(helmet());
   app.use(helmet.hidePoweredBy());
-  //app.use(helmet.frameguard("allow-from", "http://localhost:8080"));
-  //app.use(helmet.frameguard("allow-from", "http://guidemagazine.org"));
-  app.use(helmet.frameguard("allow-from", "http://gcc-chat-app.herokuapp.com"));
+  app.use(helmet.frameguard("allow-from", process.env.hostname || ("http://localhost:8080") ));
   app.use(helmet.contentSecurityPolicy({
     defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "*.jsdelivr.net", "jsconsole.com"],
