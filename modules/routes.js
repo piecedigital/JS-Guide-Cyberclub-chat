@@ -85,17 +85,11 @@ sass.render({
 
 					if(!chatQDoc) {
 						next();
-						res.setHeader("X-Frame-Options", ["ALLOW-FROM", `http://${req.headers.host}`])
 					} else {
 						if(!req.originalUrl.match(/\/banned\/ip/)) {
 							res.redirect("banned/ip");
 						} else {
 							next();
-<<<<<<< HEAD
-							res.setHeader("X-Frame-Options", ["ALLOW-FROM", `http://${req.headers.host}`])
-							console.log("bar")
-=======
->>>>>>> 1b90c4e2e61500d2fea54e39ed7e51bd540236b1
 						}
 					}
 				});
