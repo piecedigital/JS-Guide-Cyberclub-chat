@@ -1,124 +1,6 @@
-String.prototype.multiply = function(times) {
-	var arr = [];
-	var tick = 0;
-	while(tick < times) {
-		arr.push(this);
-		tick++;
-	}
-
-	return arr.join("");
-};
-
-function emojify(str) {
-	var emoteMatches = str.match(/[:][a-z\_]*[:]/gi) || [];
-	var str = emojione.toImage(str);
-	var emojioneHTML = document.createElement('span');
-	emojioneHTML.innerHTML = str;
-	emojioneMatches = $(emojioneHTML).find(".emojione");
-	//console.log($(d).find(".emojione"));
-	for(var i = 0; i < emojioneMatches.length; i++) {
-		//console.log("of match: ", emojioneMatches)
-		$(emojioneMatches[i]).attr("title", emoteMatches[i]);
-	}
-	var finalHTML = $(emojioneHTML).html();
-	//console.log(finalHTML);
-	return finalHTML
-};
-
-function checkMutes(myMutes, user) {	
-	var userReg = new RegExp(user, "gi");
-	for(var i = 0; i < myMutes.length; i++) {
-		if(myMutes[i].match(userReg)) {
-			return true;
-		}
-	}
-}
-
-var getData = function (data) {
-  var obj = {};
-  data.serializeArray()
-    .map(function(elem) {
-    obj[elem.name] = elem.value;
-  });
-  return obj;
-}
-
-function getCaretPos(input) {
-// Internet Explorer Caret Position (TextArea)
-  if (document.selection && document.selection.createRange) {
-      var range = document.selection.createRange();
-      var bookmark = range.getBookmark();
-      var caret_pos = bookmark.charCodeAt(2) - 2;
-  } else {
-      // Firefox Caret Position (TextArea)
-      if (input.setSelectionRange)
-        var caret_pos = input.selectionStart;
-  }
-  return caret_pos;
-}
-
-// generate private message window
-var generatePM = function(initName, reciName) {
-	// disallow self messaging
-
-	var frameName = initName + "x" + reciName + "-frame";
-
-	$(".pm-box[data-id='" + frameName + "']").remove();
-
-	var theCloser = $("<div>").addClass("tool closer").html("&#x2716;"),
-			theMover = $("<div>").addClass("tool mover").html("&#x2630;"),
-			theSpinner = $("<div>").addClass("spinner"),
-			theFrame = $("<iframe>").attr({
-				"name": frameName,
-				"frameborder": 0,
-				"width": "100%",
-				"height": "100%"
-			}),
-			theForm = $("<form>").attr({
-				"id": frameName,
-				"target": frameName,
-				"action": "/pm/" + initName + "/" + reciName,
-				"method": "post"
-			}).html( $("<input>").attr({ "type": "hidden" }) );
-
-	$("#pm-section > div > div > div").append(
-		$("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).html(
-			$("<div>").addClass("parent").attr({
-				"style": "width: 100%; height: 100%; padding: 0 0 1.4em"
-			}).append(
-				$("<div>").addClass("tools").append(
-					theCloser,
-					theMover,
-					$("<span>").text(">" + (initName.match(usernameFull)) ? reciName : initName)
-				),
-				theFrame,
-				theForm
-			)
-		)
-	);
-
-	$("form#" + frameName).submit();
-	// var width = (5*16) + ((.2*16) * 1);
-	// var size = $("#pm-section > div > div > div").find(".pm-box").length;
-	// console.log("width", width)
-	// console.log("size", size)
-	// $("#pm-section > div > div > div").css({ "width" : width * size + "px"})
-};
-
-$(document).on("touchstart mousedown", ".pm-box .closer", function(e) {
-	e.preventDefault();
-	e.stopPropagation();
-	$(this).parent().parent().parent().remove();
-});
-
-$(document).on("touchstart mousedown", ".pm-box .mover", function(e) {
-	e.preventDefault();
-	e.stopPropagation();
-	$(this).parent().parent().parent().toggleClass("closed");
-});
-
 // creating variable to exist
 var Notification = Notification || null;
+var notNum = 0;
 // request permission on page load
 $(document).ready(function () {
 	if(Notification) {
@@ -142,14 +24,19 @@ var notifyMe = function(person, text) {
     var notification = new Notification(person + ' Mentioned You', {
       icon: 'favicon.ico',
       body: text.substring(0, 140),
+      tag: notNum
     });
+    notNum++;
+    console.log(notification)
 
     notification.onclick = function () {
       window.focus();
     };
+    setTimeout(function(id) {
+    	notification.close();
+    }, 5000, notNum);
   }
 }
-
 ~(function () {
 	var runApp = function(userData) {
 		$(document).ready(function() {
@@ -224,6 +111,132 @@ var notifyMe = function(person, text) {
 		myColor = "black",
 		myLevel = userData.accessLevel.toLowerCase().replace(/\s/, "-"),
 		myMutes = [];
+
+		///////////////////////////////////////////////////
+		// reusable functions
+		String.prototype.multiply = function(times) {
+			var arr = [];
+			var tick = 0;
+			while(tick < times) {
+				arr.push(this);
+				tick++;
+			}
+
+			return arr.join("");
+		};
+
+		function emojify(str) {
+			var emoteMatches = str.match(/[:][a-z\_]*[:]/gi) || [];
+			var str = emojione.toImage(str);
+			var emojioneHTML = document.createElement('span');
+			emojioneHTML.innerHTML = str;
+			emojioneMatches = $(emojioneHTML).find(".emojione");
+			//console.log($(d).find(".emojione"));
+			for(var i = 0; i < emojioneMatches.length; i++) {
+				//console.log("of match: ", emojioneMatches)
+				$(emojioneMatches[i]).attr("title", emoteMatches[i]);
+			}
+			var finalHTML = $(emojioneHTML).html();
+			//console.log(finalHTML);
+			return finalHTML
+		};
+
+		function checkMutes(myMutes, user) {	
+			var userReg = new RegExp(user, "gi");
+			for(var i = 0; i < myMutes.length; i++) {
+				if(myMutes[i].match(userReg)) {
+					return true;
+				}
+			}
+		}
+
+		var getData = function (data) {
+		  var obj = {};
+		  data.serializeArray()
+		    .map(function(elem) {
+		    obj[elem.name] = elem.value;
+		  });
+		  return obj;
+		}
+
+		function getCaretPos(input) {
+		// Internet Explorer Caret Position (TextArea)
+		  if (document.selection && document.selection.createRange) {
+		      var range = document.selection.createRange();
+		      var bookmark = range.getBookmark();
+		      var caret_pos = bookmark.charCodeAt(2) - 2;
+		  } else {
+		      // Firefox Caret Position (TextArea)
+		      if (input.setSelectionRange)
+		        var caret_pos = input.selectionStart;
+		  }
+		  return caret_pos;
+		}
+
+		// generate private message window
+		var generatePM = function(initName, reciName) {
+			// disallow self messaging
+
+			var frameName = initName + "x" + reciName + "-frame";
+
+			$(".pm-box[data-id='" + frameName + "']").remove();
+
+			var theCloser = $("<div>").addClass("tool closer").html("&#x2716;"),
+					theMover = $("<div>").addClass("tool mover").html("&#x2630;"),
+					theSpinner = $("<div>").addClass("spinner"),
+					theFrame = $("<iframe>").attr({
+						"name": frameName,
+						"frameborder": 0,
+						"width": "100%",
+						"height": "100%"
+					}),
+					theForm = $("<form>").attr({
+						"id": frameName,
+						"target": frameName,
+						"action": "/pm/" + initName + "/" + reciName,
+						"method": "post"
+					}).html( $("<input>").attr({ "type": "hidden" }) );
+
+			$("#pm-section > div > div > div").append(
+				$("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).html(
+					$("<div>").addClass("parent").attr({
+						"style": "width: 100%; height: 100%; padding: 0 0 1.4em"
+					}).append(
+						$("<div>").addClass("tools").append(
+							theCloser,
+							theMover,
+							$("<span>").text(">" + ((initName.match(usernameFull)) ? reciName : initName))
+						),
+						theFrame,
+						theForm
+					)
+				)
+			);
+
+			$("form#" + frameName).submit();
+			// var width = (5*16) + ((.2*16) * 1);
+			// var size = $("#pm-section > div > div > div").find(".pm-box").length;
+			// console.log("width", width)
+			// console.log("size", size)
+			// $("#pm-section > div > div > div").css({ "width" : width * size + "px"})
+		};
+
+		$(document).on("touchstart mousedown", ".pm-box .closer", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			$(this).parent().parent().parent().remove();
+		});
+
+		$(document).on("touchstart mousedown", ".pm-box .mover", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			$(this).parent().parent().parent().toggleClass("closed");
+		});
+
+		///////////////////////////////////////////////////
+		///////////////////////////////////////////////////
+		///////////////////////////////////////////////////
+
 
 		// socket log
 		var socketLog = function() {
