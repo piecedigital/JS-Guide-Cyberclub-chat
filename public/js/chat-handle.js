@@ -61,7 +61,7 @@ function getCaretPos(input) {
 var generatePM = function(initName, reciName) {
 	// disallow self messaging
 
-	var frameName = initName + "-frame";
+	var frameName = initName + "x" + reciName + "-frame";
 
 	$(".pm-box[data-id='" + frameName + "']").remove();
 
@@ -79,8 +79,7 @@ var generatePM = function(initName, reciName) {
 				"target": frameName,
 				"action": "/pm/" + initName + "/" + reciName,
 				"method": "post"
-			}).html( $("<input>").attr({ "type": "hidden" }) ),
-			theScript = $("<script>").html("$('#" + frameName + "').submit()");
+			}).html( $("<input>").attr({ "type": "hidden" }) );
 
 	$("#pm-section > div > div > div").append(
 		$("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).html(
@@ -92,11 +91,12 @@ var generatePM = function(initName, reciName) {
 					theMover
 					),
 				theFrame,
-				theForm,
-				theScript
-				)
+				theForm
 			)
-		);
+		)
+	);
+
+	$("form#" + frameName).submit();
 	// var width = (5*16) + ((.2*16) * 1);
 	// var size = $("#pm-section > div > div > div").find(".pm-box").length;
 	// console.log("width", width)
@@ -622,11 +622,14 @@ var notifyMe = function(person, text) {
 		});
 		//chat message submission
 		$('#chat-form').submit(function(){
-			socket.emit("chat message", { "room" : room, "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
+			if( !$("#chat-val").val().match(/^[\s]*$/) ) {
+				socket.emit("chat message", { "room" : room, "msg" : $("#chat-val").val(), "usernameFull" : usernameFull, "displayName" : displayName, "color" : myColor, "level" : myLevel });
+				$("#chat-val").focus();
+				$("#chat-form button").removeClass("full");
+				$("#chat-val button").removeClass("full");
+			}
 			$("#chat-val").val("");
-			$("#chat-val").focus();
-			$("#chat-form button").removeClass("full");
-			$("#chat-val button").removeClass("full");
+
 			return false;
 		});
 		// link warning

@@ -56,6 +56,7 @@ function start (worker) {
   app.use(helmet.hidePoweredBy());
   //app.use(helmet.frameguard("allow-from", "http://localhost:8080"));
   //app.use(helmet.frameguard("allow-from", "http://guidemagazine.org"));
+  app.use(helmet.frameguard("allow-from", "http://gcc-chat-app.herokuapp.com"));
   app.use(helmet.contentSecurityPolicy({
     defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "*.jsdelivr.net", "jsconsole.com"],
