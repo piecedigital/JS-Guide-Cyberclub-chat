@@ -8,7 +8,7 @@ $(document).ready(function () {
 	    Notification.requestPermission();
 	  }
 	} else {
-		alert2('Desktop notifications not available in your browser. Try Google Chrome.'); 
+		alert('Desktop notifications not available in your browser. Try Google Chrome.'); 
 	}
 });
 
@@ -150,15 +150,6 @@ var notifyMe = function(person, text) {
 			}
 		}
 
-		var getData = function (data) {
-		  var obj = {};
-		  data.serializeArray()
-		    .map(function(elem) {
-		    obj[elem.name] = elem.value;
-		  });
-		  return obj;
-		}
-
 		function getCaretPos(input) {
 		// Internet Explorer Caret Position (TextArea)
 		  if (document.selection && document.selection.createRange) {
@@ -197,15 +188,15 @@ var notifyMe = function(person, text) {
 						"method": "post"
 					}).html( $("<input>").attr({ "type": "hidden" }) );
 
-			$("#pm-section > div > div > div").append(
+			$("#pm-section > div").append(
 				$("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).html(
 					$("<div>").addClass("parent").attr({
-						"style": "width: 100%; height: 100%; padding: 0 0 1.4em"
+						"style": "width: 100%; height: 100%;"
 					}).append(
 						$("<div>").addClass("tools").append(
 							theCloser,
 							theMover,
-							$("<span>").text(">" + ((initName.match(usernameFull)) ? reciName : initName))
+							$("<span>").text("> " + ((initName.match(usernameFull)) ? reciName : initName))
 						),
 						theFrame,
 						theForm
@@ -220,6 +211,12 @@ var notifyMe = function(person, text) {
 			// console.log("size", size)
 			// $("#pm-section > div > div > div").css({ "width" : width * size + "px"})
 		};
+
+		$(document).on("touchstart mousedown", ".pm-tools .pm-min", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			$(this).parent().parent().parent().toggleClass("closed");
+		});
 
 		$(document).on("touchstart mousedown", ".pm-box .closer", function(e) {
 			e.preventDefault();
