@@ -188,12 +188,31 @@ module.exports = function(io, db) {
 							.replace(/^\/CDN\s/i, "")
 							.replace(/^\/changeDisplayName\s/i, "");
 						if(obj.msg.match(/^[a-z0-9_-]*$/gi)){
-							Room.update({ 'roomname' : obj.room, 'users.usernameFull' : obj.usernameFull }, { '$set' : { 'users.$.displayName' : obj.msg } }, function(roomQErr, roomQDoc) {
+							// check to make sure the display name is not already a username or being used
+							Room.findOne({ 'roomname' : obj.room }, function(roomQErr, roomQDoc) {
 								if(roomQErr) throw roomQErr;
 
 								if(roomQDoc) {
-									obj.msg = obj.msg.replace(/^(\/topic)[\s]*/gi, '');
-									io.emit('update display name', { 'displayName' : obj.msg.substr(0, 20), 'usernameFull' : obj.usernameFull });
+									var matches = roomQDoc.users.filter(function(elem) {
+										if((elem.displayName && elem.displayName.toLowerCase() === obj.msg.toLowerCase()) || elem.username === obj.msg.toLowerCase()) {
+											if(elem.usernameFull != obj.usernameFull) {
+												console.log(elem.username != obj.username, elem, obj)
+												return elem;
+											}
+										}
+									});
+									console.log(matches)
+									if(matches.length === 0) {
+										Room.update({ 'roomname' : obj.room, 'users.usernameFull' : obj.usernameFull }, { '$set' : { 'users.$.displayName' : obj.msg } }, function(roomQErr2, roomQDoc2) {
+											if(roomQErr2) throw roomQErr2;
+
+											if(roomQDoc2) {
+												io.emit('update display name', { 'displayName' : obj.msg.substr(0, 20), 'usernameFull' : obj.usernameFull });
+											}
+										});
+									} else {
+										io.to(socket.id).emit("plain", { "msg" : "Username or display name is already in use" });
+									}
 								}
 							});
 						} else {

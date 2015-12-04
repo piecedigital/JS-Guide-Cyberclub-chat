@@ -1,3 +1,12 @@
+var getData = function (data) {
+  var obj = {};
+  data.serializeArray()
+    .map(function(elem) {
+    obj[elem.name] = elem.value;
+  });
+  return obj;
+};
+
 var alert2 = function(msg, cb) {
 	$(".alert-box").remove();
   $("body").append(
