@@ -1,6 +1,6 @@
 console.log("required routes module\r\n");
 
-var serverOn = true;
+var serverOn = false;
 
 var app = require('express')(),
 		fs = require("fs"),
