@@ -23,11 +23,10 @@ var notifyMe = function(person, text) {
   else {
     var notification = new Notification(person + ' Mentioned You', {
       icon: 'favicon.ico',
-      body: text.substring(0, 140),
+      body: text.substring(0, 140) + "...",
       tag: notNum
     });
     notNum++;
-    console.log(notification)
 
     notification.onclick = function () {
       window.focus();
@@ -504,7 +503,8 @@ var notifyMe = function(person, text) {
 				filter = filter.split(" ").map(function(elem) {
 					if( elem.match(/[\w\d]{1,}([\._\-]*)?[\w\d]{1,}@[\w\d]*\.[\w\d]*(\.[\w\d]*)?/i) ) {
 						elem = elem.replace(elem, "<a href='mail:" + elem + "'>" + elem + "</a>");
-					} else {
+					} else
+					if( elem.match(/((http(s)?[:\/\/]*))?([\w\d\-]*[\.])([\w\d\-]*[\.])?([\w]*)(\.\w)?/i) ) {
 						elem = elem.replace(elem, "<a href='" + (!elem.match("http") ? "http://" : "") + elem + "' target='_blank'>" + elem + "</a>");
 					}
 					
@@ -557,7 +557,8 @@ var notifyMe = function(person, text) {
 			filter = emojify(filter);
 
 			//match mentions////////////
-			var regDisplayName = new RegExp("@" + displayName, "gi");
+			var regDisplayName = new RegExp("@" + displayName + "\\b", "gi");
+
 			if(filter.match(regDisplayName) && person.toLowerCase() !== displayName.toLowerCase() ){
 				filter = filter.replace(regDisplayName, "<span class='mention'>@"+displayName+"</span>");
 				showTitle = originalTitleMention;
