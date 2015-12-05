@@ -2367,7 +2367,7 @@ label[for="admin-tab"] {
 
 /* private messaging box*/
 .pm-box {
-  z-index: 4;
+  z-index: 5;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -2378,7 +2378,8 @@ label[for="admin-tab"] {
   max-width: 400px;
   height: 320px;
   border-radius: 8px;
-  box-shadow: 0 0 0 3.2px #004B6E;
+  padding: 3.2px;
+  box-shadow: inset 0 0 0 3.2px #004B6E;
   background-color: #9be0ff;
   margin: 0;
   vertical-align: top;
@@ -2455,6 +2456,7 @@ label[for="admin-tab"] {
   box-shadow: 0 1.6px 0 0 #9be0ff;
   background-color: #004B6E;
   overflow: hidden;
+  padding: 0;
 }
 
 .pm-box.closed > div {
@@ -2506,15 +2508,10 @@ label[for="admin-tab"] {
   max-height: 320px;
   width: 100%;
   max-width: 320px;
-  border-radius: 8px;
-  box-shadow: 0 0 0 3.2px #004B6E;
+  border-radius: 8px 8px 8px 0;
   background-color: #004B6E;
   pointer-events: auto;
-  padding: 32px 0 0;
-}
-
-#pm-section.closed {
-  height: 0;
+  padding: 35.2px 3.2px 3.2px;
 }
 
 #pm-section > div {
@@ -2532,7 +2529,7 @@ label[for="admin-tab"] {
 #pm-section > div .pm-tools .pm-tool {
   display: inline-block;
   color: #004B6E;
-  padding: 3.2px 0.4em;
+  padding: 5.6px 6.4px;
   border-radius: 8px 0 0 0;
   background-color: #9be0ff;
   cursor: pointer;
@@ -2540,7 +2537,15 @@ label[for="admin-tab"] {
 
 #pm-section > div .pm-tools .pm-tool:hover {
   color: #e8f8ff;
-  background-color: #004B6E;
+  background-color: #017ab1;
+}
+
+#pm-section.closed {
+  height: 0;
+}
+
+#pm-section.closed > div .pm-tools .pm-tool {
+  padding: 5.6px 6.4px;
 }
 
 /* footer ----------------------------*/

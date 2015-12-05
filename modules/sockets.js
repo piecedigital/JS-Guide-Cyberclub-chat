@@ -196,7 +196,6 @@ module.exports = function(io, db) {
 									var matches = roomQDoc.users.filter(function(elem) {
 										if((elem.displayName && elem.displayName.toLowerCase() === obj.msg.toLowerCase()) || elem.username === obj.msg.toLowerCase()) {
 											if(elem.usernameFull != obj.usernameFull) {
-												console.log(elem.username != obj.username, elem, obj)
 												return elem;
 											}
 										}

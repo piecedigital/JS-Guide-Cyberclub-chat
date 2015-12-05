@@ -1091,7 +1091,7 @@ label[for="admin-tab"] {
 
 /* private messaging box*/
 .pm-box {
-	z-index: 4;
+	z-index: 5;
 	position: fixed;
 	bottom: 0;
 	left: 0;
@@ -1100,7 +1100,8 @@ label[for="admin-tab"] {
 	max-width: 25*$em;
 	height: 20*$em;
 	border-radius: .5*$em;
-  box-shadow: 0 0 0 .2*$em $darkBlue;
+	padding: .2*$em;
+  box-shadow: inset 0 0 0 .2*$em $darkBlue;
   background-color: $lightBlue;
   margin: 0;
   vertical-align: top;
@@ -1163,6 +1164,7 @@ label[for="admin-tab"] {
   	box-shadow: 0 .1*$em 0 0 $lightBlue;
   	background-color: $darkBlue;
   	overflow: hidden;
+  	padding: 0;
   	& > div {
   		padding: 0;
   	}
@@ -1207,17 +1209,14 @@ label[for="admin-tab"] {
 	max-height: 20*$em;
 	width: 100%;
 	max-width: 20*$em;
-	border-radius: .5*$em;
-  box-shadow: 0 0 0 .2*$em $darkBlue;
+	border-radius: .5*$em .5*$em .5*$em 0;
 	background-color: $darkBlue;
 	pointer-events: auto;
-	padding: 2*$em 0 0;
-	&.closed {
-		height: 0;
-	}
+	padding: 2.2*$em .2*$em .2*$em;
 	& > div {
 		width: 100%;
 		height: 100%;
+		padding: .2*$em 0 0;
 		& .pm-tools {
 			position: absolute;
     	top: -2em;
@@ -1226,16 +1225,28 @@ label[for="admin-tab"] {
     	& .pm-tool {
     		display: inline-block;
     		color: $darkBlue;
-		    padding: .2*$em .4em;
+		    padding: .35*$em .4*$em;
 		    border-radius: .5*$em 0 0 0;
 		    background-color: $lightBlue;
 		    cursor: pointer;
 		     &:hover {
 		     	color: $veryLightBlue;
-		     	background-color: $darkBlue;
+		     	background-color: $dimBlue;
 		     }
     	}
 		}
+	}
+	&.closed {
+		height: 0;
+		//overflow: hidden;
+		& > div {
+		& .pm-tools {
+    	& .pm-tool {
+		    padding: .35*$em .4*$em;
+		    //border-radius: .5*$em 0 0 .5*$em;
+    	}
+		}
+	}
 	}
 }
 /* footer ----------------------------*/
