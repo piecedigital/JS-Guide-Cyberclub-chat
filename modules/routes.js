@@ -606,7 +606,7 @@ sass.render({
 				res.render("downloads", { "title" : "Download the desktop client for your system of choice" });
 			})
 			.get('*', function(req, res, next) {
-				res.status(404).send('Error 404: page not found<br><br><a href="/">return Home</a>');
+	      res.render("error", { error: 404, message: "Page Not Found" });
 			})
 			;
 
