@@ -1105,6 +1105,10 @@ label[for="admin-tab"] {
   background-color: $lightBlue;
   margin: 0;
   vertical-align: top;
+  transition: 0s all;
+  & * {
+  	transition: 0s all;
+  }
   & > div {
   	padding: 0 0 1.4*$em;
   }
@@ -1113,6 +1117,7 @@ label[for="admin-tab"] {
   	left: 0;
   	display: block;
 	  z-index: 5;
+	  height: 1.4*$em;
 	  & .tool {
 	  	position: relative;
 	  	display: inline-block;
@@ -1121,6 +1126,7 @@ label[for="admin-tab"] {
 	  	background-color: $midBlue;
 	  	box-shadow: 0 0 0 .1*$em $darkBlue;
 	  	padding: 0 .75*$em;
+	  	vertical-align: top;
 	  	cursor: pointer;
 	  	&:hover {
 	  		color: $veryLightBlue;
@@ -1135,7 +1141,7 @@ label[for="admin-tab"] {
 	  }
 	  & span {
 	  	display: inline-block;
-	    padding: .1*$em .5*$em;
+	    padding: .2*$em .5*$em;
 	    font-weight: bold;
 	  }
   }
@@ -1174,13 +1180,15 @@ label[for="admin-tab"] {
   	& .tools {
   		height: 100%;
   		& .tool {
+  			height: 100%;
+  			margin: 0 .1*$em 0 0;
+  			padding: .3*$em .75*$em;
   			border-radius: 0;
   			box-shadow: none;
-  			margin: 0 .1*$em 0 0;
-  			padding: .2*$em .75*$em;
   		}
   		& span {
   			color: #e8f8ff;
+  			padding: .4*$em .5*$em;
   		}
   	}
   	& iframe {

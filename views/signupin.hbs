@@ -19,6 +19,7 @@
 						<label for="" class="bold dark-blue">Confirm Password</label>
 						<input type="password" name="passwordconfirm" placeholder="Confirm password" value="">
 						<input type="hidden" name="formtype" value="regular">
+						<input type="hidden" name="_csrf" value="{{csrfToken}}">
 						<button>Submit</button>
 					</form>
 				</div>
@@ -28,6 +29,7 @@
 						<input type="text" name="username" placeholder="username">
 						<label for="" class="bold dark-blue">Password</label>
 						<input type="password" name="password" placeholder="Password">
+						<input type="hidden" name="_csrf" value="{{csrfToken}}">
 						<div class="right-justify">
 							<a href="/request-pass">Forgot password?</a>
 						</div>

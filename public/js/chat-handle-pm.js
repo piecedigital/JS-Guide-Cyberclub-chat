@@ -165,6 +165,41 @@ String.prototype.multiply = function(times) {
 			return finalHTML
 		}
 
+		filter = filter
+			.replace(/(:\|)/g, ":neutral_face:")
+			.replace(/(:\-\|)/g, ":neutral_face:")
+			.replace(/(\B:l\b)/g, ":neutral_face:")
+			.replace(/(\B:\-l\b)/g, ":neutral_face:")
+			.replace(/(\-_\-)/g, ":expressionless:")
+			.replace(/(\-_\-)/g, ":expressionless:")
+			.replace(/(O:\))/g, ":innocent:")
+			.replace(/(O:\-\))/g, ":innocent:")
+			.replace(/(:\))/g, ":slight_smile:")
+			.replace(/(:\-\))/g, ":slight_smile:")
+			.replace(/(:D)/g, ":grinning:")
+			.replace(/(:\-D)/g, ":grinning:")
+			.replace(/(\B:P\b)/g, ":stuck_out_tongue:")
+			.replace(/(\B:\-P\b)/g, ":stuck_out_tongue:")
+			.replace(/(B\))/g, ":sunglasses:")
+			.replace(/(B\-\))/g, ":sunglasses:")
+			.replace(/(\(:\()/g, ":worried:")
+			.replace(/(\(:\-\()/g, ":worried:")
+			.replace(/(\>:\()/g, ":angry:")
+			.replace(/(\>:\-\()/g, ":angry:")
+			.replace(/(&gt;:\()/g, ":angry:")
+			.replace(/(&gt;:\-\()/g, ":angry:")
+			.replace(/(X\()/g, ":confounded:")
+			.replace(/(X\-\()/g, ":confounded:")
+			.replace(/(:\()/g, ":slight_frown:")
+			.replace(/(:\-\()/g, ":slight_frown:")
+			.replace(/(:O)/g, ":open_mouth:")
+			.replace(/(:\-O)/g, ":open_mouth:")
+			.replace(/(:'\()/g, ":cry:")
+			.replace(/(:'\-\()/g, ":cry:")
+			.replace(/(D:)/g, ":frowning:")
+			.replace(/(D\-:)/g, ":frowning:")
+			.replace(/(\(y\))/g, ":thumbsup:")
+
 		filter = emojify(filter);
 
 		//match mentions////////////

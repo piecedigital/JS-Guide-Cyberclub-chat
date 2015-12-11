@@ -1,20 +1,20 @@
 $(document).ready(function() {
-	$("label").on("touchend click", function(e) {
-		e.stopPropagation();
-		e.preventDefault();
-
+	$("label").on("touchend", function(e) {
 		$("#" + $(this).attr("for") ).prop("checked", true);
-	});
-	$("a").on("touchend click", function(e) {
+
 		e.stopPropagation();
 		e.preventDefault();
-		
+	});
+	$("a").on("touchend", function(e) {
 		window.location.href = $(this).attr("href");
-	});
-	$("button").on("touchend click", function(e) {
+		
 		e.stopPropagation();
 		e.preventDefault();
-		
+	});
+	$("button").on("touchend", function(e) {
 		$(this).parent().submit();
+		
+		e.stopPropagation();
+		e.preventDefault();
 	});
 });
