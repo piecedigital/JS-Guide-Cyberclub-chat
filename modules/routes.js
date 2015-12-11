@@ -11,7 +11,10 @@ var app = require('express')(),
 
 var priVar = require("./private-variables"),
 		account = require("./accounts"),
-		getIP = require("./acquire-ip");
+		getIP = require("./acquire-ip"),
+		csrf = require("csurf");
+
+var csrfProtection = csrf({ cookie : true })
 
 //sass compile
 var sass = require('node-sass');
@@ -127,7 +130,7 @@ sass.render({
 					res.redirect('/signup');
 				}
 			})
-			.get("/login", function(req, res, next) {
+			.get("/login", csrfProtection, function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
 
 				if(session) {
@@ -152,14 +155,14 @@ sass.render({
 							});
 		        } else {
 		        	res.clearCookie("sessId");
-							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
+							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
 		        }
 		      });
 				} else {
-					res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked" });
+					res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
 				}
 			})
-			.get("/signup", function(req, res, next) {
+			.get("/signup", csrfProtection, function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
 				
 				if(session) {
@@ -181,19 +184,19 @@ sass.render({
 		            	}
 		            } else {
 		            	res.clearCookie("sessId");
-		        			res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
+		        			res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
 		            }
 		          });
 		        } else {
 		        	res.clearCookie("sessId");
-							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
+							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
 		        }
 		      });
 				} else {
-					res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "" });
+					res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
 				}
 			})
-			.get("/admin-signup", function(req, res, next) {
+			.get("/admin-signup", csrfProtection, function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
 				
 				if(session) {
@@ -220,11 +223,11 @@ sass.render({
 		          });
 		        } else {
 		        	res.clearCookie("sessId");
-							res.render("admin-signup", { "title" : "Admin Sign Up", "msg" :"" });
+							res.render("admin-signup", { "title" : "Admin Sign Up", "msg" : "", csrfToken : req.csrfToken() });
 		        }
 		      });
 				} else {
-					res.render("admin-signup", { "title" : "Admin Sign Up", "msg" :"" });
+					res.render("admin-signup", { "title" : "Admin Sign Up", "msg" : "", csrfToken : req.csrfToken() });
 				}
 			})
 			.get("/logout", function(req, res, next) {
@@ -634,8 +637,8 @@ sass.render({
 				res.status(404).send("Error setting the chat status");
 				console.log("Possibly a tempered form");
 			})
-			.post("/signup", account(db).signup)
-			.post("/login", account(db).login)
+			.post("/signup", csrfProtection, account(db).signup)
+			.post("/login", csrfProtection, account(db).login)
 			.post("/request-pass", account(db).requestPass)
 			.post("/update-pass", account(db).updatePass)
 			.post("/adjust-user", account(db).updateUser)

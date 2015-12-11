@@ -21,7 +21,10 @@ function start (worker) {
   		bodyParser 	 = require('body-parser'),
   		helmet       = require("helmet"),
   		port 				 = process.env["PORT"] || 8080,
-      MongoClient  = require("mongodb");
+      MongoClient  = require("mongodb"),
+      csrf         = require("csurf");
+
+  var csrfProtection = csrf({ cookie : true });
 
   var priVar = require("./modules/private-variables");
 
@@ -73,6 +76,7 @@ function start (worker) {
     //disableAndroid: false, // set to true if you want to disable Android (browsers can vary and be buggy) 
     //safari5: false // set to true if you want to force buggy CSP in Safari 5 
   }));
+  //app.use(csrfProtection);
 
   // setup DB variable for socket connection
   var serverOptions = {

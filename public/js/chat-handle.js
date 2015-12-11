@@ -746,6 +746,7 @@ var notifyMe = function(person, text) {
 			if($(thisInstance).hasClass("name")
 				&&
 				$(thisInstance).parent().hasClass("room")) {
+				e.preventDefault();
 				//console.log("target found");
 				if(currentRoom === $(thisInstance).parent().attr("data-roomname")) {
 					//console.log("current: ", currentRoom);

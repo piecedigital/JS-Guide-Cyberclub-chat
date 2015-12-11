@@ -32,13 +32,13 @@ gulp.task("start", function() {
 });
 
 gulp.task("serve", function() {
-	browserSync.init(null, {
+	/*browserSync.init(null, {
 		proxy: "http://localhost:8080",
 		port: 8081
-	});
+	});*/
  
 	gulp.watch(["private/sass/*.scss"]).on("change", renderSass);
-	gulp.watch(["views/*.hbs", "public/css/*.css"]).on("change", reload);
+	//gulp.watch(["views/*.hbs", "public/css/*.css"]).on("change", reload);
 });
 
-gulp.task("default", ["start", "serve"]);
+gulp.task("default", ["serve"]);

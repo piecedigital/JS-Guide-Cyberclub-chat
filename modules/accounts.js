@@ -3,7 +3,8 @@ console.log("required accounts module\r\n");
 var app = require('express')(),
     bcrypt = require("bcryptjs"),
     MongoClient  = require("mongodb"),
-    ObjectId = require("mongodb").ObjectID;
+    ObjectId = require("mongodb").ObjectID,
+    csrf = require("csurf");
 
 var mailer = require("./mailer");
 
@@ -136,11 +137,11 @@ module.exports = function(db) {
                                 console.log(host);
                                 mailer("Confirm admin profile", email, usernameFull, "<img width=1 height=1 src='http://" + host + "/tracker'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://" + host + "/validate?key=" + key + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://" + host + "/cancel?key=" + key).mailPost();
 
-                                res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked" });
+                                res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                               }
                             });
                           } else {
-                            res.render("admin-signup", { "title" : "Admin Sign Up", "msg" : "There was a problem creating your account", "sign-checked" : "", "log-checked" : "checked" });
+                            res.render("admin-signup", { "title" : "Admin Sign Up", "msg" : "There was a problem creating your account", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                             console.log("key was not created");
                           }
                         });
@@ -152,26 +153,26 @@ module.exports = function(db) {
                           if(insertedDoc) {
                             //console.log("account created \n\r");
 
-                            res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked" });
+                            res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                           }
                         });
                       } else {
-                        res.render("signupin", { "title" : "Sign Up/Login", "msg" : "Internal server error", "sign-checked" : "", "log-checked" : "checked" });
+                        res.render("signupin", { "title" : "Sign Up/Login", "msg" : "Internal server error", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                         console.log("Error creating new user. form has been tampered with")
                       }
                     }
                   } else {
                     //error message to the user if there are illegal characters in
                     //their desired username
-                    res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Illegal characters in your username: " + regCheck.join(" "), "sign-checked" : "checked", "log-checked" : "" });
+                    res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Illegal characters in your username: " + regCheck.join(" "), "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
                   }
                 } else {
                   //error message to the user if their desired username is taken
-                  res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username or email is already in use", "sign-checked" : "checked", "log-checked" : "" });
+                  res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username or email is already in use", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
                 }
               });
             } else {
-              res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords do not match", "sign-checked" : "checked", "log-checked" : "" });
+              res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords do not match", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
             }
           } else {
             var charMatchMsg = (!username.match(/^[a-z0-9_-]*$/gi)) ? "username contains illegal characters" : (underDashMatch.length > 2) ? "username contains too many underscores" : null;
@@ -186,15 +187,15 @@ module.exports = function(db) {
             }
             errsMsg.join(", ");
             //error message to the user if their username contains illegal characters
-            res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username Errors: " + errsMsg + ". Username must be between 4-20 characters, and contain only letters and underscores (max 2)", "sign-checked" : "checked", "log-checked" : "" });
+            res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username Errors: " + errsMsg + ". Username must be between 4-20 characters, and contain only letters and underscores (max 2)", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
           }
         } else {
           //error message to the user if the email isn't valid
-          res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Email is invalid", "sign-checked" : "checked", "log-checked" : "" });
+          res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Email is invalid", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
         }
       } else {
         //error message to the user if they don't submit the data in full
-        res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Please fill out the form", "sign-checked" : "checked", "log-checked" : "" });
+        res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Please fill out the form", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
       }
     },
     login: function(req, res, next) {
@@ -249,7 +250,7 @@ module.exports = function(db) {
                     });
                   } else {
                     //console.log("password doesn't match");
-                    res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Password does not match", "sign-checked" : "", "log-checked" : "checked" });
+                    res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Password does not match", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                   }
                 });
               } else {
@@ -257,7 +258,7 @@ module.exports = function(db) {
               }
             } else {
               //console.log("user not found");
-              res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "User not found", "sign-checked" : "", "log-checked" : "checked" });
+              res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "User not found", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
             }
           });
         } else {
@@ -288,7 +289,7 @@ module.exports = function(db) {
         }
       } else {
         //console.log("username and password not present");
-        res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Please fill out the form", "sign-checked" : "", "log-checked" : "checked" });
+        res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Please fill out the form", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
       }
     },
     updateUser: function(req, res, next) {
@@ -396,23 +397,23 @@ module.exports = function(db) {
                     console.log(host);
                     mailer("Confirm password change", email, null, "Click the link below to change your password:<br><br>http://" + host + "/change-pass?key=" + key).mailPost();
 
-                    res.render("signupin", { "title" : "Sign Up/Login", "msg" : "Your password change request was successful. An email has been sent to you to proceed with the change.", "sign-checked" : "", "log-checked" : "checked" });
+                    res.render("signupin", { "title" : "Sign Up/Login", "msg" : "Your password change request was successful. An email has been sent to you to proceed with the change.", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                   } else {
-                    res.render("signupin", { "title" : "Sign Up/Login", "msg" : "There was a problem creating your account", "sign-checked" : "", "log-checked" : "checked" });
+                    res.render("signupin", { "title" : "Sign Up/Login", "msg" : "There was a problem creating your account", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                     console.log("pending insertion failure");
                   }
                 });
               } else {
-                res.render("signupin", { "title" : "Sign Up/Login", "msg" : "There was a problem creating your account", "sign-checked" : "", "log-checked" : "checked" });
+                res.render("signupin", { "title" : "Sign Up/Login", "msg" : "There was a problem creating your account", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                 console.log("key was not created");
               }
             }); 
           } else {
-            res.render("request-pass", { "title" : "Request password change", "msg" : "Email does not match an account on our records." });
+            res.render("request-pass", { "title" : "Request password change", "msg" : "Email does not match an account on our records.", csrfToken : req.csrfToken() });
           }
         });
       } else {
-        res.render("request-pass", { "title" : "Request password change", "msg" : "Please enter a valid email" });
+        res.render("request-pass", { "title" : "Request password change", "msg" : "Please enter a valid email", csrfToken : req.csrfToken() });
       }
     },
     updatePass: function(req, res, next) {
@@ -440,20 +441,20 @@ module.exports = function(db) {
                     Pending.remove({ "validationId" : key }, function(remQErr, remQDoc) {
                       if(remQErr) throw remQErr;
 
-                      res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Your password has been changed successfully", "sign-checked" : "", "log-checked" : "checked" });
+                      res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Your password has been changed successfully", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                     });
                   } else {
-                    res.render("signupin", { "title" : "Sign Up/Login", "msg" :"There was an internal server error. Password could not be reset", "sign-checked" : "", "log-checked" : "checked" });
+                    res.render("signupin", { "title" : "Sign Up/Login", "msg" :"There was an internal server error. Password could not be reset", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                     console.log("user not found and written to");
                   }
                 });
               });
             } else {
-              res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "" });
+              res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
             }
           });
         } else {
-          res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Invalid password. Password has not been reset", "sign-checked" : "checked", "log-checked" : "" });
+          res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Invalid password. Password has not been reset", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
         }
       } else {
         res.redirect("/login");
