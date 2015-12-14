@@ -501,10 +501,10 @@ var notifyMe = function(person, text) {
 				//console.log(jointArray);
 
 				filter = filter.split(" ").map(function(elem) {
-					if( elem.match(/[\w\d]{1,}([\._\-]*)?[\w\d]{1,}@[\w\d]*\.[\w\d]*(\.[\w\d]*)?/i) ) {
+					if( elem.match(/[\w\d]{1,}([\._\-]*)?[\w\d]{1,}@[\w\d]*\.[\w\d]{1,}(\.[\w\d]{1,})?/i) ) {
 						elem = elem.replace(elem, "<a href='mail:" + elem + "'>" + elem + "</a>");
 					} else
-					if( elem.match(/((http(s)?[:\/\/]*))?([\w\d\-]*[\.])([\w\d\-]*[\.])?([\w]*)(\.\w)?/i) ) {
+					if( elem.match(/(http(s)?[:\/\/]*)?([\w\d\-]*\.\w{1,})([\.][\w\d\-]*)?(\.\w{1,})?/i) ) {
 						elem = elem.replace(elem, "<a href='" + (!elem.match("http") ? "http://" : "") + elem + "' target='_blank'>" + elem + "</a>");
 					}
 					

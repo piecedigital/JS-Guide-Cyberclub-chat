@@ -34,6 +34,9 @@ module.exports = function(io, db) {
 					io.to(socket.id).emit("update", {
 						"msg": "Welcome, " + obj.usernameFull + ", to the Guide Cyberclub chat! Please select one of our available rooms to begin chatting."
 					});
+					io.to(socket.id).emit("update", {
+						"msg": "To join a room double-click/-tap on a room name, or right-click and select \"Join\" from the menu.<br><br>For more help, join a room and type \"/help\"."
+					});
 				} else {
 					if(obj.pm) {
 						socket.join(obj.room);
@@ -225,7 +228,7 @@ module.exports = function(io, db) {
 
 							if(roomQDoc) {
 								obj.msg = obj.msg.replace(/^\/help[\s]*$/gi, "");
-								io.to(socket.id).emit("plain", { "msg" : "<span class='bold'>Commands:</span><br>/ChangeDisplayName or /CDN - changes your display name (temporary),<br>/topic - shows the room topic,<br>/me - chat detached (talk in 3rd person, express feelings, current status, etc),<br>" });
+								io.to(socket.id).emit("plain", { "msg" : "<span class='bold'>Commands:</span><br>/ChangeDisplayName or /CDN - changes your display name (temporary),<br>/topic - shows the room topic,<br>/me - chat detached (talk in 3rd person, express feelings, current status, etc),<br><br>Tap or left-/right-click on a user name to bring up a menu" });
 							}
 						});
 					} else
