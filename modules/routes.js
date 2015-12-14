@@ -100,7 +100,6 @@ sass.render({
 						}
 					}
 				});
-
 			})
 			.get('/', function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
@@ -320,7 +319,7 @@ sass.render({
 				            			////console.log(obj);
 				            			//console.log(userQDoc);
 
-				            			////console.log(keyVars);
+				            			console.log(keyVars);
 				            			var dest = (userQDoc.accessLevel !== "admin" && userQDoc.accessLevel !== "moderator") ? "chat" : "admin-chat";
 
 					            		res.render(dest, { "title" : "GCC Admin Panel", "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedEmotes" : keyVars.bannedEmotes, "recommendedEmotes" : keyVars.recommendedEmotes, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "levelColors" : keyVars.levelColors, "chatOptions" : chatOptions });
@@ -367,7 +366,7 @@ sass.render({
 				            		}
 				            	});
 				            	// pull data from db and populate only if admin or mod
-				            	if(userQDoc.accessLevel === "admin" && userQDoc.accessLevel === "moderator") {
+				            	if(userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") {
 					            	// pull data for banned emotes
 					            	Chat.findOne({ "optionName" : "bannedEmotes" }, function(chatQErr, chatQDoc) {
 					            		if(chatQErr) throw chatQErr;
