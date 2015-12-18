@@ -11,7 +11,7 @@
   ],
   "main": "app.js",
   "engines": {
-    "node": "^5.2.x"
+    "node": "^4.x.x"
   },
   "dependencies": {
     "bcryptjs": "^2.1.0",
@@ -23,6 +23,7 @@
     "helmet": "^0.15.0",
     "mongodb": "^2.0.43",
     "morgan": "^1.6.0",
+    "node-sass": "^3.4.2",
     "nodemailer": "^1.4.0",
     "nodemailer-smtp-transport": "^1.0.3",
     "path": "^0.11.14",
