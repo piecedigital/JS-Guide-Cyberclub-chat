@@ -252,7 +252,7 @@ sass.render({
 			.get('/admin-chat', function(req, res, next) {
 				res.redirect("/chat");
 			})
-			.get('/chat', function(req, res, next) {
+			.get('/chat', csrfProtection, function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
 				
 				if(session) {
@@ -319,10 +319,10 @@ sass.render({
 				            			////console.log(obj);
 				            			//console.log(userQDoc);
 
-				            			console.log(keyVars);
+				            			//console.log(keyVars);
 				            			var dest = (userQDoc.accessLevel !== "admin" && userQDoc.accessLevel !== "moderator") ? "chat" : "admin-chat";
 
-					            		res.render(dest, { "title" : "GCC Admin Panel", "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedEmotes" : keyVars.bannedEmotes, "recommendedEmotes" : keyVars.recommendedEmotes, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "levelColors" : keyVars.levelColors, "chatOptions" : chatOptions });
+					            		res.render(dest, { "title" : "GCC Admin Panel", "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedEmotes" : keyVars.bannedEmotes, "recommendedEmotes" : keyVars.recommendedEmotes, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "levelColors" : keyVars.levelColors, "chatOptions" : chatOptions, csrfToken : req.csrfToken() });
 					            		chatOptions = null;
 					            		keyVars = null;
 				            		}
@@ -613,7 +613,7 @@ sass.render({
 		//// POST requests ////
 		///////////////////////
 		app
-			.post("/update-server", function(req, res, next) {
+			.post("/update-server", csrfProtection, function(req, res, next) {
 				var status = req.body.status.toLowerCase();
 
 				if(status === "online") {
@@ -642,7 +642,7 @@ sass.render({
 			.post("/update-pass", account(db).updatePass)
 			.post("/adjust-user", account(db).updateUser)
 			.post("/query-user", account(db).queryUser)
-			.post("/populate-users", function(req, res, next) {
+			.post("/populate-users", csrfProtection, function(req, res, next) {
 				Room.find({}, { "_id" : 0, "roomname" : 1, "users" : 1 }).toArray(function(roomQErr, roomQDoc) {
       		if(roomQErr) throw roomQErr;
 
@@ -658,7 +658,7 @@ sass.render({
       		}
       	});
 			})
-			.post("/get-app-data", function(req, res, next) {
+			.post("/get-app-data", csrfProtection, function(req, res, next) {
 				var request = req.body.request || "";
 
 				var requests = {
@@ -680,7 +680,7 @@ sass.render({
 
 				requests[request]();
 			})
-			.post("/update-rooms", function(req, res, next) {
+			.post("/update-rooms", csrfProtection, function(req, res, next) {
 				//console.log("update rooms function")
 				//console.log(req.body);
 				
@@ -731,7 +731,7 @@ sass.render({
 					res.status(417).send("Unacceptable room name");
 				}
 			})
-			.post("/update-emotes", function(req, res, next) {
+			.post("/update-emotes", csrfProtection, function(req, res, next) {
 				//console.log("update banned words function")
 				//console.log(req.body);
 				
@@ -766,7 +766,7 @@ sass.render({
 					res.status(417).send("Unacceptable emote keyword");
 				}
 			})
-			.post("/update-recommended-emotes", function(req, res, next) {
+			.post("/update-recommended-emotes", csrfProtection, function(req, res, next) {
 				var emote = req.body.emote || "",
 						op = req.body.op || "$push";
 
@@ -798,7 +798,7 @@ sass.render({
 					res.status(417).send("Unacceptable emote keyword");
 				}
 			})
-			.post("/update-banned", function(req, res, next) {
+			.post("/update-banned", csrfProtection, function(req, res, next) {
 				//console.log("update banned words function")
 				//console.log(req.body);
 				
@@ -830,7 +830,7 @@ sass.render({
 					res.status(417).send("Unacceptable room name");
 				}
 			})
-			.post("/update-ips", function(req, res, next) {
+			.post("/update-ips", csrfProtection, function(req, res, next) {
 				//console.log("update banned IPs function")
 				//console.log(req.body);
 
@@ -894,7 +894,7 @@ sass.render({
 					res.status(417).send("Unacceptable IP address name");
 				}
 			})
-			.post("/update-colors", function(req, res, next) {
+			.post("/update-colors", csrfProtection, function(req, res, next) {
 				//console.log("update user colors function")
 				//console.log(req.body);
 
@@ -931,7 +931,7 @@ sass.render({
 					}
 				});
 			})
-			.post("/pm/:initiator/:receiver", function(req, res, next) {
+			.post("/pm/:initiator/:receiver", csrfProtection, function(req, res, next) {
 				var room = req.params.initiator + req.params.receiver;
 				var session = req.cookies["sessId"] || "";
 
@@ -963,10 +963,10 @@ sass.render({
 					});
 				}
 			})
-			.post("/report-violation", function(req, res) {
+			.post("/report-violation", csrfProtection, function(req, res) {
 				console.log("report URI", req.body["csp-report"]);
 			})
-			.post("*", function(req, res) {
+			.post("*", csrfProtection, function(req, res) {
 				res.status(404).send('Error 404: page not found');
 			})
 			;

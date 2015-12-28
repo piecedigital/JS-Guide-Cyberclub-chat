@@ -43,6 +43,7 @@ var notifyMe = function(person, text) {
 				url: "/populate-users",
 				type: "POST",
 				dataType: "json",
+				data: { _csrf : csrfToken },
 				success: function(data) {
 					// console.log(data);
 
@@ -74,6 +75,7 @@ var notifyMe = function(person, text) {
 			url: "/get-app-data",
 			type: "POST",
 			"data": {
+				_csrf: csrfToken,
 				"request": "emotes"
 			},
 			dataType: "json",
