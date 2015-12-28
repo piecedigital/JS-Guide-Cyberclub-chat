@@ -40,7 +40,7 @@
 
 .alert-box .alert .commands form {
   display: inline-block;
-  margin: 0 0.5em;
+  margin: 0 .5em;
 }
 
 .alert-box .alert .commands form input {
@@ -2652,7 +2652,7 @@ footer {
     right: 1.6px;
     width: 16px;
     height: 16px;
-    box-shadow: 0px 0 0 #004B6E;
+    box-shadow: 3.2px -3.2px 0 0 #004B6E;
     border-radius: 0 8px 0;
   }
   #chat-box > div #side-bar {

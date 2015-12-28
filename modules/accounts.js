@@ -134,7 +134,7 @@ module.exports = function(db) {
                               if(insertedDoc) {
                                 //console.log("account created \n\r");
                                 var host = req.headers.host;
-                                console.log(host);
+                                //console.log(host);
                                 mailer("Confirm admin profile", email, usernameFull, "<img width=1 height=1 src='http://" + host + "/tracker'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://" + host + "/validate?key=" + key + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://" + host + "/cancel?key=" + key).mailPost();
 
                                 res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
