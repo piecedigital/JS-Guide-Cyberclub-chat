@@ -9,7 +9,7 @@ var app = require('express')(),
 		ObjectId = require("mongodb").ObjectID,
 		hb = require("hbs");
 
-var priVar = require("./private-variables"),
+var config = require("./config"),
 		account = require("./accounts"),
 		getIP = require("./acquire-ip"),
 		csrf = require("csurf");
@@ -34,7 +34,7 @@ sass.render({
 });
 
 // mongodb config
- MongoClient.connect(process.env["mongolabURL"] || priVar.mongolabURL
+ MongoClient.connect(config.mongolabURL
   , function(err, db) {
   	if(err) throw err;
 

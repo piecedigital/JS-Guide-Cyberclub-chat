@@ -26,7 +26,7 @@ function start (worker) {
 
   //var csrfProtection = csrf({ cookie : true });
 
-  var priVar = require("./modules/private-variables");
+  var config = require("./modules/config");
 
   // config
   // view engine setup
@@ -93,7 +93,7 @@ function start (worker) {
 
   var Server = MongoClient.Server,
   Db = MongoClient.Db,
-  db = MongoClient.connect(process.env["mongolabURL"] || priVar.mongolabURL
+  db = MongoClient.connect(process.env["mongolabURL"] || config.mongolabURL
     , function(err, db) {
       if(err) throw err;
       //console.log(db)
