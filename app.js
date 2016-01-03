@@ -71,10 +71,10 @@ function start (worker) {
     frameSrc: ["'self'"],
     //sandbox: ["allow-forms", "allow-scripts", "allow-same-origin"],
     reportUri: '/report-violation',
-    //reportOnly: true, // set to true if you only want to report errors 
-    //setAllHeaders: false, // set to true if you want to set all headers 
-    //disableAndroid: false, // set to true if you want to disable Android (browsers can vary and be buggy) 
-    //safari5: false // set to true if you want to force buggy CSP in Safari 5 
+    //reportOnly: true, // set to true if you only want to report errors
+    //setAllHeaders: false, // set to true if you want to set all headers
+    //disableAndroid: false, // set to true if you want to disable Android (browsers can vary and be buggy)
+    //safari5: false // set to true if you want to force buggy CSP in Safari 5
   }));
 
   // setup DB variable for socket connection

@@ -24,7 +24,6 @@ sass.render({
   outFile: "./public/css/style.css"
 }, function(err, result) {
 	if(err) throw err;
-
 	////console.log(result.css.toString());
 	fs.writeFile('./public/css/style.css', result.css.toString(), function (err) {
 	  if (err) throw err;
@@ -60,7 +59,7 @@ sass.render({
 				//console.log(req.headers)
 				////console.log(IP, typeof IP);
 				var session = req.cookies["sessId"] || "";
-				
+
 				if(session) {
 		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
 		        if(sessQErr) throw sessQErr;
@@ -143,7 +142,7 @@ sass.render({
 								if(userQDoc) {
 									if(!userQDoc.banned) {
 										var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "/admin-chat" : "/chat";
-										
+
 										res.redirect(dest);
 									} else {
 										res.redirect('/banned/account/' + userQDoc.usernameFull)
@@ -163,7 +162,7 @@ sass.render({
 			})
 			.get("/signup", csrfProtection, function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				
+
 				if(session) {
 		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
 		        if(sessQErr) throw sessQErr;
@@ -197,7 +196,7 @@ sass.render({
 			})
 			.get("/admin-signup", csrfProtection, function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				
+
 				if(session) {
 		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
 		        if(sessQErr) throw sessQErr;
@@ -254,7 +253,7 @@ sass.render({
 			})
 			.get('/chat', csrfProtection, function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				
+
 				if(session) {
 		      Sess.findOne({ "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
 		        if(sessQErr) throw sessQErr;
@@ -485,7 +484,7 @@ sass.render({
 			})
 			.get("/request-pass", function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
-				
+
 				if(session) {
 		      Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
 		        if(sessQErr) throw sessQErr;
@@ -497,7 +496,7 @@ sass.render({
 								if(userQDoc) {
 									if(!userQDoc.banned) {
 										var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "/admin-chat" : "/chat";
-										
+
 										res.redirect(dest);
 									} else {
 										res.redirect('/banned/account/' + userQDoc.usernameFull)
@@ -683,7 +682,7 @@ sass.render({
 			.post("/update-rooms", csrfProtection, function(req, res, next) {
 				//console.log("update rooms function")
 				//console.log(req.body);
-				
+
 				var roomname = req.body.roomname || "",
 						roomnameHyph = req.body.roomname.replace(/\s/g, "-").toLowerCase(),
 						originalName = req.body.originalName || "",
@@ -708,7 +707,7 @@ sass.render({
 							"op": op
 						});
 					};
-					
+
 					if(!op) {
 						Room.update({ "roomnameHyph" : originalNameHyph }, { "$set" : { "roomname" : roomname, "roomnameHyph" : roomnameHyph, "minMods" : minMods, "topic" : topic } }, { "upsert" : true }, function(roomQErr, roomQDoc) {
 							if(err) throw err;
@@ -734,7 +733,7 @@ sass.render({
 			.post("/update-emotes", csrfProtection, function(req, res, next) {
 				//console.log("update banned words function")
 				//console.log(req.body);
-				
+
 				var emote = req.body.emote || "",
 						op = req.body.op || "$push";
 
@@ -801,7 +800,7 @@ sass.render({
 			.post("/update-banned", csrfProtection, function(req, res, next) {
 				//console.log("update banned words function")
 				//console.log(req.body);
-				
+
 				var word = req.body.word || "",
 						op = req.body.op || "$push";
 
@@ -948,7 +947,7 @@ sass.render({
 										||
 										userQDoc.usernameFull === req.params.receiver) {
 										var name = (userQDoc.usernameFull === req.params.initiator) ? req.params.receiver : req.params.initiator;
-										
+
 										res.render("pmsg", { "title" : "Chat w/ " + name, "room" : room, "usernameFull" : userQDoc.usernameFull, "username" : userQDoc.username, "alert" : true, "layout" : "private-layout" });
 									} else {
 										res.status(404).send("incorrect room");
