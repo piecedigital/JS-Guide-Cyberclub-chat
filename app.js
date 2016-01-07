@@ -1,6 +1,5 @@
 var workers = process.env.WEB_CONCURRENCY || 1;
 var throng = require("throng");
-var cp = require("child_process");
 
 throng(start, {
   workers: workers,
