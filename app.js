@@ -23,7 +23,7 @@ function start (worker) {
   		port 				 = process.env["PORT"] || 8080,
       MongoClient  = require("mongodb"),
       csrf         = require("csurf");
-console.log(path)
+
   //var csrfProtection = csrf({ cookie : true });
 
   var config = require("./modules/config");
@@ -112,7 +112,7 @@ console.log(path)
 
 
   process.on('uncaughtException', function (err) {
-    console.log("\n\r **Uncaught Exception event** \n\r")
+    console.log("\n\r **Uncaught Exception event** \n\r");
     console.log(err);
   });
 }
