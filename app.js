@@ -23,7 +23,7 @@ function start (worker) {
   		port 				 = process.env["PORT"] || 8080,
       MongoClient  = require("mongodb"),
       csrf         = require("csurf");
-
+console.log(path)
   //var csrfProtection = csrf({ cookie : true });
 
   var priVar = require("./modules/private-variables");
