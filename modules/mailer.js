@@ -4,15 +4,15 @@ var app = require('express')(),
 		nodemailer  = require("nodemailer"),
 		smtpTransport  = require("nodemailer-smtp-transport"),
 		fs  = require("fs"),
-		priVar = require("./private-variables");
+		config = require("./config");
 var sender = "piecedigitalstudios@gmail.com";
 
 var transporter = nodemailer.createTransport(smtpTransport({
 	host: "smtp.mandrillapp.com",
-	port: process.env["mailPort"] || priVar.mailerVariables.port,
+	port: config.mailPort,
 	auth: {
 		user: sender,
-		pass: process.env["mailPass"] || priVar.mailerVariables.pass
+		pass: config.mailPass
 	}
 }));
 
