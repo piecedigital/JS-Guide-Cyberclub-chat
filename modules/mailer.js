@@ -5,7 +5,8 @@ var app = require('express')(),
 		smtpTransport  = require("nodemailer-smtp-transport"),
 		fs  = require("fs"),
 		config = require("./config");
-var sender = "piecedigitalstudios@gmail.com";
+var sender = "piecedigitalstudios@gmail.com",
+	recipient = process.env.emailRecipient || sender;
 
 var transporter = nodemailer.createTransport(smtpTransport({
 	host: "smtp.mandrillapp.com",
@@ -16,7 +17,7 @@ var transporter = nodemailer.createTransport(smtpTransport({
 	}
 }));
 
-module.exports = function(type, email, name, message) {
+module.exports = function(type, email, toEmail, name, message) {
 	return {
 		mailPost: function() {
 			var messageDetails = {
@@ -24,7 +25,8 @@ module.exports = function(type, email, name, message) {
 				name: name,
 				subject: type,
 				body: message,
-				email: email
+				email: email,
+				toEmail: toEmail
 			}
 			fs.readFile("./modules/mail-templates/template1.html", {
 				encoding: "UTF-8"
@@ -48,11 +50,11 @@ function sendMail(data, details) {
 	transporter.sendMail({
 		sender: sender,
 		from: {
-			name: details.name,
+			name: "Piece Digital Studios",
 			address: sender
 		},
-		to: details.email,
-		replyTo: sender,
+		to: details.toEmail || recipient,
+		replyTo: details.email,
 		subject: details.subject,
 		html: data
 	}, function(err, info) {
