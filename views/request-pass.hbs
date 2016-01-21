@@ -7,6 +7,7 @@
 					<form action="/request-pass" method="POST" class="x-pad-0_5 y-pad-0_5">
 						<label for="" class="bold dark-blue">Enter the email of your account</label>
 						<input type="email" name="email" placeholder="Enter your email">
+						<input type="hidden" name="_csrf" value="{{csrfToken}}">
 						<button>Submit</button>
 					</form>
 				</div>

@@ -909,6 +909,7 @@ var notifyMe = function(person, text) {
 		"url": "/query-user",
 		"type": "post",
 		"dataType": "json",
+		data: { _csrf : csrfToken },
 		success: function(data) {
 			runApp(data);
 		},

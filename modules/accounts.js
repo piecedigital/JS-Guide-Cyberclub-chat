@@ -11,7 +11,7 @@ var mailer = require("./mailer");
 
 // (Assuming you're using express - expressjs.com)
 // Get the credit card details submitted by the form
-module.exports = function(db) {
+module.exports = function(db, admin) {
   var User = db.collection("users"),
       Pending = db.collection("pending"),
       Sess = db.collection("sessions"),
@@ -73,7 +73,7 @@ module.exports = function(db) {
           //console.log(req.body);
 
       // sets this variable to either the User variable or Admin variable, depending on the form submitted
-      var Save = req.body.formtype;
+      var Save = (req.headers.referer.match(/\/admin-signup/)) ? "admin" : "regular";
 
       //check whether the user submitted the form with all parameters. if not
       //then the alternative is to re-render the page with the appropriate message
@@ -135,9 +135,10 @@ module.exports = function(db) {
                                 //console.log("account created \n\r");
                                 var host = req.headers.host;
                                 //console.log(host);
-                                mailer("Confirm admin profile", email, usernameFull, "<img width=1 height=1 src='http://" + host + "/tracker'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://" + host + "/validate?key=" + key + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://" + host + "/cancel?key=" + key).mailPost();
+                                mailer("Confirm admin profile", email, null, usernameFull, "<img width=1 height=1 src='http://" + host + "/tracker'>A new user, " + usernameFull + ", has submitted the form for admin access.<br><br>If this is an approved user please click the link below to confirm this new account:<br><br>http://" + host + "/validate?key=" + key + "<br><br>If this is not an approved user submission, use this link to cancel the request: http://" + host + "/cancel?key=" + key).mailPost();
 
-                                res.render("signupin", { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
+                                var dest = (Save = "admin")  ? "admin-signup" : "signupin";
+                                res.render(dest, { "title" : "Sign Up/Login", "msg" : msgToUser, "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                               }
                             });
                           } else {
@@ -157,22 +158,26 @@ module.exports = function(db) {
                           }
                         });
                       } else {
-                        res.render("signupin", { "title" : "Sign Up/Login", "msg" : "Internal server error", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
+                        var dest = (Save = "admin")  ? "admin-signup" : "signupin";
+                        res.render(dest, { "title" : "Sign Up/Login", "msg" : "Internal server error", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                         console.log("Error creating new user. form has been tampered with")
                       }
                     }
                   } else {
                     //error message to the user if there are illegal characters in
                     //their desired username
-                    res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Illegal characters in your username: " + regCheck.join(" "), "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
+                    var dest = (Save = "admin")  ? "admin-signup" : "signupin";
+                    res.render(dest, { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Illegal characters in your username: " + regCheck.join(" "), "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
                   }
                 } else {
                   //error message to the user if their desired username is taken
-                  res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username or email is already in use", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
+                  var dest = (Save = "admin")  ? "admin-signup" : "signupin";
+                  res.render(dest, { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username or email is already in use", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
                 }
               });
             } else {
-              res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords do not match", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
+              var dest = (Save = "admin")  ? "admin-signup" : "signupin";
+              res.render(dest, { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Passwords do not match", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
             }
           } else {
             var charMatchMsg = (!username.match(/^[a-z0-9_-]*$/gi)) ? "username contains illegal characters" : (underDashMatch.length > 2) ? "username contains too many underscores" : null;
@@ -187,15 +192,18 @@ module.exports = function(db) {
             }
             errsMsg.join(", ");
             //error message to the user if their username contains illegal characters
-            res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username Errors: " + errsMsg + ". Username must be between 4-20 characters, and contain only letters and underscores (max 2)", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
+            var dest = (Save = "admin")  ? "admin-signup" : "signupin";
+            res.render(dest, { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Username Errors: " + errsMsg + ". Username must be between 4-20 characters, and contain only letters and underscores (max 2)", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
           }
         } else {
           //error message to the user if the email isn't valid
-          res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Email is invalid", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
+          var dest = (Save = "admin")  ? "admin-signup" : "signupin";
+          res.render(dest, { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Email is invalid", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
         }
       } else {
         //error message to the user if they don't submit the data in full
-        res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Please fill out the form", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
+        var dest = (Save = "admin")  ? "admin-signup" : "signupin";
+        res.render(dest, { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Please fill out the form", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
       }
     },
     login: function(req, res, next) {
@@ -394,8 +402,8 @@ module.exports = function(db) {
                   if(insertedDoc) {
                     //console.log("account created \n\r");
                     var host = req.headers.host;
-                    console.log(host);
-                    mailer("Confirm password change", email, null, "Click the link below to change your password:<br><br>http://" + host + "/change-pass?key=" + key).mailPost();
+                    //console.log(host);
+                    mailer("Confirm password change", email, email, userQDoc.usernameFull, "Hello "+userQDoc.usernameFull+",<br><br>Click the link below to change your password:<br><br>http://" + host + "/change-pass?key=" + key).mailPost();
 
                     res.render("signupin", { "title" : "Sign Up/Login", "msg" : "Your password change request was successful. An email has been sent to you to proceed with the change.", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                   } else {
@@ -461,6 +469,8 @@ module.exports = function(db) {
       }
     },
     queryUser: function(req, res, next) {
+      console.log(req.body, req.headers)
+      
       var session = req.cookies["sessId"] || "";
         
       if(session) {

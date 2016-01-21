@@ -482,7 +482,7 @@ sass.render({
 					res.redirect("/login");
 				}
 			})
-			.get("/request-pass", function(req, res, next) {
+			.get("/request-pass", csrfProtection, function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
 
 				if(session) {
@@ -502,19 +502,19 @@ sass.render({
 										res.redirect('/banned/account/' + userQDoc.usernameFull)
 									}
 								} else {
-									res.render("request-pass", { "title" : "Request password change"});
+									res.render("request-pass", { "title" : "Request password change", csrfToken : req.csrfToken() });
 								}
 							});
 		        } else {
 		        	res.clearCookie("sessId");
-							res.render("request-pass", { "title" : "Request password change" });
+							res.render("request-pass", { "title" : "Request password change", csrfToken : req.csrfToken() });
 		        }
 		      });
 				} else {
-					res.render("request-pass", { "title" : "Request password change" });
+					res.render("request-pass", { "title" : "Request password change", csrfToken : req.csrfToken() });
 				}
 			})
-			.get("/change-pass", function(req, res, next) {
+			.get("/change-pass", csrfProtection, function(req, res, next) {
 				var key = req.query.key;
 	      //console.log(key)
 
@@ -523,7 +523,7 @@ sass.render({
 	          if(pendQErr) throw pendQErr;
 
 	          if(pendQDoc) {
-	            res.render("change-pass", { "title" : "Change your password", "key" : key });
+	            res.render("change-pass", { "title" : "Change your password", "key" : key, csrfToken : req.csrfToken() });
 	          } else {
 	            res.redirect("/login");
 	          }
@@ -636,11 +636,12 @@ sass.render({
 				console.log("Possibly a tempered form");
 			})
 			.post("/signup", csrfProtection, account(db).signup)
+			.post("/admin-signup", csrfProtection, account(db, true).signup)
 			.post("/login", csrfProtection, account(db).login)
-			.post("/request-pass", account(db).requestPass)
-			.post("/update-pass", account(db).updatePass)
-			.post("/adjust-user", account(db).updateUser)
-			.post("/query-user", account(db).queryUser)
+			.post("/request-pass", csrfProtection, account(db).requestPass)
+			.post("/update-pass", csrfProtection, account(db).updatePass)
+			.post("/adjust-user", csrfProtection, account(db).updateUser)
+			.post("/query-user", csrfProtection, account(db).queryUser)
 			.post("/populate-users", csrfProtection, function(req, res, next) {
 				Room.find({}, { "_id" : 0, "roomname" : 1, "users" : 1 }).toArray(function(roomQErr, roomQDoc) {
       		if(roomQErr) throw roomQErr;
