@@ -445,7 +445,7 @@ sass.render({
 					res.redirect("/signup");
 				}
 			})
-			.get('/validate', function(req, res, next) {
+			.get('/validate', csrfProtection, function(req, res, next) {
 				var key = req.query.key;
 				//console.log(key)
 
@@ -470,12 +470,12 @@ sass.render({
 		      				Pending.remove({ "validationId" : key }, function(remQErr, remQDoc) {
 		      					if(remQErr) throw remQErr;
 
-	      						res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Account confirmed. Please login", "sign-checked" : "", "log-checked" : "checked" });
+	      						res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Account confirmed. Please login", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
 		      				});
 		      			}
 		      		});
 		      	} else {
-		      		res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "" });
+		      		res.render("signupin", { "title" : "Sign Up/Login", "msg" :"Pending account could not be located.", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
 		      	}
 		      });
 				} else {
