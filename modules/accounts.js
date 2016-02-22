@@ -309,6 +309,7 @@ module.exports = function(db, admin) {
           ban = req.body.ban || "",
           reason = req.body.reason || "Your behavior did not align with the rules of the chat room.",
           reasonIp = req.body.reasonIp || "The activty from this connection exhibited an inordinate degree of offenses.";
+      console.log(req.body)
       if(!ban) {
         User.update({ "usernameFull" : usernameFull }, { "$set" : { "username" : (newUsername.toLowerCase()), "usernameFull" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
           if(userQErr) throw userQErr;
@@ -366,6 +367,37 @@ module.exports = function(db, admin) {
                     },
                     userQDoc.currentIp || "0.0.0.0"],
                     "op": [ban, "$push"]
+                  });
+                } else {
+                  res.status(417).send("DB write error");
+                }
+              });
+            } else {
+              res.status(417).send("User not found");
+            }
+          });
+        } else
+        if(ban === "DEL") {
+          //remove user
+          User.findOne({ "username" : usernameFull.toLowerCase() }, function(userQErr, userQDoc) {
+            if(userQErr) throw userQErr;
+            if(userQDoc) {
+console.log(userQDoc.usernameFull)
+              //User.update({ "username" : usernameFull }, { "$set" : { "banned" : reason } });
+              Sess.remove({ "user" : userQDoc.username });
+              User.remove({ "username" : userQDoc.username }, function(userQErr2, userQDoc2) {
+                if(userQErr2) throw userQErr2;
+
+                if(userQDoc2 && userQDoc2.result.ok) {
+                  res.status(200).send({
+                    "msg": "success",
+                    "action": "callback",
+                    "callback": "updateUsers",
+                    "data": {
+                      "usernameFull": usernameFull,
+                      "newName": newUsername
+                    },
+                    "op": ban
                   });
                 } else {
                   res.status(417).send("DB write error");
