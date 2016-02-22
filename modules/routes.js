@@ -340,7 +340,7 @@ sass.render({
 				            		}
 				            	});
 				            	// pull data for users for the admin
-				            	User.find({ "accessLevel" : { "$in" : [ "regular", "teen mod", "junior mod", "moderator" ] } }).toArray(function(userQErr, userQDoc) {
+				            	User.find({ "username" : { "$not" : { "$eq" : userQDoc.username } } }).toArray(function(userQErr, userQDoc) {
 				            		if(userQErr) throw userQErr;
 
 				            		if(userQDoc) {
