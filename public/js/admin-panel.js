@@ -353,7 +353,7 @@ console.log(selectKey[thisAccessLevel]);
 				tag.find(".name").attr("data-usernamefull", data.newName).html(data.newName);
 				thisUsername = data.newName;
 
-				socket.emit("live update", { "callback" : "updateUsers", "op" : "update", "usernameFull" : data.usernameFull, "newName" : data.newName });
+				socket.emit("live update", { "callback" : "updateUsers", "op" : "update", "usernameFull" : data.usernameFull, "newName" : data.newName, "accessLevel" : data.accessLevel });
 			}
 		},
 		updateColors: function(data, operation) {

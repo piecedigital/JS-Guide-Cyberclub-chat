@@ -303,30 +303,41 @@ module.exports = function(db, admin) {
     updateUser: function(req, res, next) {
       //console.log("update user function");
       //console.log(req.body);
-      var newUsername = req.body.newUsername || "",
+      var newUsername = req.body.newusername || "",
           usernameFull = req.body.originalName || "",
-          accessLevel = req.body.accessLevel || "",
+          accessLevel = req.body.accesslevel || "regular",
           ban = req.body.ban || "",
           reason = req.body.reason || "Your behavior did not align with the rules of the chat room.",
           reasonIp = req.body.reasonIp || "The activty from this connection exhibited an inordinate degree of offenses.";
       console.log(req.body)
       if(!ban) {
-        User.update({ "usernameFull" : usernameFull }, { "$set" : { "username" : (newUsername.toLowerCase()), "usernameFull" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
-          if(userQErr) throw userQErr;
+         User.findOne({ "username" : newUsername.toLowerCase() },
+          function(userQErr, userQDoc) {
+            if(userQErr) throw userQErr;
 
-          if(userQDoc && userQDoc.result.ok) {
-            res.status(200).send({
-              "msg": "success",
-              "action": "callback",
-              "callback": "updateUsers",
-              "data": {
-                "usernameFull": usernameFull,
-                "newName": newUsername
-              },
-              "op": ban
-            });
-          }
-        });
+            if(!userQDoc || newUsername.toLowerCase() === usernameFull.toLowerCase()) {
+              Sess.update({ "user" : usernameFull.toLowerCase() }, { "$set" : { "user" : newUsername.toLowerCase() } });
+              User.update({ "usernameFull" : usernameFull }, { "$set" : { "username" : newUsername.toLowerCase(), "usernameFull" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
+                if(userQErr) throw userQErr;
+
+                if(userQDoc && userQDoc.result.ok) {
+                  res.status(200).send({
+                    "msg": "success",
+                    "action": "callback",
+                    "callback": "updateUsers",
+                    "data": {
+                      "usernameFull": usernameFull,
+                      "newName": newUsername,
+                      "accessLevel": accessLevel
+                    },
+                    "op": ban
+                  });
+                }
+              });
+            } else {
+              res.status(417).send("Username is already taken");
+            }
+         });
       } else {
         if(ban === "ACC") {
           User.update({ "usernameFull" : usernameFull }, { "$set" : { "banned" : reason } }, function(userQErr, userQDoc) {
@@ -382,7 +393,7 @@ module.exports = function(db, admin) {
           User.findOne({ "username" : usernameFull.toLowerCase() }, function(userQErr, userQDoc) {
             if(userQErr) throw userQErr;
             if(userQDoc) {
-console.log(userQDoc.usernameFull)
+
               //User.update({ "username" : usernameFull }, { "$set" : { "banned" : reason } });
               Sess.remove({ "user" : userQDoc.username });
               User.remove({ "username" : userQDoc.username }, function(userQErr2, userQDoc2) {
