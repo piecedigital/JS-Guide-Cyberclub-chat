@@ -327,7 +327,7 @@ var notifyMe = function(person, text) {
 			scrollToBottom();
 		});
 		socket.on("kick", function(data){
-			//console.log("kick", data, room);
+			// console.log("kick", data, room);
 			if(myLevel !== "admin" || myLevel !== "moderator") {
 				socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
 				$("#messages").append($("<li class='plain'>").html("There are an insufficient number of mods in this room. You will now be moved out of this room. Try joining another.") );
@@ -415,11 +415,21 @@ var notifyMe = function(person, text) {
 					};
 					if(data.op === "update") {
 						$("#room-list").find(".room .user[data-usernamefull='" + data.usernameFull + "']").attr({
-							"data-usernamefull": data.newName
-						});
+							"data-usernamefull": data.newName,
+							"data-username": data.newName.toLowerCase()
+						}).text(data.newName);
 						if(data.usernameFull === usernameFull) {
-							alert("your username has been changed. You browser must now be refreshed.");
-							window.location.reload(true);
+							if(usernameFull !== data.newName) {
+								alert("Your username has been changed to "+data.newName+".");
+							};
+							if(data.accessLevel !== myLevel) {
+								alert("Your account permission has been changed to "+data.accessLevel+". The app will now reload.");
+								window.location.reload(true);
+								return;
+							};
+							usernameFull = data.newName;
+							username = data.newName.toLowerCase();
+							displayName = data.newName;
 						}
 					};
 				},

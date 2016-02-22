@@ -300,7 +300,7 @@ module.exports = function(io, db) {
 				//console.log(obj);
 			})
 			.on("disconnect", function() {
-				//console.log("disconnected", socket.id);
+				console.log("disconnected", socket.id);
 
 				io.to(socket.id).emit("update", {
 					"msg": "You have disconnected from the chat server. If this was an error, please refresh your browser."
@@ -317,8 +317,32 @@ module.exports = function(io, db) {
 							"displayName": userQDoc.usernameFull,
 							"room": null
 						});
+						if(userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") {
+							Room.findOne({ "users" : { "$elemMatch" : { "username" : userQDoc.username } } },
+								function(roomQErr, roomQDoc) {
+								if(roomQErr) throw roomQErr;
 
+								if(roomQDoc) {
+									// console.log("matched room", roomQDoc);
+									var currentMods = 0;
+									userElem = roomQDoc.users;
+									for(var i = 0; i < userElem.length; i++) {
+										if(userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
+											currentMods++;
+										}
+									};
+									console.log("current mods", currentMods)
+									if(currentMods <= roomQDoc.minMods) {
+										io.in(roomQDoc.roomname).emit("kick", { "roomname" : roomQDoc.roomname });
+									}
+								} else {
+									console.log("room not found")
+								}
+							});
+						}
 						Room.update({}, { "$pull" : { "users" : { "username" : userQDoc.username} } }, { "multi" : true } );
+					} else {
+						console.log("user not found")
 					}
 				});
 			});
