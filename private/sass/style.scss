@@ -957,6 +957,7 @@ label[for="admin-tab"] {
 			width: 25%;
 			box-shadow: .1*$em 0 0 0 $darkBlue;
 			height: 100%;
+			overflow: auto;
 			& .item {
 				list-style: none;
 				text-align: left;
