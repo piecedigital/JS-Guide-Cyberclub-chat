@@ -428,6 +428,13 @@ label[for="admin-tab"] {
 		margin: 0;
 	}
 }
+.separator {
+	width: 100% !important;
+	padding: 0 1*$em;
+	& div {
+		height: .2*$em;
+	}
+}
 /*chat*/
 .notification {
 	position: fixed;
@@ -842,7 +849,7 @@ label[for="admin-tab"] {
 	position: relative;
 	display: block;
 	width: 100%;
-	min-width: 40*$em;
+	min-width: 24*$em;
 	max-width: 40*$em;
 	height: 100%;
 	padding: 1.125*$em 0 1.06*$em;

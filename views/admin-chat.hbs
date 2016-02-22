@@ -288,7 +288,7 @@
 						<ul id="item-list">
 							{{#each users}}
 								<li class="item parent">
-									<span class="name" data-usernameFull="{{usernameFull}}">{{usernameFull}}</span>
+									<span class="name" data-usernamefull="{{usernameFull}}" data-accesslevel="{{accessLevel}}">{{usernameFull}}</span>
 									<span class="number {{#if banned}}banned-true{{/if}}"></span>
 								</li>
 							{{/each}}
@@ -301,29 +301,34 @@
 									<label>Username: </label>
 								</div><!--
 								--><div class="col-2 right-justify">
-									<input type="text" name="newUsername" placeholder="Enter a new username"><br>
-								</div><br>
+									<input type="text" name="newusername" placeholder="Enter a new username"><br>
+								</div>
+								<div class="separator"><div class="dark-blue-bg"></div></div>
 								<div class="col-2 left-justify">
 									<label>Access Level: </label>
 								</div><!--
 								--><div class="col-2 right-justify">
-									<select name="accessLevel">
-										<option>regular</option>
-										<option>teen mod</option>
-										<option>junior mod</option>
-										<option>moderator</option>
-										<option>admin</option>
+									<select name="accesslevel">
+										<option value="regular">Regular</option>
+										<option value="teen mod">Teen Mod</option>
+										<option value="junior mod">Junior Mod</option>
+										<option value="moderator">Moderator</option>
+										<option value="admin">Admin</option>
 									</select>
-								</div><br>
+								</div>
+								<div class="separator"><div class="dark-blue-bg"></div></div>
 								<div class="col-2 left-justify">
-									<label>Ban user: </label>
+									<label>Ban/Delete user: </label>
 								</div><!--
 								--><div class="col-2 right-justify">
-									<label>Account Ban</label>
+									<label>Account Ban: </label>
 									<input type="radio" name="ban" value="ACC"><br>
 									<label>IP Ban: </label>
-									<input type="radio" name="ban" value="IP">
+									<input type="radio" name="ban" value="IP"><br>
+									<label>Delete: </label>
+									<input type="radio" name="ban" value="DEL">
 								</div>
+								<div class="separator"><div class="dark-blue-bg"></div></div>
 								<div class="center-justify x-pad-3_9">
 									<button>Submit</button>
 								</div>

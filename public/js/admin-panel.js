@@ -11,7 +11,8 @@ var getData = function (data) {
 	var socket = io();
 
 	var thisUsername,
-			thisRoomname;
+			thisRoomname,
+			thisAccessLevel;
 
 	// PANEL functions
 	var panels = {
@@ -91,11 +92,21 @@ var getData = function (data) {
 	// users panel
 	panels.users.find("#item-list .item").on("click", ".name", function() {
 		// variables
-		thisUsername = $(this).attr("data-usernameFull");
-
+		thisUsername = $(this).attr("data-usernamefull");
+		thisAccessLevel = $(this).attr("data-accesslevel");
 		// DOM manipulation
+		var selectKey = {
+			"regular": 0,
+			"teen mod": 1,
+			"junior mod": 2,
+			"moderator": 3,
+			"admin": 4
+		};
+console.log(selectKey[thisAccessLevel]);
 		panels.users.find("#item-options").removeClass("invisible");
-		panels.users.find(".add-window").find("input[name='newUsername']").val(thisUsername);
+		panels.users.find(".add-window").find("input[name='newusername']").val(thisUsername);
+		panels.users.find(".add-window").find("select[name='accesslevel']")[0]
+			.selectedIndex = (selectKey[thisAccessLevel]);
 		panels.users.find(".add-window").find("input[name='ban']").attr("checked", false);
 	});
 
@@ -104,7 +115,7 @@ var getData = function (data) {
 		var formData = $(this).serializeArray();
 
 		var dataObj = functions.parseForm(formData);
-		if(dataObj.newUsername) {
+		if(dataObj.newusername) {
 			dataObj.originalName = thisUsername || dataObj.usernameFull;
 		}
 		if(dataObj.roomname) {
@@ -114,32 +125,42 @@ var getData = function (data) {
 		var action = functions.parseAction(e);
 
 		if(dataObj.ban) {
-			confirm2("Are you sure you want to ban " + thisUsername + "?", function(res) {
-				if(res.action === "true") {
-					prompt2("Please provide a reason for this account ban.", "Your behavior did not align with the rules of the chat room.", function(res) {
-						if(res.action === "true") {
-							dataObj.reason = res.response;
-							if(dataObj.ban === "IP") {
-								prompt2("Please provide a reason for this IP ban.", "The activty from this connection exhibited an inordinate degree of offenses.", function(res) {
-									if(res.action === "true") {
-										dataObj.reasonIp = res.response;
-										functions.ajax(action, "POST", "json", dataObj);
-									} else {
-										alert2("Operation cancelled");
-									}
-								});
+			if(dataObj.ban === "DEL") {
+				confirm2("Are you sure you want to delete " + thisUsername + "? This operation cannot be reversed", function(res) {
+					if(res.action === "true") {
+						functions.ajax(action, "POST", "json", dataObj);
+					} else {
+						alert2("Operation cancelled");
+					}
+				});
+			} else {
+				confirm2("Are you sure you want to ban " + thisUsername + "?", function(res) {
+					if(res.action === "true") {
+						prompt2("Please provide a reason for this account ban.", "Your behavior did not align with the rules of the chat room.", function(res) {
+							if(res.action === "true") {
+								dataObj.reason = res.response;
+								if(dataObj.ban === "IP") {
+									prompt2("Please provide a reason for this IP ban.", "The activty from this connection exhibited an inordinate degree of offenses.", function(res) {
+										if(res.action === "true") {
+											dataObj.reasonIp = res.response;
+											functions.ajax(action, "POST", "json", dataObj);
+										} else {
+											alert2("Operation cancelled");
+										}
+									});
+								} else {
+									functions.ajax(action, "POST", "json", dataObj);
+								}
 							} else {
-								functions.ajax(action, "POST", "json", dataObj);
+								alert2("Operation cancelled");
 							}
-						} else {
-							alert2("Operation cancelled");
-						}
-					});
-				} else {
-					alert2("Operation cancelled");
-				}
-			})
-		} else 
+						});
+					} else {
+						alert2("Operation cancelled");
+					}
+				});
+			}
+		} else
 		if(dataObj.op) {
 			confirm2("Are you sure you want to remove " + dataObj.roomname + "?", function(res) {
 				conf = res.action;
@@ -304,23 +325,32 @@ var getData = function (data) {
 		updateUsers: function(data, operation) {
 			console.log(data, operation);
 			if(operation) {
-				console.log("removing");
+				if(operation === "DEL") {
+					var tag = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + data.usernameFull + "']").parent();
 
-				var tag = panels.users.find("#item-list").find(".item .name[data-usernameFull='" + data.usernameFull + "']").parent();
+					tag.find(".name").attr("data-usernamefull", data.newName).remove();
+					thisUsername = null;
 
-				tag.find(".number").addClass("banned-true");
-				tag.find(".name").attr("data-usernameFull", data.newName).html(data.newName);
-				thisUsername = data.newName;
+					socket.emit("live update", { "callback" : "updateUsers", "op" : "remove", "usernameFull" : data.usernameFull, "newName" : data.newName });
+				} else {
+					console.log("banning");
 
-				socket.emit("live update", { "callback" : "updateUsers", "op" : "remove", "usernameFull" : data.usernameFull, "newName" : data.newName });
+					var tag = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + data.usernameFull + "']").parent();
+
+					tag.find(".number").addClass("banned-true");
+					tag.find(".name").attr("data-usernamefull", data.newName).html(data.newName);
+					thisUsername = data.newName;
+
+					socket.emit("live update", { "callback" : "updateUsers", "op" : "remove", "usernameFull" : data.usernameFull, "newName" : data.newName });
+				}
 				
 			} else {
 				console.log("updating");
 
-				var tag = panels.users.find("#item-list").find(".item .name[data-usernameFull='" + data.usernameFull + "']").parent()
+				var tag = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + data.usernameFull + "']").parent()
 				
 				tag.find(".number").removeClass("banned-, banned-true");
-				tag.find(".name").attr("data-usernameFull", data.newName).html(data.newName);
+				tag.find(".name").attr("data-usernamefull", data.newName).html(data.newName);
 				thisUsername = data.newName;
 
 				socket.emit("live update", { "callback" : "updateUsers", "op" : "update", "usernameFull" : data.usernameFull, "newName" : data.newName });
