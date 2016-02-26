@@ -92,6 +92,9 @@ var getData = function (data) {
 	// users panel
 	panels.users.find("#item-list .item").on("click", ".name", function() {
 		// variables
+		var thisFirstName = $(this).attr("data-first-name");
+			thisLastName = $(this).attr("data-last-name");
+			thisEmail = $(this).attr("data-email");
 		thisUsername = $(this).attr("data-usernamefull");
 		thisAccessLevel = $(this).attr("data-accesslevel");
 		// DOM manipulation
@@ -102,8 +105,10 @@ var getData = function (data) {
 			"moderator": 3,
 			"admin": 4
 		};
-console.log(selectKey[thisAccessLevel]);
+
 		panels.users.find("#item-options").removeClass("invisible");
+		panels.users.find(".add-window").find("label.user-gov-name").text(thisFirstName + " " + thisLastName);
+		panels.users.find(".add-window").find("label.user-email").text(thisEmail);
 		panels.users.find(".add-window").find("input[name='newusername']").val(thisUsername);
 		panels.users.find(".add-window").find("select[name='accesslevel']")[0]
 			.selectedIndex = (selectKey[thisAccessLevel]);
@@ -115,6 +120,8 @@ console.log(selectKey[thisAccessLevel]);
 		var formData = $(this).serializeArray();
 
 		var dataObj = functions.parseForm(formData);
+		dataObj.adminLevel = myLevel;
+
 		if(dataObj.newusername) {
 			dataObj.originalName = thisUsername || dataObj.usernameFull;
 		}

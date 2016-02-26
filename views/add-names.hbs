@@ -1,0 +1,24 @@
+<section>
+	<div class="page-wrap">
+		<div class="form-box x-pad-1_0 y-pad-1_0 center-justify mid-blue-bg border-radius-0_5">
+			<h1 class="very-light-blue">Some information is missing on your account.</h1>
+			<h1 class="very-light-blue">Please enter your first and last name</h1>
+			<br><br>
+			<div id="sign-up-in" class="border-radius-0_5">
+				<div id="signup">
+					<form action="/add-names" method="POST" class="x-pad-0_5 y-pad-0_5">
+						<label for="" class="bold dark-blue">First Name</label>
+						<input type="text" name="firstname" placeholder="First name" value="">
+						<label for="" class="bold dark-blue">Last Name</label>
+						<input type="text" name="lastname" placeholder="Last name" value="">
+						<input type="hidden" name="_csrf" value="{{csrfToken}}">
+						<button>Submit</button>
+					</form>
+				</div>
+			</div>
+			<span id="err-msg">{{msg}}</span>
+		</div>
+	</div>
+</section>
+<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="js/touch.js"></script>

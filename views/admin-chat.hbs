@@ -288,7 +288,7 @@
 						<ul id="item-list">
 							{{#each users}}
 								<li class="item parent">
-									<span class="name" data-usernamefull="{{usernameFull}}" data-accesslevel="{{accessLevel}}">{{usernameFull}}</span>
+									<span class="name" data-first-name="{{firstName}}" data-last-name="{{lastName}}" data-usernamefull="{{usernameFull}}" data-accesslevel="{{accessLevel}}" data-email="{{email}}">{{usernameFull}}</span>
 									<span class="number {{#if banned}}banned-true{{/if}}"></span>
 								</li>
 							{{/each}}
@@ -297,6 +297,19 @@
 							<h1 class="title font-size-1_5">User Options</h1>
 							<h1 class="title font-size-1_2">Adjust User Info</h1>
 							<form class="add-window" action="/adjust-user">
+								<div class="col-2 left-justify">
+									<label>Gov. Name: </label>
+								</div><!--
+								--><div class="col-2 right-justify">
+									<label class="user-gov-name"></label><br>
+								</div>
+								<div class="col-2 left-justify">
+									<label>Email: </label>
+								</div><!--
+								--><div class="col-2 right-justify">
+									<label class="user-email"></label><br>
+								</div>
+								<div class="separator"><div class="dark-blue-bg"></div></div>
 								<div class="col-2 left-justify">
 									<label>Username: </label>
 								</div><!--
@@ -310,8 +323,8 @@
 								--><div class="col-2 right-justify">
 									<select name="accesslevel">
 										<option value="regular">Regular</option>
-										<option value="teen mod">Teen Mod</option>
-										<option value="junior mod">Junior Mod</option>
+										<option value="teen-mod">Teen Mod</option>
+										<option value="junior-mod">Junior Mod</option>
 										<option value="moderator">Moderator</option>
 										<option value="admin">Admin</option>
 									</select>
@@ -357,8 +370,6 @@
 </script>
 <script type="text/javascript" src="/js/chat-handle.js"></script>
 <script type="text/javascript" src="/js/admin-panel.js"></script>
-<!-- <script type="text/javascript">var dragTab = ".mover";</script> -->
-<!-- <script type="text/javascript" src="/js/drag-n-drop.js"></script> -->
 <style type="text/css" id="level-colors">
 	.chat > .regular {
 		box-shadow: inset 0 -.4em 0 0 {{levelColors.regular}},

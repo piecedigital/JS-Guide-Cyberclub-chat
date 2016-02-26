@@ -62,10 +62,25 @@ module.exports = function(db, admin) {
     makeKey();
   }// end generateId
 
+  var getRouteByAccess = function(userQDoc, slash) {
+    slash = slash || "";
+    return slash + ( (userQDoc.accessLevel === "master" || userQDoc.accessLevel === "moderator" || userQDoc.accessLevel === "admin") ? "admin-chat" : "chat" );
+  };
+  var authCheck = function(userQDoc, adminLevel) {
+    if( (userQDoc.accessLevel === "admin" ||
+      userQDoc.accessLevel === "master") &&
+      (adminLevel !== "master") ) {
+      return false;
+    };
+    return true;
+  };
+
   return {
     signup: function(req, res, next) {
       //sets up variables that's be used
-      var email = req.body.email.toLowerCase() || "",
+      var firstName = req.body.firstname.toLowerCase() || "",
+          lastName = req.body.lastname.toLowerCase() || "",
+          email = req.body.email.toLowerCase() || "",
           username = req.body.username.toLowerCase() || "",
           usernameFull = req.body.username || "",
           password = req.body.password || "",
@@ -78,7 +93,7 @@ module.exports = function(db, admin) {
       //check whether the user submitted the form with all parameters. if not
       //then the alternative is to re-render the page with the appropriate message
       //explaining why
-      if(email && username && password && passwordConf) {
+      if(firstName && lastName && email && username && password && passwordConf) {
         //checks for valid password
         if(email.match(/([a-z0-9])*([.][a-z0-9]*)?([@][a-z0-9]*[.][a-z]{1,3})([.][a-z]{1,2})?/i)) {
           var underDashMatch = username.match(/_-/gi) || [];
@@ -112,6 +127,8 @@ module.exports = function(db, admin) {
                     //inserts the user into the database and then sends them an email to confirm
                     function insertAccount(hash) {
                       var dbObj = {
+                        "firstName": firstName,
+                        "lastName": lastName,
                         "email": email,
                         "username": username,
                         "usernameFull": usernameFull,
@@ -203,7 +220,7 @@ module.exports = function(db, admin) {
       } else {
         //error message to the user if they don't submit the data in full
         var dest = (Save = "admin")  ? "admin-signup" : "signupin";
-        res.render(dest, { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Please fill out the form", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
+        res.render(dest, { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Please complete the form", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
       }
     },
     login: function(req, res, next) {
@@ -233,14 +250,14 @@ module.exports = function(db, admin) {
                 //database. if it's true then it proceeds to log them in.
                 //if not the the user is notified that the provided password is
                 //invalid
-                ////console.log(userQDoc);
+                //console.log(userQDoc);
                 var usernameFull = userQDoc.usernameFull;
                 bcrypt.compare(password, userQDoc.password, function(bcErr, bcSuccess) {
                   if(bcErr) throw bcErr;
 
                   if(bcSuccess) {
                     //console.log("password matches");
-                    Sess.insert({ "user" : username, "creationTime" : new Date().getTime() }, function(sessQErr, sessQDoc) {
+                    Sess.insert({ "user" : username.toLowerCase(), "creationTime" : new Date().getTime() }, function(sessQErr, sessQDoc) {
                       if(sessQErr) throw sessQErr;
                       
                       //sets the coookie sessId
@@ -249,7 +266,7 @@ module.exports = function(db, admin) {
                         //console.log("session created. id: ", newSession);
                         res.cookie("sessId", newSession, { maxAge: (Date.now() + 900000), httpOnly: true });
 
-                        var dest = (userQDoc.accessLevel === "admin") ? "/admin-chat" : "/chat";
+                        var dest = (!userQDoc.firstName && !userQDoc.lastName) ? "/add-names" : getRouteByAccess(userQDoc, "/");
 
                         res.redirect(dest);
                       } else {
@@ -300,22 +317,86 @@ module.exports = function(db, admin) {
         res.render("signupin", { "page" : "signupin", "title" : "Sign Up/Login", "msg" : "Please fill out the form", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
       }
     },
+    addNames: function(req, res, next) {
+      //sets up variables that's be used
+      var firstName = req.body.firstname || "",
+          lastName = req.body.lastname || "",
+          session = req.cookies["sessId"] || "";
+      //console.log(req.body);
+      //check whether the user submitted the form with all parameters. if not
+      //then the alternative is to re-render the page with the appropriate message
+      //explaining why
+      if(session) {
+        if(firstName && lastName) {
+        //console.log("username and password present");
+          Sess.findOne({ "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
+            if(sessQErr) throw sessQErr;
+
+            if(sessQDoc) {
+              //console.log("session found");
+              User.findOne({ "username" : sessQDoc.user }, function(userQErr, userQDoc) {
+                if(userQErr) throw userQErr;
+
+                if(userQDoc) {
+                  var updateObj = {
+                    firstName: firstName,
+                    lastName: lastName
+                  };
+
+                  User.update({ "username" : userQDoc.username }, { "$set" : updateObj }, function(updatErr, updatedDoc) {
+                    if(updatErr) throw updatErr;
+
+                    if(updatedDoc) {
+                      //console.log("account created \n\r");
+
+                      res.redirect("/chat");
+                    } else {
+                      res.render("add-names", { "title" : "Add first and last name", "msg" : "There was an issue updating your account. Please contact an administrator for assitance", "csrfToken" : req.csrfToken() });
+                    }
+                  });
+                } else {
+                  //console.log("user doesn't match session. clearing sessId and redirection to login");
+                  res.clearCookie("sessId");
+                  res.redirect("/login");
+                }
+              });
+            } else {
+              //console.log("no session. clearing sessId and redirecting to login");
+              res.clearCookie("sessId");
+              res.redirect("/login");
+            }
+          });
+        } else {
+          //console.log("session id present, proceed with session confirmation");
+          res.render("add-names", { "page" : "", "title" : "Add first and last name", "msg" : "Please fill out the form", csrfToken : req.csrfToken() });
+          
+        }
+      } else {
+        //console.log("username and password not present");
+        res.redirect("/signup");
+      }
+    },
     updateUser: function(req, res, next) {
       //console.log("update user function");
-      //console.log(req.body);
+      console.log(req.body);
+
       var newUsername = req.body.newusername || "",
           usernameFull = req.body.originalName || "",
           accessLevel = req.body.accesslevel || "regular",
           ban = req.body.ban || "",
           reason = req.body.reason || "Your behavior did not align with the rules of the chat room.",
           reasonIp = req.body.reasonIp || "The activty from this connection exhibited an inordinate degree of offenses.";
-      console.log(req.body)
       if(!ban) {
          User.findOne({ "username" : newUsername.toLowerCase() },
           function(userQErr, userQDoc) {
             if(userQErr) throw userQErr;
 
             if(!userQDoc || newUsername.toLowerCase() === usernameFull.toLowerCase()) {
+              // stop action if not a high enough level
+              if(!authCheck(userQDoc, req.body.adminLevel)) {
+                return res.status(401).send("This account is not authorized to modify an account of this level");
+              };
+
               Sess.update({ "user" : usernameFull.toLowerCase() }, { "$set" : { "user" : newUsername.toLowerCase() } });
               User.update({ "usernameFull" : usernameFull }, { "$set" : { "username" : newUsername.toLowerCase(), "usernameFull" : newUsername, "accessLevel" : accessLevel, "banned" : "" } }, function(userQErr, userQDoc) {
                 if(userQErr) throw userQErr;
@@ -340,28 +421,42 @@ module.exports = function(db, admin) {
          });
       } else {
         if(ban === "ACC") {
-          User.update({ "usernameFull" : usernameFull }, { "$set" : { "banned" : reason } }, function(userQErr, userQDoc) {
+          User.findOne({ "username" : usernameFull.toLowerCase() }, function(userQErr, userQDoc) {
             if(userQErr) throw userQErr;
 
-            if(userQDoc && userQDoc.result.ok) { 
-              res.status(200).send({
-                "msg": "success",
-                "action": "callback",
-                "callback": "updateUsers",
-                "data": {
-                  "usernameFull": usernameFull,
-                  "newName": newUsername
-                },
-                "op": ban
+            if(userQDoc) {
+              if(!authCheck(userQDoc, req.body.adminLevel)) {
+                return res.status(401).send("This account is not authorized to modify an account of this level");
+              };
+              User.update({ "usernameFull" : usernameFull }, { "$set" : { "banned" : reason } }, function(userQErr2, userQDoc2) {
+                if(userQErr2) throw userQErr2;
+
+                if(userQDoc2 && userQDoc2.result.ok) { 
+                  res.status(200).send({
+                    "msg": "success",
+                    "action": "callback",
+                    "callback": "updateUsers",
+                    "data": {
+                      "usernameFull": usernameFull,
+                      "newName": newUsername
+                    },
+                    "op": ban
+                  });
+                }
               });
+            } else {
+              return res.status(404).send("User not found");
             }
           });
         } else
         if(ban === "IP") {
-          User.findOne({ "usernameFull" : usernameFull }, function(userQErr, userQDoc) {
+          User.findOne({ "username" : usernameFull.toLowerCase() }, function(userQErr, userQDoc) {
             if(userQErr) throw userQErr;
 
             if(userQDoc) {
+              if(!authCheck(userQDoc, req.body.adminLevel)) {
+                return res.status(401).send("This account is not authorized to modify an account of this level");
+              };
               User.update({ "username" : usernameFull }, { "$set" : { "banned" : reason } });
               Sess.remove({ "user" : usernameFull });
               Chat.update({ "optionName" : "bannedAddrs" }, { "$push" : { "list" : { 'ip' : userQDoc.currentIp || "0.0.0.0", 'reason' : reasonIp } } }, { "upsert" : true }, function(chatQErr, chatQDoc) {
@@ -392,8 +487,11 @@ module.exports = function(db, admin) {
           //remove user
           User.findOne({ "username" : usernameFull.toLowerCase() }, function(userQErr, userQDoc) {
             if(userQErr) throw userQErr;
-            if(userQDoc) {
 
+            if(userQDoc) {
+              if(!authCheck(userQDoc, req.body.adminLevel)) {
+                return res.status(401).send("This account is not authorized to modify an account of this level");
+              };
               //User.update({ "username" : usernameFull }, { "$set" : { "banned" : reason } });
               Sess.remove({ "user" : userQDoc.username });
               User.remove({ "username" : userQDoc.username }, function(userQErr2, userQDoc2) {
@@ -419,7 +517,7 @@ module.exports = function(db, admin) {
             }
           });
         } else {
-          res.status(500).send("tampered form");
+          res.status(403).send("tampered form");
           console.log("variable error. data has been tampered with")
         }
       }

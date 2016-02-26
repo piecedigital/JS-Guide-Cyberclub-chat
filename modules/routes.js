@@ -49,6 +49,10 @@ sass.render({
 		var hour = 60 * 60;
 		//Sess.log_events.createIndex({ "creationTime" : 1 }, { "expiresAfterSeconds" : hour });
 
+	  var getRouteByAccess = function(userQDoc, slash) {
+	  	slash = slash || "";
+	    return slash + ( (userQDoc.accessLevel === "master" || userQDoc.accessLevel === "moderator" || userQDoc.accessLevel === "admin") ? "admin-chat" : "chat" );
+	  };
 		//////////////////////
 		//// GET requests ////
 		//////////////////////
@@ -112,7 +116,7 @@ sass.render({
 								if(userQErr) throw userQErr;
 
 								if(userQDoc) {
-									var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "/admin-chat" : "/chat";
+									var dest = getRouteByAccess(userQDoc, "/");
 
 									res.redirect(dest);
 								} else {
@@ -141,7 +145,7 @@ sass.render({
 
 								if(userQDoc) {
 									if(!userQDoc.banned) {
-										var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "/admin-chat" : "/chat";
+										var dest = getRouteByAccess(userQDoc, "/");
 
 										res.redirect(dest);
 									} else {
@@ -174,7 +178,7 @@ sass.render({
 		            if(userQDoc) {
 		            	//console.log(userQDoc);
 		            	if(!userQDoc.banned) {
-			            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "/admin-chat" : "/chat";
+			            	var dest = getRouteByAccess(userQDoc, "/");
 
 				  					res.redirect(dest);
 		            	} else {
@@ -194,6 +198,43 @@ sass.render({
 					res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "checked", "log-checked" : "", csrfToken : req.csrfToken() });
 				}
 			})
+			.get("/add-names", csrfProtection, function(req, res, next) {
+				var session = req.cookies["sessId"] || "";
+
+				if(session) {
+		      Sess.findOne({ "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
+		        if(sessQErr) throw sessQErr;
+
+		        if(sessQDoc) {
+							User.findOne({ "username" : sessQDoc.user }, function(userQErr, userQDoc) {
+								if(userQErr) throw userQErr;
+
+								if(userQDoc) {
+									if(!userQDoc.banned) {
+                    if(!userQDoc.firstName && !userQDoc.lastName) {
+											res.render("add-names", { "title" : "Add first and last name", "msg" :"", csrfToken : req.csrfToken() });
+                    } else {
+                    	var dest = getRouteByAccess(userQDoc, "/");
+
+											res.redirect(dest);
+                    }
+
+									} else {
+										res.redirect('/banned/account/' + userQDoc.usernameFull)
+									}
+								} else {
+									res.redirect("/signup");
+								}
+							});
+		        } else {
+		        	res.clearCookie("sessId");
+							res.render("signupin", { "title" : "Sign Up/Login", "msg" :"", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
+		        }
+		      });
+				} else {
+					res.redirect("/signup");
+				}
+			})
 			.get("/admin-signup", csrfProtection, function(req, res, next) {
 				var session = req.cookies["sessId"] || "";
 
@@ -208,7 +249,7 @@ sass.render({
 		            if(userQDoc) {
 		            	//console.log(userQDoc);
 		            	if(!userQDoc.banned) {
-			            	var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "/admin-chat" : "/chat";
+			            	var dest = getRouteByAccess(userQDoc, "/");
 
 				  					res.redirect(dest);
 		            	} else {
@@ -319,7 +360,7 @@ sass.render({
 				            			//console.log(userQDoc);
 
 				            			//console.log(keyVars);
-				            			var dest = (userQDoc.accessLevel !== "admin" && userQDoc.accessLevel !== "moderator") ? "chat" : "admin-chat";
+				            			var dest = getRouteByAccess(userQDoc);
 
 					            		res.render(dest, { "title" : "GCC Admin Panel", "room" : "", "disable" : "disabled", "rooms" : keyVars.rooms, "bannedEmotes" : keyVars.bannedEmotes, "recommendedEmotes" : keyVars.recommendedEmotes, "bannedWords" : keyVars.bannedWords, "bannedAddrs" : keyVars.bannedAddrs, "users" : keyVars.users, "levelColors" : keyVars.levelColors, "chatOptions" : chatOptions, csrfToken : req.csrfToken() });
 					            		chatOptions = null;
@@ -495,7 +536,7 @@ sass.render({
 
 								if(userQDoc) {
 									if(!userQDoc.banned) {
-										var dest = (userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") ? "/admin-chat" : "/chat";
+										var dest = getRouteByAccess(userQDoc, "/");
 
 										res.redirect(dest);
 									} else {
@@ -638,6 +679,7 @@ sass.render({
 			.post("/signup", csrfProtection, account(db).signup)
 			.post("/admin-signup", csrfProtection, account(db, true).signup)
 			.post("/login", csrfProtection, account(db).login)
+			.post("/add-names", csrfProtection, account(db).addNames)
 			.post("/request-pass", csrfProtection, account(db).requestPass)
 			.post("/update-pass", csrfProtection, account(db).updatePass)
 			.post("/adjust-user", csrfProtection, account(db).updateUser)
