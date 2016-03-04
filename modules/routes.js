@@ -59,9 +59,9 @@ sass.render({
 		app
 			.get(/\/.*/, function(req, res, next) {
 				var IP = getIP.getIP3(req);
-				console.log("req ip", IP);
-				//console.log(req.headers)
-				////console.log(IP, typeof IP);
+				// console.log("req ip", IP);
+				// console.log(req.headers)
+				// console.log(IP, typeof IP);
 				var session = req.cookies["sessId"] || "";
 
 				if(session) {
@@ -305,7 +305,7 @@ sass.render({
 
 		            if(userQDoc) {
 		            	if(!userQDoc.banned) {
-            				if(!serverOn && (userQDoc.accessLevel !== "admin" && userQDoc.accessLevel !== "moderator")) {
+            				if(!serverOn && (userQDoc.accessLevel !== "master" && userQDoc.accessLevel !== "admin" && userQDoc.accessLevel !== "moderator")) {
 		            			res.render("offline", {});
 		            		} else {
 				            	// key variables needed before rendering the page
@@ -406,7 +406,7 @@ sass.render({
 				            		}
 				            	});
 				            	// pull data from db and populate only if admin or mod
-				            	if(userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") {
+				            	if(userQDoc.accessLevel === "master" || userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") {
 					            	// pull data for banned emotes
 					            	Chat.findOne({ "optionName" : "bannedEmotes" }, function(chatQErr, chatQDoc) {
 					            		if(chatQErr) throw chatQErr;

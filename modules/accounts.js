@@ -377,8 +377,8 @@ module.exports = function(db, admin) {
       }
     },
     updateUser: function(req, res, next) {
-      //console.log("update user function");
-      console.log(req.body);
+      // console.log("update user function");
+      // console.log(req.body);
 
       var newUsername = req.body.newusername || "",
           usernameFull = req.body.originalName || "",
@@ -610,7 +610,7 @@ module.exports = function(db, admin) {
       }
     },
     queryUser: function(req, res, next) {
-      console.log(req.body, req.headers)
+      // console.log(req.body, req.headers)
       
       var session = req.cookies["sessId"] || "";
         

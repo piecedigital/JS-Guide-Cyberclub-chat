@@ -455,6 +455,10 @@ var notifyMe = function(person, text) {
 						"box-shadow: inset 0 -.4em 0 0 " + data.colorData.admin + ",\n\r"+
 						"inset 0 .4em 0 0 " + data.colorData.admin + " !important;\n\r"+
 					"}"+
+					".chat > .master {\n\r"+
+						"box-shadow: inset 0 -.4em 0 0 " + data.colorData.admin + ",\n\r"+
+						"inset 0 .4em 0 0 " + data.colorData.admin + " !important;\n\r"+
+					"}"+
 					"/*room list icon*/"+
 					".icon.regular {"+
 						"background: " + data.colorData.regular + ";"+
@@ -469,6 +473,9 @@ var notifyMe = function(person, text) {
 						"background: " + data.colorData.moderator + ";"+
 					"}"+
 					".icon.admin {"+
+						"background: " + data.colorData.admin + ";"+
+					"}"+
+					".icon.master {"+
 						"background: " + data.colorData.admin + ";"+
 					"}";
 

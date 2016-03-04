@@ -19,6 +19,28 @@ module.exports = function(io, db) {
 
 			return arr.join("")
 		};
+		var filterMessage = function(obj) {
+			obj.msg = obj.msg.replace(/[<]/gi, "&lt;")
+				.replace(/[>]/gi, "&gt;");
+
+			// filter out banned words
+			//console.log(bannedWords)
+			for(var i = 0; i < bannedWords.length; i++) {
+				var banReg = new RegExp(`\\b(${bannedWords[i]})\\b`, "gi")
+				obj.msg = obj.msg.replace(banReg, "*".multiply(bannedWords[i].length));
+			}
+			// filter out banned emotes
+			var rpCode =  "&#58;";
+			//console.log(bannedEmotes)
+			for(var i = 0; i < bannedEmotes.length; i++) {
+				var banReg = new RegExp(bannedEmotes[i], "gi");
+
+				var match = obj.msg.match(banReg) || [];
+				match = (match[0]) ? match[0].replace(/[:]/gi, rpCode) : match;
+				obj.msg = obj.msg.replace(banReg, match);
+			}
+			return obj.msg;
+		};
 	return {
 		socketHandler: function(socket) {
 			//console.log("socketHandler called");
@@ -83,14 +105,14 @@ module.exports = function(io, db) {
 							var currentMods = 0;
 							userElem = roomQDoc.users || [];
 							for(var i = 0; i < userElem.length; i++) {
-								if(userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
+								if(userElem[i].accessLevel === "master" || userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
 									currentMods++;
 								}
 							};
         			if(currentMods >= roomQDoc.minMods) {
         				joinUser();
         			} else {
-								if(obj.accessLevel === "moderator" || obj.accessLevel === "admin") {
+								if(obj.accessLevel === "moderator" || obj.accessLevel === "admin" || obj.accessLevel === "master") {
 									joinUser();
 								} else {
 									io.to(socket.id).emit("update", {
@@ -123,7 +145,7 @@ module.exports = function(io, db) {
 					"displayName": obj.displayName,
 					"room": null
 				});
-				if(obj.accessLevel === "admin" || obj.accessLevel === "moderator") {
+				if(obj.accessLevel === "master" || obj.accessLevel === "admin" || obj.accessLevel === "moderator") {
 					Room.findOne({ "roomname" : obj.room }, function(roomQErr, roomQDoc) {
 						if(roomQErr) throw roomQErr;
 
@@ -131,7 +153,7 @@ module.exports = function(io, db) {
 							var currentMods = 0;
 							userElem = roomQDoc.users;
 							for(var i = 0; i < userElem.length; i++) {
-								if(userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
+								if(userElem[i].accessLevel === "master" || userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
 									currentMods++;
 								}
 							};
@@ -147,25 +169,7 @@ module.exports = function(io, db) {
 				if(obj.msg) {
 					//console.log("'chat message' socket function");
 					//console.log(obj);
-					obj.msg = obj.msg.replace(/[<]/gi, "&lt;")
-						.replace(/[>]/gi, "&gt;");
-
-					// filter out banned words
-					//console.log(bannedWords)
-					for(var i = 0; i < bannedWords.length; i++) {
-						var banReg = new RegExp(bannedWords[i], "gi")
-						obj.msg = obj.msg.replace(banReg, "*".multiply(bannedWords[i].length));
-					}
-					// filter out banned emotes
-					var rpCode =  "&#58;";
-					//console.log(bannedEmotes)
-					for(var i = 0; i < bannedEmotes.length; i++) {
-						var banReg = new RegExp(bannedEmotes[i], "gi");
-
-						var match = obj.msg.match(banReg) || [];
-						match = (match[0]) ? match[0].replace(/[:]/gi, rpCode) : match;
-						obj.msg = obj.msg.replace(banReg, match);
-					}
+					obj.msg = filterMessage(obj);
 
 					// check if command or regular message
 					if(obj.msg.match(/^\/me\s/gi)) {
@@ -317,7 +321,7 @@ module.exports = function(io, db) {
 							"displayName": userQDoc.usernameFull,
 							"room": null
 						});
-						if(userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") {
+						if(userQDoc.accessLevel === "master" || userQDoc.accessLevel === "admin" || userQDoc.accessLevel === "moderator") {
 							Room.findOne({ "users" : { "$elemMatch" : { "username" : userQDoc.username } } },
 								function(roomQErr, roomQDoc) {
 								if(roomQErr) throw roomQErr;
@@ -327,7 +331,7 @@ module.exports = function(io, db) {
 									var currentMods = 0;
 									userElem = roomQDoc.users;
 									for(var i = 0; i < userElem.length; i++) {
-										if(userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
+										if(userElem[i].accessLevel === "master" || userElem[i].accessLevel === "admin" || userElem[i].accessLevel === "moderator") {
 											currentMods++;
 										}
 									};
