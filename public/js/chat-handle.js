@@ -187,7 +187,12 @@ var notifyMe = function(person, text) {
 						"target": frameName,
 						"action": "/pm/" + initName + "/" + reciName,
 						"method": "post"
-					}).html( $("<input>").attr({ "type": "hidden" }) );
+					}).html( $("<input>").attr({
+							"type": "hidden",
+							"name": "_csrf",
+							"value": csrfToken
+						})
+					);
 
 			$("#pm-section > div").append(
 				$("<div>").attr({ "class" : "pm-box", "data-id" : frameName }).html(
@@ -328,7 +333,7 @@ var notifyMe = function(person, text) {
 		});
 		socket.on("kick", function(data){
 			// console.log("kick", data, room);
-			if(myLevel !== "admin" || myLevel !== "moderator") {
+			if(myLevel !== "master" || myLevel !== "admin" || myLevel !== "moderator") {
 				socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
 				$("#messages").append($("<li class='plain'>").html("There are an insufficient number of mods in this room. You will now be moved out of this room. Try joining another.") );
 				scrollToBottom();
@@ -339,7 +344,7 @@ var notifyMe = function(person, text) {
 		});
 		socket.on("new entry", function(data){
 			$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").remove();
-			if(data.accessLevel === "admin" || data.accessLevel === "moderator") {
+			if(data.accessLevel === "master" || data.accessLevel === "admin" || data.accessLevel === "moderator") {
 				$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").prepend("<li class='user parent' data-usernamefull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
 			} else {
 				$("#room-list").find(".room[data-roomname='" + data.room + "'] ul").append("<li class='user parent' data-usernamefull='" + data.usernameFull + "' data-username='" + (data.usernameFull.toLowerCase()) + "' data-displayname='" + data.usernameFull + "'><span class='icon " + data.accessLevel + "'></span><span class='username'>" + data.usernameFull + "</span></li>");
@@ -508,7 +513,7 @@ var notifyMe = function(person, text) {
 			var originalText = filter;
 
 			//smiles
-			if(personData.level != "admin" && personData.level != "moderator") {
+			if(personData.level != "master" && personData.level != "admin" && personData.level != "moderator") {
 				filter = filter
 					.replace(/[\w\d]{1,}([\._\-]*)?[\w\d]{1,}@[\w\d]*\.[\w\d]*(\.[\w\d]*)?/ig, "[deleted email]")
 					.replace(/((http(s)?[:\/\/]*))?([\w\d\-]*[\.])([\w\d\-]*[\.])?([\w]*)(\.\w)?/gi, "[deleted link]")
@@ -723,12 +728,12 @@ var notifyMe = function(person, text) {
 				contextUserdisp = null;
 			},
 			message: function() {
-				if(myLevel === "admin" || myLevel === "moderator") {
+				if(myLevel === "master" || myLevel === "admin" || myLevel === "moderator") {
 					socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
 					generatePM(usernameFull, contextUsername);
 				} else {
 					var $acc = $("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon");
-					if($acc.hasClass("moderator") || $acc.hasClass("admin")) {
+					if($acc.hasClass("moderator") || $acc.hasClass("admin") || $acc.hasClass("master")) {
 						socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
 						generatePM(usernameFull, contextUsername);
 					} else {

@@ -57,7 +57,7 @@ function start (worker) {
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(helmet());
   app.use(helmet.hidePoweredBy());
-  app.use(helmet.frameguard("allow-from", process.env.hostname || ("http://localhost:8080") ));
+  app.use(helmet.frameguard("allow-from", process.env["WEB_HOSTNAME"] || ("http://localhost:8080") ));
   app.use(helmet.contentSecurityPolicy({
     defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "*.jsdelivr.net", "jsconsole.com"],
