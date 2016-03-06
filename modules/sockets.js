@@ -291,7 +291,7 @@ module.exports = function(io, db) {
 					}
 				};
 				
-				callbacks[obj.callback]();
+				callbacks[obj.callback] ? callbacks[obj.callback]() : io.emit("real time update", obj);
 			})
 			.on("private message", function(obj) {
 				io.emit("generate pm", obj)

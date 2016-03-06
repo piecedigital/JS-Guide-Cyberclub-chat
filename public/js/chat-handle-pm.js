@@ -142,9 +142,31 @@ String.prototype.multiply = function(times) {
 	//filter chat for links and emites
 	function regexFilter(filter, person){
 
-		//smiles
-		filter = filter.replace(/((http(s)?[:\/\/]*))?([a-z0-9\-]*[.])([a-z0-9\-]*[.])?([a-z]{2,3})(.*)?/ig, "[deleted link]")
-			.replace(/[a-z]{1,}([._-]*)?[a-z]{1,}@[a-z]*.[a-z]*/ig, "[deleted email]");
+		//links and emails
+		if(person.level != "master" && person.level != "admin" && person.level != "moderator") {
+			filter = filter
+				.replace(/[\w\d]{1,}([\._\-]{3,})?[\w\d]{3,}@[\w\d]{3,}\.[\w\d]{3,}(\.[\w\d]{3,})?/ig, "[deleted email]")
+				.replace(/((http(s)?[:\/\/]{3,}))?([a-z0-9\-]{3,}[.])([a-z0-9\-]{3,}[.])?([a-z]{2,3})(.{3,})?/gi, "[deleted link]")
+		} else {
+			//var website = filter.match(/((http(s)?[:\/\/]*))?([\w\d\-]*[\.])([\w\d\-]*[\.])?([\w]*)(\.\w)?/gi),
+				//email = filter.match(/[a-z]{1,}([._-]*)?[a-z]{1,}@[a-z]*.[a-z]*/ig);
+
+			//var jointArray = (website.join(",") + "," + website.join(",")).split(",");
+			//console.log(jointArray);
+
+			filter = filter.split(" ").map(function(elem) {
+				if( elem.match(/[\w\d]{1,}([\._\-]*)?[\w\d]{1,}@[\w\d]*\.[\w\d]{1,}(\.[\w\d]{1,})?/i) ) {
+					elem = elem.replace(elem, "<a href='mail:" + elem + "'>" + elem + "</a>");
+				} else
+				if( elem.match(/(http(s)?[:\/\/]*)?([\w\d\-]*\.\w{1,})([\.][\w\d\-]*)?(\.\w{1,})?/i) ) {
+					elem = elem.replace(elem, "<a href='" + (!elem.match("http") ? "http://" : "") + elem + "' target='_blank'>" + elem + "</a>");
+				}
+				
+				return elem;
+			}).join(" ");
+
+			//email1@gmail.com email2@gmail.com example.com example2.com example.com email1@gmail.com
+		}
 
 
 		//emoticons/////////////

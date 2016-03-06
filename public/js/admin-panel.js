@@ -366,6 +366,9 @@ var getData = function (data) {
 		updateColors: function(data, operation) {
 			console.log(data, operation);
 			socket.emit("live update", { "callback" : "updateColors", "colorData" : data });
+		},
+		kickRegs: function() {
+			socket.emit("live update", { "callback" : "kickRegs" });
 		}
 	}
 }());

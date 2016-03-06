@@ -45,8 +45,9 @@ var notifyMe = function(person, text) {
 				dataType: "json",
 				data: { _csrf : csrfToken },
 				success: function(data) {
-					// console.log(data);
-
+					// early return if there is no data
+					if(!data) return;
+					if(!data.data) return;
 					for(var obj in data.data) {
 						// console.log(obj)
 						var roomName = data.data[obj].roomname;
@@ -56,7 +57,24 @@ var notifyMe = function(person, text) {
 							// console.log("applying user: ", users[user])
 							users[user].displayName = users[user].displayName || users[user].usernameFull;
 
-							$("#room-list").find(".room[data-roomname='" + roomName + "'] ul").append("<li class='user parent' data-usernamefull='" + users[user].usernameFull + "' data-username='" + (users[user].usernameFull.toLowerCase()) + "' data-displayname='" + users[user].displayName + "'><span class='icon " + users[user].accessLevel + "'></span><span class='username'>" + users[user].displayName + "</span></li>");
+							$("#room-list").find(".room[data-roomname='" + roomName + "'] ul")
+								.append(
+									$("<li>")
+										.addClass("user parent")
+										.attr({
+											"data-usernamefull": users[user].usernameFull,
+											"data-username": users[user].usernameFull.toLowerCase(),
+											"data-displayname": users[user].displayName
+										})
+										.append(
+											$("<span>")
+												.addClass("icon " + users[user].accessLevel),
+											$("<span>")
+												.addClass("username")
+												.text(users[user].displayName)
+										)
+
+								);
 						}
 					}
 				},
@@ -80,6 +98,9 @@ var notifyMe = function(person, text) {
 			},
 			dataType: "json",
 			success: function(data) {
+				// early return if there is no data
+				if(!data) return;
+				if(!data.data) return;
 				for(var i = 0; i < data.data.length; i++) {
 					var filteredEmote = regexFilter(data.data[i], "");
 
@@ -218,6 +239,10 @@ var notifyMe = function(person, text) {
 			// $("#pm-section > div > div > div").css({ "width" : width * size + "px"})
 		};
 
+		var isAdmin = function(level) {
+			return level === "master" || level === "admin" || level === "moderator";
+		};
+
 		$(document).on("touchstart mousedown", ".pm-tools .pm-min", function(e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -288,7 +313,25 @@ var notifyMe = function(person, text) {
 		socket.on("chat response", function(data){
 			var matchedUser = checkMutes(myMutes, data.usernameFull);
 			if(!matchedUser) {
-				$("#messages").append($("<li class='chat'>").html("<span class='time-code'>[" + logDate() + "]</span> <span class='user " + data.level + "' data-displayname='" + data.displayName + "' data-usernamefull='" + data.usernameFull + "'> " + data.displayName + "</span>: " + "<p class='chat-text' style='color:" + data.color + "'>" + regexFilter(data.msg, data) + "</p>" ) );
+				$("#messages").append($("<li>")
+					.attr({
+						"class": "chat",
+						"data-displayname": data.displayName,
+						"data-usernamefull": data.usernameFull
+					})
+					.append(
+						$("<span>")
+							.addClass("time-code")
+							.text( logDate() ),
+						$("<span>")
+							.addClass("user " + data.level)
+							.text( data.displayName + ": " ),
+						$("<p>")
+							.addClass("chat-text")
+							.css("color", data.color)
+							.html( regexFilter(data.msg, data) )
+					)
+				);
 				scrollToBottom();
 			}
 			//console.log(data)
@@ -499,6 +542,13 @@ var notifyMe = function(person, text) {
 
 						$("#tools #emotes").append( emoteOpt );
 					};
+				},
+				kickRegs: function() {
+					console.log(isAdmin(myLevel))
+					if(!isAdmin(myLevel)) {
+						socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
+						$("#messages").append($("<li class='plain'>").html("The chat has been shutdown. You have been removed from the room. Thanks for participating in today's chat session!") );
+					}
 				}
 			};
 
@@ -512,11 +562,11 @@ var notifyMe = function(person, text) {
 			var person = personData.displayName || "";
 			var originalText = filter;
 
-			//smiles
+			//links and emails
 			if(personData.level != "master" && personData.level != "admin" && personData.level != "moderator") {
 				filter = filter
-					.replace(/[\w\d]{1,}([\._\-]*)?[\w\d]{1,}@[\w\d]*\.[\w\d]*(\.[\w\d]*)?/ig, "[deleted email]")
-					.replace(/((http(s)?[:\/\/]*))?([\w\d\-]*[\.])([\w\d\-]*[\.])?([\w]*)(\.\w)?/gi, "[deleted link]")
+					.replace(/[\w\d]{1,}([\._\-]{3,})?[\w\d]{3,}@[\w\d]{3,}\.[\w\d]{3,}(\.[\w\d]{3,})?/ig, "[deleted email]")
+					.replace(/((http(s)?[:\/\/]{3,}))?([a-z0-9\-]{3,}[.])([a-z0-9\-]{3,}[.])?([a-z]{2,3})(.{3,})?/gi, "[deleted link]")
 			} else {
 				//var website = filter.match(/((http(s)?[:\/\/]*))?([\w\d\-]*[\.])([\w\d\-]*[\.])?([\w]*)(\.\w)?/gi),
 					//email = filter.match(/[a-z]{1,}([._-]*)?[a-z]{1,}@[a-z]*.[a-z]*/ig);

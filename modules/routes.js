@@ -667,7 +667,11 @@ sass.render({
 				if(status === "offline") {
 					serverOn = false;
 					res.status(200).send({
-						"msg": "success"
+						"msg": "success",
+						"action": "callback",
+						"callback": "kickRegs",
+						"data": "kick regular users",
+						"op": "kick regular users"
 					})
 
 					return false;
@@ -714,7 +718,10 @@ sass.render({
           				"data": chatQDoc.list
           			});
           		} else {
-          			res.status(404).send("Collection doesn't exist");
+          			res.status(204).send({
+          				"msg": "Collection doesn't exist. Can create.",
+          				"data": []
+          			});
           		}
           	});
 					}
