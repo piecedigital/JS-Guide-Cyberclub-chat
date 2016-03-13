@@ -8,13 +8,13 @@ $(document).ready(function () {
 	    Notification.requestPermission();
 	  }
 	} else {
-		alert('Desktop notifications not available in your browser. Try Google Chrome.'); 
+		alert('Desktop notifications not available in your browser. Try Google Chrome.');
 	}
 });
 
 var notifyMe = function(person, text) {
   if (!Notification) {
-    //alert2('Desktop notifications not available in your browser. Try Chromium.'); 
+    //alert2('Desktop notifications not available in your browser. Try Chromium.');
     return;
   }
 
@@ -87,7 +87,7 @@ var notifyMe = function(person, text) {
 				}
 			})
 		});
-		
+
 		// load recommended emotes
 		$.ajax({
 			url: "/get-app-data",
@@ -163,13 +163,14 @@ var notifyMe = function(person, text) {
 			return finalHTML
 		};
 
-		function checkMutes(myMutes, user) {	
+		function checkMutes(myMutes, user) {
 			var userReg = new RegExp(user, "gi");
 			for(var i = 0; i < myMutes.length; i++) {
 				if(myMutes[i].match(userReg)) {
 					return true;
 				}
 			}
+			return false;
 		}
 
 		function getCaretPos(input) {
@@ -308,7 +309,7 @@ var notifyMe = function(person, text) {
 				$("#chat-form button").addClass("full");
 			}
 		});
-		
+
 		//socket response on chat response
 		socket.on("chat response", function(data){
 			var matchedUser = checkMutes(myMutes, data.usernameFull);
@@ -325,7 +326,13 @@ var notifyMe = function(person, text) {
 							.text( logDate() ),
 						$("<span>")
 							.addClass("user " + data.level)
-							.text( data.displayName + ": " ),
+							.text( data.displayName ),
+						$("<span>")
+							.css({
+								"display": "inline-block",
+								"padding": "5px"
+							})
+							.text( " : " ),
 						$("<p>")
 							.addClass("chat-text")
 							.css("color", data.color)
@@ -355,7 +362,7 @@ var notifyMe = function(person, text) {
 			$("#messages").append($("<li class='plain'>").html(data.msg) );
 			scrollToBottom();
 		});
-		
+
 		//socket responses on room entry
 		socket.on("enter room", function(data){
 			$("#messages").append($("<li class='plain'>").html(data.msg) );
@@ -581,7 +588,7 @@ var notifyMe = function(person, text) {
 					if( elem.match(/(http(s)?[:\/\/]*)?([\w\d\-]*\.\w{1,})([\.][\w\d\-]*)?(\.\w{1,})?/i) ) {
 						elem = elem.replace(elem, "<a href='" + (!elem.match("http") ? "http://" : "") + elem + "' target='_blank'>" + elem + "</a>");
 					}
-					
+
 					return elem;
 				}).join(" ");
 
@@ -683,7 +690,7 @@ var notifyMe = function(person, text) {
 				//replace username in text
 				if(e.keyCode === 13 && listMenu === true) {
 					textArr = text.split("");
-					
+
 					textArr.splice(atPos, (caret - atPos), listUser);
 
 					$("#chat-val").val( textArr.join("") + " " );
@@ -714,7 +721,7 @@ var notifyMe = function(person, text) {
 					var regexUser = new RegExp(subStr, "gi");
 
 					$("#list-box").show().html("");
-					
+
 					$("#room-list").find(".room .user").map(function(ind, elem) {
 						if( $(elem).data("usernamefull").match(regexUser) ) {
 							$("#list-box").append( $("<li>").text( $(elem).data("usernamefull") ) );
@@ -753,18 +760,43 @@ var notifyMe = function(person, text) {
 		///////////////////////////
 		$("body").append("<ul id='new-context-menu'></ul>");
 		var roomOpts = ["Join", "Leave"];
-		var userOpts = ["Mention", "Message", "Mute", "Unmute"];
+		var userOpts = ["Mention", "Message", "Mute", "Unmute", "Kick"];
+
+		var click = "", currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
 
 		function populateContext(arr) {
 			if(arr) {
 				$("#new-context-menu").html("");
 				for(var i = 0; i < arr.length; i++) {
-					$("#new-context-menu").append("<li data-option='" + arr[i].toLowerCase() + "'>" + arr[i] + "</li>");
+					var print = true;
+					console.log(arr[i].match("Kick"));
+					if( (myMutes.indexOf(contextUsername.toLowerCase()) >= 0) ) {
+						if( arr[i].match("Mute") ) {
+							print = false
+						}
+					} else
+					if( !(myMutes.indexOf(contextUsername.toLowerCase()) >= 0) ) {
+						if( arr[i].match("Unmute") ) {
+							print = false;
+						}
+					};
+					if(arr[i].match("Kick")) {
+						console.log(myLevel)
+						switch (myLevel) {
+							case "master":
+							case "admin":
+							case "moderator":
+								print = true;
+								break;
+							default:
+								print = false;
+						}
+					}
+					if(print) $("#new-context-menu").append("<li data-option='" + arr[i].toLowerCase() + "'>" + arr[i] + "</li>");
 				};
 			}
 		};
 
-		var click = "", currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
 		var options = {
 			join: function() {
 				socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
@@ -782,8 +814,8 @@ var notifyMe = function(person, text) {
 					socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
 					generatePM(usernameFull, contextUsername);
 				} else {
-					var $acc = $("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon");
-					if($acc.hasClass("moderator") || $acc.hasClass("admin") || $acc.hasClass("master")) {
+					var acc = $("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon");
+					if($(acc).hasClass("moderator") || $(acc).hasClass("admin") || $(acc).hasClass("master")) {
 						socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
 						generatePM(usernameFull, contextUsername);
 					} else {
@@ -807,6 +839,9 @@ var notifyMe = function(person, text) {
 				myMutes.splice( (myMutes.indexOf(contextUsername.toLowerCase())), 1 );
 				$("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon").removeClass("muted");
 				contextUsername = null;
+			},
+			kick: function() {
+				console.log("kick method. need context")
 			}
 		};
 
@@ -825,7 +860,7 @@ var notifyMe = function(person, text) {
 				if(currentRoom === $(thisInstance).parent().attr("data-roomname")) {
 					//console.log("current: ", currentRoom);
 					currentRoom = null;
-					
+
 					contextRoomname = $(thisInstance).parent().attr("data-roomname");
 					if(room !== "door") {
 						options.leave();
