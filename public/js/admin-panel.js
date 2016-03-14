@@ -1,3 +1,25 @@
+// gets user info for admin
+var myUsernameFull, myUsername, myLevel;
+$.ajax({
+  "url": "/query-user",
+  "type": "post",
+  "dataType": "json",
+  data: { _csrf : csrfToken },
+  success: function(data) {
+    myUsernameFull = data.usernameFull;
+    myUsername = myUsernameFull.toLowerCase();
+    myLevel = data.accessLevel;
+  },
+  error: function(err1, err2, err3) {
+    confirm2("There was an error retreiving your user data", ".alert form", function(data) {
+      console.log(data);
+    });
+    console.log(err1.status);
+    console.log(err2);
+    console.log(err3);
+  }
+});
+
 var getData = function (data) {
   var obj = {};
   data.serializeArray()
@@ -14,7 +36,7 @@ var getData = function (data) {
 			thisRoomname,
 			thisAccessLevel;
 
-	// PANEL functions
+	// panel functions
 	var panels = {
 		chatOpt: $(".panel.chat-opt"),
 		rooms: $(".panel.rooms"),
@@ -27,28 +49,28 @@ var getData = function (data) {
 
 		// DOM manipulation
 		panels.chatOpt.find("#item-options").find(".option-box").addClass("hidden");
-		
+
 		panels.chatOpt.find("#item-options").find(".option-box.option-" + itemOptions + "").removeClass("hidden");
 	});
 	// banned emote deletion
 	panels.chatOpt.find("#item-options .option-box[data-section='Banned Emotes']").on("click", ".close", function() {
 		var emote = $(this).parent().data("emote");
-		functions.ajax("/update-emotes", "POST", "json", { "emote" : emote, "op" : "$pull" });
+		mainFunctions().ajax("/update-emotes", "POST", "json", { "emote" : emote, "op" : "$pull" });
 	});
 	// recommened emote deletion
 	panels.chatOpt.find("#item-options .option-box[data-section='Recommended Emotes']").on("click", ".close", function() {
 		var emote = $(this).parent().data("emote");
-		functions.ajax("/update-recommended-emotes", "POST", "json", { "emote" : emote, "op" : "$pull" });
+		mainFunctions().ajax("/update-recommended-emotes", "POST", "json", { "emote" : emote, "op" : "$pull" });
 	});
 	// banned word deletion
 	panels.chatOpt.find("#item-options .option-box[data-section='Banned Words']").on("click", ".close", function() {
 		var word = $(this).parent().data("word");
-		functions.ajax("/update-banned", "POST", "json", { "word" : word, "op" : "$pull" });
+		mainFunctions().ajax("/update-banned", "POST", "json", { "word" : word, "op" : "$pull" });
 	});
 	// banned ip deletion
 	panels.chatOpt.find("#item-options .option-box[data-section='Banned IP Addresses']").on("click", ".close", function() {
 		var addr = $(this).parent().data("addr");
-		functions.ajax("/update-ips", "POST", "json", { "ip" : addr, "op" : "$pull" });
+		mainFunctions().ajax("/update-ips", "POST", "json", { "ip" : addr, "op" : "$pull" });
 	});
 	// rooms panel
 	panels.rooms.find("#item-list").on("click", ".item .name", function() {
@@ -62,9 +84,9 @@ var getData = function (data) {
 		panels.rooms.find("#item-options").find(".title").text("Edit Room: " + thisRoomname);
 
 		panels.rooms.find("#item-options").find("input[name='roomname']").val(thisRoomname);
-		
+
 		panels.rooms.find("#item-options").find("select").find("option[data-ind='" + (mods) + "']").attr("selected", true);
-		
+
 		panels.rooms.find("#item-options").find("input[name='topic']").val(topic);
 
 		panels.rooms.find("#item-options").find("input[type='checkbox']").attr("checked", false);
@@ -80,17 +102,17 @@ var getData = function (data) {
 		panels.rooms.find("#item-options").find(".title").text("Add Room");
 
 		panels.rooms.find("#item-options").find("input[name='roomname']").val("");
-		
+
 		panels.rooms.find("#item-options").find("select").find("option[data-ind='2']").attr("selected", true);
-		
+
 		panels.rooms.find("#item-options").find("input[name='topic']").val("");
-		
+
 		panels.rooms.find("#item-options").find("input[type='checkbox']").attr("checked", false);
 
 		panels.rooms.find("#item-options").find(".hide").addClass("hidden-force");
 	});
 	// users panel
-	panels.users.find("#item-list .item").on("click", ".name", function() {
+	panels.users.find("#item-list").on("click", ".item .name", function() {
 		// variables
 		var thisFirstName = $(this).attr("data-first-name");
 			thisLastName = $(this).attr("data-last-name");
@@ -119,7 +141,7 @@ var getData = function (data) {
 	$(document).on("submit", ".add-window", function(e) {
 		var formData = $(this).serializeArray();
 
-		var dataObj = functions.parseForm(formData);
+		var dataObj = mainFunctions().parseForm(formData);
 		dataObj.adminLevel = myLevel;
 
 		if(dataObj.newusername) {
@@ -129,13 +151,13 @@ var getData = function (data) {
 			dataObj.originalName = thisRoomname || dataObj.roomname;
 		}
 		console.log(e)
-		var action = functions.parseAction(e);
+		var action = mainFunctions().parseAction(e);
 
 		if(dataObj.ban) {
 			if(dataObj.ban === "DEL") {
 				confirm2("Are you sure you want to delete " + thisUsername + "? This operation cannot be reversed", function(res) {
 					if(res.action === "true") {
-						functions.ajax(action, "POST", "json", dataObj);
+						mainFunctions().ajax(action, "POST", "json", dataObj);
 					} else {
 						alert2("Operation cancelled");
 					}
@@ -150,13 +172,13 @@ var getData = function (data) {
 									prompt2("Please provide a reason for this IP ban.", "The activty from this connection exhibited an inordinate degree of offenses.", function(res) {
 										if(res.action === "true") {
 											dataObj.reasonIp = res.response;
-											functions.ajax(action, "POST", "json", dataObj);
+											mainFunctions().ajax(action, "POST", "json", dataObj);
 										} else {
 											alert2("Operation cancelled");
 										}
 									});
 								} else {
-									functions.ajax(action, "POST", "json", dataObj);
+									mainFunctions().ajax(action, "POST", "json", dataObj);
 								}
 							} else {
 								alert2("Operation cancelled");
@@ -173,13 +195,13 @@ var getData = function (data) {
 				conf = res.action;
 				console.log(conf)
 				if(res.action === "true") {
-					functions.ajax(action, "POST", "json", dataObj);
+					mainFunctions().ajax(action, "POST", "json", dataObj);
 				} else {
 					alert2("Operation cancelled");
 				}
 			});
 		} else {
-			functions.ajax(action, "POST", "json", dataObj);
+			mainFunctions().ajax(action, "POST", "json", dataObj);
 		}
 
 		// don't send the form so the page doesn't reload
@@ -189,186 +211,257 @@ var getData = function (data) {
 	//////////////////////////////////////////////
 	// an object of functions to use externally //
 	//////////////////////////////////////////////
-	var functions = {
-		parseForm: function(data) {
-			var obj = {};
-			for(var i = 0; i < data.length; i++) {
-				obj[data[i].name] = data[i].value;
-			}
+	var mainFunctions = function(functionsCallback) {
+    return {
+  		parseForm: function(data) {
+  			var obj = {};
+  			for(var i = 0; i < data.length; i++) {
+  				obj[data[i].name] = data[i].value;
+  			}
 
-			return obj;
-		},
-		parseAction: function(e) {
-			return e.currentTarget.action.split(/(http(s)?[:\/\/][a-z]*[.:][a-z0-9]*)/i).pop();
-		},
-		ajax: function(url, method, dType, dataObj) {
-			dataObj._csrf = csrfToken;
-			console.log(method)
-			$.ajax({
-				url: url,
-				type: method,
-				dataType: dType,
-				data: dataObj,
-				success: function(data) {
-					console.log(data);
-					alert2(data.msg);
+  			return obj;
+  		},
+  		parseAction: function(e) {
+  			return e.currentTarget.action.split(/(http(s)?[:\/\/][a-z]*[.:][a-z0-9]*)/i).pop();
+  		},
+  		ajax: function(url, method, dType, dataObj) {
+  			dataObj._csrf = csrfToken;
+  			console.log(method)
+  			$.ajax({
+  				url: url,
+  				type: method,
+  				dataType: dType,
+  				data: dataObj,
+  				success: function(data) {
+  					// console.log(data);
+  					if(!data.quiet) alert2(data.msg);
 
-					if(data.action === "callback") {
-						if(typeof data.callback === "object") {
-							for(var i = 0; i < data.callback.length; i++) {
-								functions[data.callback[i]](data.data[i], data.op[i]);
-							}
-						} else {
-							functions[data.callback](data.data, data.op)
-						}
-					}
-				},
-				error: function(error1, error2, error3) {
-					console.log(error1.status);
-					console.log(error2);
-					console.log(error3);
-					console.log(error1.responseText);
-					alert2(error1.responseText);
-				}
-			});
-		},
-		updateBannedEmotes: function(data, operation) {
-			console.log(data, operation);
-			if(operation === "$pull") {
-				console.log("removing");
+  					if(data.action === "callback") {
+  						if(typeof data.callback === "object") {
+  							for(var i = 0; i < data.callback.length; i++) {
+  								mainFunctions()[data.callback[i]](data.data[i], data.op[i]);
+  							}
+  						} else {
+  							mainFunctions()[data.callback](data.data, data.op)
+  						}
+  					} else {
+              if(typeof functionsCallback === "function") {
+                functionsCallback(data);
+              }
+            }
+  				},
+  				error: function(error1, error2, error3) {
+  					console.log(error1.status);
+  					console.log(error2);
+  					console.log(error3);
+  					console.log(error1.responseText);
+  					alert2(error1.responseText);
+  				}
+  			});
+  		},
+  		updateBannedEmotes: function(data, operation) {
+  			console.log(data, operation);
+  			if(operation === "$pull") {
+  				console.log("removing");
 
-				panels.chatOpt.find("#item-options .option-box[data-section='Banned Emotes'] #banned-list").find(".emote[data-emote='" + data + "']").remove();
-				
-			}
-			if(operation === "$push") {
-				console.log("adding");
-				console.log(data);
+  				panels.chatOpt.find("#item-options .option-box[data-section='Banned Emotes'] #banned-list").find(".emote[data-emote='" + data + "']").remove();
 
-				panels.chatOpt.find("#item-options .option-box[data-section='Banned Emotes'] #banned-list").append("<li class='emote' data-emote='" + data + "'>" + data + "<div class='close'>x</div></li>");
-			}
-			socket.emit("live update", { "callback" : "updateBannedEmotes", "op" : operation, "emote" : data });
-		},
-		updateRecommendedEmotes: function(data, operation) {
-			console.log(data, operation);
-			if(operation === "$pull") {
-				console.log("removing");
+  			}
+  			if(operation === "$push") {
+  				console.log("adding");
+  				console.log(data);
 
-				panels.chatOpt.find("#item-options .option-box[data-section='Recommended Emotes'] #recommended-list").find(".emote[data-emote='" + data + "']").remove();
-				
-			}
-			if(operation === "$push") {
-				console.log("adding");
-				console.log(data);
+  				panels.chatOpt.find("#item-options .option-box[data-section='Banned Emotes'] #banned-list").append("<li class='emote' data-emote='" + data + "'>" + data + "<div class='close'>x</div></li>");
+  			}
+  			socket.emit("live update", { "callback" : "updateBannedEmotes", "op" : operation, "emote" : data });
+  		},
+  		updateRecommendedEmotes: function(data, operation) {
+  			console.log(data, operation);
+  			if(operation === "$pull") {
+  				console.log("removing");
 
-				panels.chatOpt.find("#item-options .option-box[data-section='Recommended Emotes'] #recommended-list").append("<li class='emote' data-emote='" + data + "'>" + data + "<div class='close'>x</div></li>");
-			}
-			socket.emit("live update", { "callback" : "updateRecommendedEmotes", "op" : operation, "emote" : data });
-		},
-		updateBannedWords: function(data, operation) {
-			console.log(data, operation);
-			if(operation === "$pull") {
-				console.log("removing");
+  				panels.chatOpt.find("#item-options .option-box[data-section='Recommended Emotes'] #recommended-list").find(".emote[data-emote='" + data + "']").remove();
 
-				panels.chatOpt.find("#item-options .option-box[data-section='Banned Words'] #banned-list").find(".word[data-word='" + data + "']").remove();
-				
-			}
-			if(operation === "$push") {
-				console.log("adding");
-				console.log(data);
+  			}
+  			if(operation === "$push") {
+  				console.log("adding");
+  				console.log(data);
 
-				panels.chatOpt.find("#item-options .option-box[data-section='Banned Words'] #banned-list").append("<li class='word' data-word='" + data + "'>" + data + "<div class='close'>x</div></li>");
-			}
-			socket.emit("live update", { "callback" : "updateBannedWords", "op" : operation, "word" : data });
-		},
-		updateBannedAddrs: function(data, operation) {
-			console.log(data, operation);
-			if(operation === "$pull") {
-				console.log("removing");
+  				panels.chatOpt.find("#item-options .option-box[data-section='Recommended Emotes'] #recommended-list").append("<li class='emote' data-emote='" + data + "'>" + data + "<div class='close'>x</div></li>");
+  			}
+  			socket.emit("live update", { "callback" : "updateRecommendedEmotes", "op" : operation, "emote" : data });
+  		},
+  		updateBannedWords: function(data, operation) {
+  			console.log(data, operation);
+  			if(operation === "$pull") {
+  				console.log("removing");
 
-				panels.chatOpt.find("#item-options .option-box[data-section='Banned IP Addresses'] #banned-list").find(".addr[data-addr='" + data + "']").remove();
-				
-			}
-			if(operation === "$push") {
-				console.log("adding");
-				console.log(data);
+  				panels.chatOpt.find("#item-options .option-box[data-section='Banned Words'] #banned-list").find(".word[data-word='" + data + "']").remove();
 
-				panels.chatOpt.find("#item-options .option-box[data-section='Banned IP Addresses'] #banned-list").append("<li class='addr' data-addr='" + data + "'>" + data + "<div class='close'>x</div></li>");
-			}
-		},
-		updateRooms: function(data, operation) {
-			console.log(data, operation);
-			if(operation) {
-				console.log("removing");
+  			}
+  			if(operation === "$push") {
+  				console.log("adding");
+  				console.log(data);
 
-				panels.rooms.find("#item-list").find(".item .name[data-roomname='" + data.originalName + "']").parent().remove();
-				
-				socket.emit("live update", { "callback" : "updateRooms", "op" : "remove", "roomname" : data.roomname, "originalName" : data.originalName, "topic" : data.topic });
-			} else {
-				console.log("updating");
-				
-				var tag = panels.rooms.find("#item-list").find(".item .name[data-roomname='" + data.originalName + "']") || "";
+  				panels.chatOpt.find("#item-options .option-box[data-section='Banned Words'] #banned-list").append("<li class='word' data-word='" + data + "'>" + data + "<div class='close'>x</div></li>");
+  			}
+  			socket.emit("live update", { "callback" : "updateBannedWords", "op" : operation, "word" : data });
+  		},
+  		updateBannedAddrs: function(data, operation) {
+  			console.log(data, operation);
+  			if(operation === "$pull") {
+  				console.log("removing");
 
-				if(tag.length > 0) {
-					console.log("updating");
+  				panels.chatOpt.find("#item-options .option-box[data-section='Banned IP Addresses'] #banned-list").find(".addr[data-addr='" + data + "']").remove();
 
-					tag.attr({
-						"data-roomname": data.roomname,
-						"data-topic": data.topic,
-						"data-mods": data.minMods
-					})
-					.html(data.roomname);
+  			}
+  			if(operation === "$push") {
+  				console.log("adding");
+  				console.log(data);
 
-					socket.emit("live update", { "callback" : "updateRooms", "op" : "update", "roomname" : data.roomname, "originalName" : data.originalName, "topic" : data.topic });
-				} else {
-					console.log("adding");
+  				panels.chatOpt.find("#item-options .option-box[data-section='Banned IP Addresses'] #banned-list").append("<li class='addr' data-addr='" + data + "'>" + data + "<div class='close'>x</div></li>");
+  			}
+  		},
+  		updateRooms: function(data, operation) {
+  			console.log(data, operation);
+  			if(operation) {
+  				console.log("removing");
 
-					panels.rooms.find("#item-list").prepend("<li class='item parent'><span class='name' data-roomname='" + data.roomname + "' data-topic='" + data.topic + "' data-mods='" + data.minMods + "'>" + data.roomname + "</span><span class='number'>0</span></li>");
+  				panels.rooms.find("#item-list").find(".item .name[data-roomname='" + data.originalName + "']").parent().remove();
 
-					socket.emit("live update", { "callback" : "updateRooms", "op" : "add", "roomname" : data.roomname, "originalName" : data.originalName, "topic" : data.topic });
-				}
-				thisRoomname = data.roomname;
-			}
-		},
-		updateUsers: function(data, operation) {
-			console.log(data, operation);
-			if(operation) {
-				if(operation === "DEL") {
-					var tag = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + data.usernameFull + "']").parent();
+  				socket.emit("live update", { "callback" : "updateRooms", "op" : "remove", "roomname" : data.roomname, "originalName" : data.originalName, "topic" : data.topic });
+  			} else {
+  				console.log("updating");
 
-					tag.find(".name").attr("data-usernamefull", data.newName).remove();
-					thisUsername = null;
+  				var tag = panels.rooms.find("#item-list").find(".item .name[data-roomname='" + data.originalName + "']") || "";
 
-					socket.emit("live update", { "callback" : "updateUsers", "op" : "remove", "usernameFull" : data.usernameFull, "newName" : data.newName });
-				} else {
-					console.log("banning");
+  				if(tag.length > 0) {
+  					console.log("updating");
 
-					var tag = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + data.usernameFull + "']").parent();
+  					tag.attr({
+  						"data-roomname": data.roomname,
+  						"data-topic": data.topic,
+  						"data-mods": data.minMods
+  					})
+  					.html(data.roomname);
 
-					tag.find(".number").addClass("banned-true");
-					tag.find(".name").attr("data-usernamefull", data.newName).html(data.newName);
-					thisUsername = data.newName;
+  					socket.emit("live update", { "callback" : "updateRooms", "op" : "update", "roomname" : data.roomname, "originalName" : data.originalName, "topic" : data.topic });
+  				} else {
+  					console.log("adding");
 
-					socket.emit("live update", { "callback" : "updateUsers", "op" : "remove", "usernameFull" : data.usernameFull, "newName" : data.newName });
-				}
-				
-			} else {
-				console.log("updating");
+  					panels.rooms.find("#item-list").prepend("<li class='item parent'><span class='name' data-roomname='" + data.roomname + "' data-topic='" + data.topic + "' data-mods='" + data.minMods + "'>" + data.roomname + "</span></li>");
 
-				var tag = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + data.usernameFull + "']").parent()
-				
-				tag.find(".number").removeClass("banned-, banned-true");
-				tag.find(".name").attr("data-usernamefull", data.newName).html(data.newName);
-				thisUsername = data.newName;
+  					socket.emit("live update", { "callback" : "updateRooms", "op" : "add", "roomname" : data.roomname, "originalName" : data.originalName, "topic" : data.topic });
+  				}
+  				thisRoomname = data.roomname;
+  			}
+  		},
+  		updateUsers: function(data, operation) {
+  			console.log(data, operation);
+  			if(operation) {
+  				if(operation === "DEL") {
+  					var tag = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + data.usernameFull + "']").parent();
 
-				socket.emit("live update", { "callback" : "updateUsers", "op" : "update", "usernameFull" : data.usernameFull, "newName" : data.newName, "accessLevel" : data.accessLevel });
-			}
-		},
-		updateColors: function(data, operation) {
-			console.log(data, operation);
-			socket.emit("live update", { "callback" : "updateColors", "colorData" : data });
-		},
-		kickRegs: function() {
-			socket.emit("live update", { "callback" : "kickRegs" });
-		}
-	}
+  					tag.find(".name").attr("data-usernamefull", data.newName).remove();
+  					thisUsername = null;
+
+  					socket.emit("live update", { "callback" : "updateUsers", "op" : "remove", "usernameFull" : data.usernameFull, "newName" : data.newName });
+  				} else {
+  					console.log("banning");
+
+  					var tag = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + data.usernameFull + "']").parent();
+
+  					tag.find(".number").addClass("banned-true");
+  					tag.find(".name").attr("data-usernamefull", data.newName).html(data.newName);
+  					thisUsername = data.newName;
+
+  					socket.emit("live update", { "callback" : "updateUsers", "op" : "remove", "usernameFull" : data.usernameFull, "newName" : data.newName });
+  				}
+
+  			} else {
+  				console.log("updating");
+
+  				var tag = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + data.usernameFull + "']").parent()
+
+  				tag.find(".number").removeClass("banned-, banned-true");
+  				tag.find(".name").attr("data-usernamefull", data.newName).html(data.newName);
+  				thisUsername = data.newName;
+
+  				socket.emit("live update", { "callback" : "updateUsers", "op" : "update", "usernameFull" : data.usernameFull, "newName" : data.newName, "accessLevel" : data.accessLevel });
+  			}
+  		},
+  		updateColors: function(data, operation) {
+  			console.log(data, operation);
+  			socket.emit("live update", { "callback" : "updateColors", "colorData" : data });
+  		},
+  		kickRegs: function() {
+  			socket.emit("live update", { "callback" : "kickRegs" });
+  		}
+  	}
+  };
+  // live update
+  var updateInterval = 5; // seconds
+  function updateAdminPanel(data) {
+    var collectionActions = {
+      users: function() {
+        console.log(data)
+        data.data.map(function(elem) {
+          var element = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + elem.usernameFull + "']").parent();
+          if(element.length > 0) {
+            console.log( $(element).find(".name") );
+            $(element).find(".name")
+            .attr({
+              "data-username": elem.username,
+              "data-usernamefull": elem.usernameFull,
+              "data-first-name": elem.firstName,
+              "data-last-name": elem.lastName,
+              "data-email": elem.email,
+              "data-accesslevel": elem.accessLevel
+            })
+            .text(elem.usernameFull)
+            .parent().find(".number")
+            .attr("class", "number" + (elem.banned ? " banned-true" : "") );
+          } else {
+            if(elem.username !== myUsername) {
+              panels.users.find("#item-list")
+              .append(
+                $("<li>")
+                .addClass("item parent")
+                .append(
+                  $("<span>")
+                  .addClass("name")
+                  .attr({
+                    "data-username": elem.username,
+                    "data-usernamefull": elem.usernameFull,
+                    "data-first-name": elem.firstName,
+                    "data-last-name": elem.lastName,
+                    "data-email": elem.email,
+                    "data-accesslevel": elem.accessLevel
+                  })
+                  .text(elem.usernameFull),
+                  $("<span>")
+                  .attr("className", "number")
+                )
+              )
+            };
+          };
+        });
+      },
+      rooms: function() {
+        // var element = panels.rooms.find("#item-list").find(".item .name[data-roomname='" + data.originalName + "']").parent()
+      },
+      chatOptions: function() {
+      }
+    };
+    collectionActions[data.collection]();
+  };
+  var queryForData = function() {
+    var collections = [{ name : "users", use : true }, { name : "rooms", use : false }, { name : "chatOptions", use : false }];
+    collections.map(function(coll) {
+      if(coll.use) {
+        mainFunctions(updateAdminPanel).ajax("/get-db-data", "POST", "json", { "collection" : coll.name });
+      }
+    });
+  };
+  var dataQuery = setInterval(queryForData, updateInterval * 1000);
 }());

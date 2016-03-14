@@ -170,7 +170,6 @@ var notifyMe = function(person, text) {
 					return true;
 				}
 			}
-			return false;
 		}
 
 		function getCaretPos(input) {
@@ -242,6 +241,9 @@ var notifyMe = function(person, text) {
 
 		var isAdmin = function(level) {
 			return level === "master" || level === "admin" || level === "moderator";
+		};
+		Array.prototype.includes = function(strMatch) {
+			return this.indexOf(strMatch) >= 0;
 		};
 
 		$(document).on("touchstart mousedown", ".pm-tools .pm-min", function(e) {
@@ -326,13 +328,7 @@ var notifyMe = function(person, text) {
 							.text( logDate() ),
 						$("<span>")
 							.addClass("user " + data.level)
-							.text( data.displayName ),
-						$("<span>")
-							.css({
-								"display": "inline-block",
-								"padding": "5px"
-							})
-							.text( " : " ),
+							.text( data.displayName + ": " ),
 						$("<p>")
 							.addClass("chat-text")
 							.css("color", data.color)
@@ -551,7 +547,7 @@ var notifyMe = function(person, text) {
 					};
 				},
 				kickRegs: function() {
-					console.log(isAdmin(myLevel))
+					// console.log(isAdmin(myLevel))
 					if(!isAdmin(myLevel)) {
 						socket.emit("leave", { "room" : room, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
 						$("#messages").append($("<li class='plain'>").html("The chat has been shutdown. You have been removed from the room. Thanks for participating in today's chat session!") );
@@ -762,41 +758,24 @@ var notifyMe = function(person, text) {
 		var roomOpts = ["Join", "Leave"];
 		var userOpts = ["Mention", "Message", "Mute", "Unmute", "Kick"];
 
-		var click = "", currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
-
 		function populateContext(arr) {
 			if(arr) {
 				$("#new-context-menu").html("");
+				var print, userToMatch = contextUsername.toLowerCase();
 				for(var i = 0; i < arr.length; i++) {
-					var print = true;
-					console.log(arr[i].match("Kick"));
-					if( (myMutes.indexOf(contextUsername.toLowerCase()) >= 0) ) {
-						if( arr[i].match("Mute") ) {
-							print = false
-						}
-					} else
-					if( !(myMutes.indexOf(contextUsername.toLowerCase()) >= 0) ) {
-						if( arr[i].match("Unmute") ) {
-							print = false;
-						}
-					};
-					if(arr[i].match("Kick")) {
-						console.log(myLevel)
-						switch (myLevel) {
-							case "master":
-							case "admin":
-							case "moderator":
-								print = true;
-								break;
-							default:
-								print = false;
-						}
+					print = true;
+					if( arr[i].match("Mute") && myMutes.includes(userToMatch) ) { print = false; };
+					if( arr[i].match("Unmute") && !myMutes.includes(userToMatch) ) { print = false; };
+					if( arr[i].match("Kick") && !isAdmin(myLevel) ) { print = false; };
+					console.log(arr[i], print);
+					if(print) {
+						$("#new-context-menu").append("<li data-option='" + arr[i].toLowerCase() + "'>" + arr[i] + "</li>");
 					}
-					if(print) $("#new-context-menu").append("<li data-option='" + arr[i].toLowerCase() + "'>" + arr[i] + "</li>");
 				};
 			}
 		};
 
+		var click = "", currentRoom, contextRoomname, contextUsername, contextUserdisp, fingerPos={};
 		var options = {
 			join: function() {
 				socket.emit("join", { "room" : contextRoomname, "usernameFull" : usernameFull, "displayName" : displayName, "accessLevel" : myLevel });
@@ -814,8 +793,8 @@ var notifyMe = function(person, text) {
 					socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
 					generatePM(usernameFull, contextUsername);
 				} else {
-					var acc = $("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon");
-					if($(acc).hasClass("moderator") || $(acc).hasClass("admin") || $(acc).hasClass("master")) {
+					var $acc = $("#room-list .room ul").find(".user[data-username='" + (contextUsername.toLowerCase()) + "']").find(".icon");
+					if($acc.hasClass("moderator") || $acc.hasClass("admin") || $acc.hasClass("master")) {
 						socket.emit("private message", { "to" : contextUsername, "from" : usernameFull });
 						generatePM(usernameFull, contextUsername);
 					} else {
@@ -841,7 +820,7 @@ var notifyMe = function(person, text) {
 				contextUsername = null;
 			},
 			kick: function() {
-				console.log("kick method. need context")
+				console.log("kick called");
 			}
 		};
 

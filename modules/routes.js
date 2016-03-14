@@ -1012,6 +1012,25 @@ sass.render({
 					});
 				}
 			})
+			.post("/get-db-data", csrfProtection, function(req, res, next) {
+				var collection = req.body.collection;
+
+				db.collection(collection).find({}, {_id: 0, usernameFull: 1, username: 1, firstName: 1, lastName: 1, email: 1, accessLevel: 1, banned: 1}).toArray( function(dbQErr, dbQData) {
+					if(dbQErr) throw dbQErr;
+
+					if(dbQData) {
+						console.log(dbQData)
+						res.status(200).send({
+							"msg": "success",
+							"data": dbQData,
+							"collection": collection,
+							"quiet": true
+						});
+					} else {
+						res.status(404).send("Collection could not be located");
+					}
+				});
+			})
 			.post("/report-violation", csrfProtection, function(req, res) {
 				console.log("report URI", req.body["csp-report"]);
 			})
