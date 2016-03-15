@@ -404,11 +404,10 @@ var getData = function (data) {
   function updateAdminPanel(data) {
     var collectionActions = {
       users: function() {
-        console.log(data)
+        // console.log(data)
         data.data.map(function(elem) {
           var element = panels.users.find("#item-list").find(".item .name[data-usernamefull='" + elem.usernameFull + "']").parent();
           if(element.length > 0) {
-            console.log( $(element).find(".name") );
             $(element).find(".name")
             .attr({
               "data-username": elem.username,
@@ -448,7 +447,56 @@ var getData = function (data) {
         });
       },
       rooms: function() {
-        // var element = panels.rooms.find("#item-list").find(".item .name[data-roomname='" + data.originalName + "']").parent()
+        // console.log(data)
+        var currentRooms = [];
+        panels.rooms.find("#item-list").find(".item.parent").map(function(ind, elem) {
+          currentRooms.push($(elem).find(".name")[0].attributes["data-roomname"].value);
+        });
+        console.log(currentRooms)
+        data.data.map(function(elem) {
+          var parent = panels.rooms.find("#item-list"),
+              element = parent.find(".item .name[data-roomname='" + elem.roomname + "']").parent();
+
+          if(element.length > 0) {
+            // removeu room from list of current rooms
+            var currRoomIndex = currentRooms.indexOf(elem.roomname);
+            if(currRoomIndex >= 0) {
+              currentRooms.splice( currRoomIndex, 1 );
+            };
+
+            // update an existing room
+            $(element).find(".name")
+            .attr({
+              "data-roomname": elem.username,
+              "data-topic": elem.usernameFull,
+              "data-mods": elem.firstName
+            })
+            .text(elem.roomname)
+          } else {
+            // add a non-existant room
+            panels.rooms.find("#item-list")
+            .prepend(
+              $("<li>")
+              .addClass("item parent")
+              .html(
+                $("<span>")
+                .attr({
+                  "class": "name",
+                  "data-roomname": elem.roomname,
+                  "data-roomnameHyph": elem.roomnameHyph,
+                  "data-topic": elem.topic,
+                  "data-mods": elem.minMods
+                })
+                .text(elem.roomname)
+              )
+            )
+          };
+        });
+        console.log(currentRooms)
+        // remove remaining rooms as they no longer exist
+        currentRooms.map(function(elem) {
+          panels.rooms.find("#item-list").find(".item .name[data-roomname='" + elem + "']").parent().remove();
+        });
       },
       chatOptions: function() {
       }
@@ -456,10 +504,10 @@ var getData = function (data) {
     collectionActions[data.collection]();
   };
   var queryForData = function() {
-    var collections = [{ name : "users", use : true }, { name : "rooms", use : false }, { name : "chatOptions", use : false }];
+    var collections = [{ name : "users", use : true }, { name : "rooms", use : true }, { name : "chatOptions", use : false }];
     collections.map(function(coll) {
       if(coll.use) {
-        mainFunctions(updateAdminPanel).ajax("/get-db-data", "POST", "json", { "collection" : coll.name });
+        mainFunctions(updateAdminPanel).ajax("/get-db-data/" + coll.name, "POST", "json", { "collection" : coll.name });
       }
     });
   };

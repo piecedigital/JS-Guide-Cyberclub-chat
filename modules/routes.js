@@ -1012,10 +1012,26 @@ sass.render({
 					});
 				}
 			})
-			.post("/get-db-data", csrfProtection, function(req, res, next) {
-				var collection = req.body.collection;
+			.post("/get-db-data/:collection", csrfProtection, function(req, res, next) {
+				var collection = req.params.collection;
 
-				db.collection(collection).find({}, {_id: 0, usernameFull: 1, username: 1, firstName: 1, lastName: 1, email: 1, accessLevel: 1, banned: 1}).toArray( function(dbQErr, dbQData) {
+				var queryParams = {
+					users: {
+						_id: 0,
+						usernameFull: 1,
+						username: 1,
+						firstName: 1,
+						lastName: 1,
+						email: 1,
+						accessLevel: 1,
+						banned: 1
+					},
+					rooms: {
+						_id: 0
+					}
+				};
+
+				db.collection(collection).find({}, queryParams[collection]).toArray( function(dbQErr, dbQData) {
 					if(dbQErr) throw dbQErr;
 
 					if(dbQData) {
