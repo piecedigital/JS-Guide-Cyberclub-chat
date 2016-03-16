@@ -499,12 +499,87 @@ var getData = function (data) {
         });
       },
       chatOptions: function() {
+        console.log(data);
+        var sections = {
+
+          levelColors: {
+            name: "Access Level Colors",
+            type: null
+          },
+          bannedWords: {
+            name: "Banned Words",
+            adjective: "word",
+            type: "list"
+          },
+          bannedEmotes: {
+            name: "Banned Emotes",
+            adjective: "emote",
+            type: "list"
+          },
+          recommendedEmotes: {
+            name: "Recommended Emotes",
+            adjective: "emote",
+            type: "list"
+          }
+        };
+
+        data.data.map(function(elem) {
+          var optionSection = panels.chatOpt.find("#item-options"),
+          currentSection = sections[elem.optionName].name,
+          adjective = sections[elem.optionName].adjective;
+
+          if(sections[elem.optionName].type === "list") {
+            var list = optionSection.find("[data-section='"+currentSection+"']").find("#banned-list");
+            if(list.length === 0) {
+              list = optionSection.find("[data-section='"+currentSection+"']").find("#recommended-list");
+            };
+            // console.log(list)
+
+            var currentItems = [];
+            $(list).find("li").map(function(ind, elem2) {
+              currentItems.push($(elem2)[0].attributes["data-"+adjective].value);
+            });
+            if(list.length > 0) {
+              elem.list.map(function(listItem) {
+                var existingItem = $(list).find("li[data-"+adjective+"='"+listItem+"']");
+
+                if(existingItem.length === 0) {
+                  var existanceIndex = currentItems.indexOf(listItem);
+                  if(existanceIndex >= 0) {
+                    currentItems.splice(existanceIndex, 1);
+                  };
+
+                  $(list).append(
+                    $("<li>")
+                    .attr({
+                      class: adjective,
+                      "data-word": listItem,
+                      "data-emote": listItem
+                    })
+                    .text(listItem)
+                    .append(
+                      $("<div>")
+                      .addClass("close")
+                      .text("X")
+                    )
+                  );
+                }
+              });
+            }
+          } else {
+            var colorList = optionSection.find("[data-section='"+currentSection+"']");
+            var itemsKeys = Object.keys(elem.list);
+            itemsKey.map(function(key) {
+              $(colorList).find("input").map(function(ind, elem));
+            });
+          }
+        });
       }
     };
     collectionActions[data.collection]();
   };
   var queryForData = function() {
-    var collections = [{ name : "users", use : true }, { name : "rooms", use : true }, { name : "chatOptions", use : false }];
+    var collections = [{ name : "users", use : true }, { name : "rooms", use : true }, { name : "chatOptions", use : true }];
     collections.map(function(coll) {
       if(coll.use) {
         mainFunctions(updateAdminPanel).ajax("/get-db-data/" + coll.name, "POST", "json", { "collection" : coll.name });

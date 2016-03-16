@@ -1028,6 +1028,9 @@ sass.render({
 					},
 					rooms: {
 						_id: 0
+					},
+					chatOptions: {
+						_id: 0
 					}
 				};
 
