@@ -388,6 +388,12 @@ var notifyMe = function(person, text) {
 				scrollToBottom();
 			}
 		});
+		socket.on("kick user", function(data) {
+			if(data.username === username) {
+				alert("You have been removed from the chatroom due the following reason: " + data.msg);
+				window.location.href = "http://" + window.location.host + "/logout";
+			};
+		});
 		socket.on("new entry", function(data){
 			$("#room-list .room ul").find(".user[data-username='" + (data.usernameFull.toLowerCase()) + "']").remove();
 			if(data.accessLevel === "master" || data.accessLevel === "admin" || data.accessLevel === "moderator") {
@@ -820,7 +826,22 @@ var notifyMe = function(person, text) {
 				contextUsername = null;
 			},
 			kick: function() {
-				console.log("kick called");
+				confirm2("Are you sure you want to kick " + contextUsername + "?", function(res) {
+					if(res.action === "true") {
+						prompt2("Please provide a reason for this account ban.", "Your behavior did not align with the rules of the chat room.", function(res) {
+							if(res.action === "true") {
+								socket.emit("kick user", { username : contextUsername.toLowerCase(), msg : res.response });
+								contextUsername = null;
+							} else {
+								alert2("Operation cancelled");
+								contextUsername = null;
+							}
+						});
+					} else {
+						alert2("Operation cancelled");
+						contextUsername = null;
+					}
+				});
 			}
 		};
 

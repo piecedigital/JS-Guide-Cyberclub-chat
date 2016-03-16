@@ -50,7 +50,7 @@ module.exports = function(db, admin) {
 
         if(pendQDoc) {
           //console.log("duplicate id: " + key);
-          tries++; 
+          tries++;
           makeKey("re");
         } else {
           return cb(key);
@@ -134,7 +134,9 @@ module.exports = function(db, admin) {
                         "usernameFull": usernameFull,
                         "password": hash,
                         "created": new Date().getTime(),
-                        "accessLevel": "regular"
+                        "accessLevel": "regular",
+                        "banned": "",
+                        "kickTimes": 0
                       };
                       var msgToUser = "Your account has been created. You may now login";
 
@@ -259,7 +261,7 @@ module.exports = function(db, admin) {
                     //console.log("password matches");
                     Sess.insert({ "user" : username.toLowerCase(), "creationTime" : new Date().getTime() }, function(sessQErr, sessQDoc) {
                       if(sessQErr) throw sessQErr;
-                      
+
                       //sets the coookie sessId
                       if(sessQDoc) {
                         var newSession = sessQDoc.ops[0]._id;
@@ -369,7 +371,7 @@ module.exports = function(db, admin) {
         } else {
           //console.log("session id present, proceed with session confirmation");
           res.render("add-names", { "page" : "", "title" : "Add first and last name", "msg" : "Please fill out the form", csrfToken : req.csrfToken() });
-          
+
         }
       } else {
         //console.log("username and password not present");
@@ -431,7 +433,7 @@ module.exports = function(db, admin) {
               User.update({ "usernameFull" : usernameFull }, { "$set" : { "banned" : reason } }, function(userQErr2, userQDoc2) {
                 if(userQErr2) throw userQErr2;
 
-                if(userQDoc2 && userQDoc2.result.ok) { 
+                if(userQDoc2 && userQDoc2.result.ok) {
                   res.status(200).send({
                     "msg": "success",
                     "action": "callback",
@@ -556,7 +558,7 @@ module.exports = function(db, admin) {
                 res.render("signupin", { "title" : "Sign Up/Login", "msg" : "There was a problem creating your account", "sign-checked" : "", "log-checked" : "checked", csrfToken : req.csrfToken() });
                 console.log("key was not created");
               }
-            }); 
+            });
           } else {
             res.render("request-pass", { "title" : "Request password change", "msg" : "Email does not match an account on our records.", csrfToken : req.csrfToken() });
           }
@@ -611,9 +613,9 @@ module.exports = function(db, admin) {
     },
     queryUser: function(req, res, next) {
       // console.log(req.body, req.headers)
-      
+
       var session = req.cookies["sessId"] || "";
-        
+
       if(session) {
         Sess.findOne({  "_id" : new ObjectId(session) }, function(sessQErr, sessQDoc) {
           if(sessQErr) throw sessQErr;

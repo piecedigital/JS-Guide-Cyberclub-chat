@@ -85,10 +85,10 @@ module.exports = function(io, db) {
 
 								Room.update({}, { "$pull" : { "users" : { "username" : obj.usernameFull.toLowerCase() } } }, { "multi" : true }, function(roomQErr, roomQDoc) {
 									if(roomQErr) throw roomQErr;
-									
+
 									Room.update({ "roomname" : obj.room }, { "$push" : { "users" : userObj } }, { "multi" : true });
 								});
-								
+
 								io.to(socket.id).emit("enter room", {
 									"msg": "Joined " + obj.room,
 									"room": obj.room
@@ -246,7 +246,7 @@ module.exports = function(io, db) {
 			.on("live update", function(obj) {
 				//console.log("'live update' socket function");
 				//console.log(obj);
-				
+
 				var callbacks = {
 					updateBannedWords: function() {
 						if(obj.op === "$push") {
@@ -290,14 +290,17 @@ module.exports = function(io, db) {
 						});
 					}
 				};
-				
+
 				callbacks[obj.callback] ? callbacks[obj.callback]() : io.emit("real time update", obj);
 			})
 			.on("private message", function(obj) {
 				io.emit("generate pm", obj)
 			})
-			.on("console.log", function() {
-				console.log(JSON.stringify(arguments));
+			.on("kick user", function(obj) {
+				io.emit("kick user", obj);
+				User.update({ username : obj.username }, { $inc : { kickTimes : 1 } }, function(userQErr, userQDoc) {
+					if(userQErr) throw userQErr;
+				});
 			})
 			.on("example", function(obj) {
 				//console.log("'' socket function");
