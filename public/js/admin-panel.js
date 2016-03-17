@@ -150,7 +150,6 @@ var getData = function (data) {
 		if(dataObj.roomname) {
 			dataObj.originalName = thisRoomname || dataObj.roomname;
 		}
-		console.log(e)
 		var action = mainFunctions().parseAction(e);
 
 		if(dataObj.ban) {
@@ -224,9 +223,21 @@ var getData = function (data) {
   		parseAction: function(e) {
   			return e.currentTarget.action.split(/(http(s)?[:\/\/][a-z]*[.:][a-z0-9]*)/i).pop();
   		},
+      parseQuery: function(queryStr) {
+        var returnObj = {};
+        // console.log(queryStr)
+        queryStr.split(/;[\s]*/).map(function(pairs) {
+          // console.log(pairs)
+          pairs = pairs.split("=");
+          // console.log(pairs)
+          returnObj[pairs[0]] = pairs[1];
+        });
+
+        return returnObj;
+      },
   		ajax: function(url, method, dType, dataObj) {
   			dataObj._csrf = csrfToken;
-  			// console.log(method)
+        if(url.match(/null$/i)) return false;
   			$.ajax({
   				url: url,
   				type: method,
@@ -400,7 +411,11 @@ var getData = function (data) {
   	}
   };
   // live update
-  var updateInterval = 5; // seconds
+  var cookies = mainFunctions().parseQuery(document.cookie);
+console.log(cookies)
+  var updateInterval = parseInt(cookies.updateInterval) || 5,
+      shouldUpdate = (cookies.shouldUpdate && cookies.shouldUpdate === "true") ? true : false || true; // seconds
+
   function updateAdminPanel(data) {
     var collectionActions = {
       users: function() {
@@ -499,7 +514,7 @@ var getData = function (data) {
         });
       },
       chatOptions: function() {
-        console.log(data);
+        // console.log(data);
         var sections = {
 
           levelColors: {
@@ -542,13 +557,13 @@ var getData = function (data) {
             if(list.length > 0) {
               elem.list.map(function(listItem) {
                 var existingItem = $(list).find("li[data-"+adjective+"='"+listItem+"']");
+                // remove item from currentItems
+                var existanceIndex = currentItems.indexOf(listItem);
+                if(existanceIndex >= 0) {
+                  currentItems.splice(existanceIndex, 1);
+                };
 
                 if(existingItem.length === 0) {
-                  var existanceIndex = currentItems.indexOf(listItem);
-                  if(existanceIndex >= 0) {
-                    currentItems.splice(existanceIndex, 1);
-                  };
-
                   $(list).append(
                     $("<li>")
                     .attr({
@@ -565,12 +580,16 @@ var getData = function (data) {
                   );
                 }
               });
+
+              currentItems = currentItems.filter(function(item) {
+                $(list).find("li[data-"+adjective+"='"+item+"']").remove();
+              });
             }
           } else {
             var colorList = optionSection.find("[data-section='"+currentSection+"']");
             var itemsKeys = Object.keys(elem.list);
-            itemsKey.map(function(key) {
-              $(colorList).find("input").map(function(ind, elem));
+            itemsKeys.map(function(key) {
+              $(colorList).find("input[name='"+key+"Color']").val(elem.list[key]);
             });
           }
         });
@@ -578,13 +597,42 @@ var getData = function (data) {
     };
     collectionActions[data.collection]();
   };
-  var queryForData = function() {
-    var collections = [{ name : "users", use : true }, { name : "rooms", use : true }, { name : "chatOptions", use : true }];
-    collections.map(function(coll) {
-      if(coll.use) {
-        mainFunctions(updateAdminPanel).ajax("/get-db-data/" + coll.name, "POST", "json", { "collection" : coll.name });
-      }
-    });
+  var startQueryCount = function() {
+    var queryForData = function() {
+      console.log("I'm updating!");
+      var collections = [{ name : "users", use : true }, { name : "rooms", use : true }, { name : "chatOptions", use : true }];
+      collections.map(function(coll) {
+        if(coll.use) {
+          mainFunctions(updateAdminPanel).ajax("/get-db-data/" + coll.name, "POST", "json", { "collection" : coll.name });
+        }
+      });
+
+    };
+    // call this function if shouldUpdate is true
+    if(shouldUpdate) queryForData();
+    setTimeout(function() {
+      startQueryCount();
+    }, updateInterval * 1000);
   };
-  var dataQuery = setInterval(queryForData, updateInterval * 1000);
+  startQueryCount();
+
+  // catch all forms with interfere in their class
+  $("form.interfere").on("submit", function(e) {
+    e.preventDefault();
+
+    // if form has class panel-opt
+    if($(e.target).hasClass("panel-opt")) {
+      var formData = $(e.target).serializeArray(),
+      formDataObj = {};
+      formData.map(function(elem) {
+        formDataObj[elem.name] = elem.value;
+      });
+      updateInterval = parseInt(formDataObj.interval);
+      shouldUpdate = (formDataObj.update === "true") ? true : false;
+
+      document.cookie = "updateInterval=" + updateInterval;
+      document.cookie = "shouldUpdate=" + shouldUpdate;
+      alert2("Changes Saved");
+    };
+  });
 }());

@@ -935,11 +935,11 @@ label[for="admin-tab"] {
 				display: block;
 			}
 		}
-		&#addrs:checked {
+		&#panel-opt:checked {
 			& + label {
 				top: -.6*$em;
 			}
-			& ~ .panel.addrs {
+			& ~ .panel.panel-opt {
 				display: block;
 			}
 		}
