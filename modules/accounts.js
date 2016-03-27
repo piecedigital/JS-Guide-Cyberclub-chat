@@ -67,12 +67,19 @@ module.exports = function(db, admin) {
     return slash + ( (userQDoc.accessLevel === "master" || userQDoc.accessLevel === "moderator" || userQDoc.accessLevel === "admin") ? "admin-chat" : "chat" );
   };
   var authCheck = function(userQDoc, adminLevel) {
-    if( (userQDoc.accessLevel === "admin" ||
-      userQDoc.accessLevel === "master") &&
-      (adminLevel !== "master") ) {
-      return false;
-    };
-    return true;
+    switch (adminLevel) {
+      case "master":
+        return userQDoc.accessLevel !== "master" ? true : false;
+        break;
+      case "admin":
+        return (userQDoc.accessLevel !== "master" || userQDoc.accessLevel !== "admin") ? true : false;
+        break;
+      case "moderator":
+        return (userQDoc.accessLevel !== "master" && userQDoc.accessLevel !== "admin" && userQDoc.accessLevel !== "moderator") ? true : false;
+        break;
+      default:
+        return false;
+    }
   };
 
   return {

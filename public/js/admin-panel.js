@@ -114,9 +114,10 @@ var getData = function (data) {
 	// users panel
 	panels.users.find("#item-list").on("click", ".item .name", function() {
 		// variables
-		var thisFirstName = $(this).attr("data-first-name");
-			thisLastName = $(this).attr("data-last-name");
-			thisEmail = $(this).attr("data-email");
+		var thisFirstName = $(this).attr("data-first-name"),
+			thisLastName = $(this).attr("data-last-name"),
+			thisEmail = $(this).attr("data-email"),
+      thisBan = $(this).attr("data-is-banned") === "true" ? true : false;
 		thisUsername = $(this).attr("data-usernamefull");
 		thisAccessLevel = $(this).attr("data-accesslevel");
 		// DOM manipulation
@@ -134,7 +135,8 @@ var getData = function (data) {
 		panels.users.find(".add-window").find("input[name='newusername']").val(thisUsername);
 		panels.users.find(".add-window").find("select[name='accesslevel']")[0]
 			.selectedIndex = (selectKey[thisAccessLevel]);
-		panels.users.find(".add-window").find("input[name='ban']").attr("checked", false);
+		panels.users.find(".add-window").find("select.edit-user").val("1");
+    panels.users.find(".add-window").find("select.edit-user")[0].selectedIndex = thisBan ? 1 : 0;
 	});
 
 	// form submission handling
@@ -412,7 +414,7 @@ var getData = function (data) {
   };
   // live update
   var cookies = mainFunctions().parseQuery(document.cookie);
-console.log(cookies)
+// console.log(cookies)
   var updateInterval = parseInt(cookies.updateInterval) || 5,
       shouldUpdate = (cookies.shouldUpdate && cookies.shouldUpdate === "true") ? true : false || true; // seconds
 
@@ -599,7 +601,7 @@ console.log(cookies)
   };
   var startQueryCount = function() {
     var queryForData = function() {
-      console.log("I'm updating!");
+      // console.log("I'm updating!");
       var collections = [{ name : "users", use : true }, { name : "rooms", use : true }, { name : "chatOptions", use : true }];
       collections.map(function(coll) {
         if(coll.use) {

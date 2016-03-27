@@ -290,7 +290,7 @@
 						<ul id="item-list">
 							{{#each users}}
 								<li class="item parent">
-									<span class="name" data-first-name="{{firstName}}" data-last-name="{{lastName}}" data-usernamefull="{{usernameFull}}" data-accesslevel="{{accessLevel}}" data-email="{{email}}">{{usernameFull}}</span>
+									<span class="name" data-first-name="{{firstName}}" data-last-name="{{lastName}}" data-usernamefull="{{usernameFull}}" data-accesslevel="{{accessLevel}}" data-email="{{email}}" data-is-banned="{{#if banned}}true{{else}}false{{/if}}">{{usernameFull}}</span>
 									<span class="number {{#if banned}}banned-true{{/if}}"></span>
 								</li>
 							{{/each}}
@@ -336,12 +336,12 @@
 									<label>Ban/Delete user: </label>
 								</div><!--
 								--><div class="col-2 right-justify">
-									<label>Account Ban: </label>
-									<input type="radio" name="ban" value="ACC"><br>
-									<label>IP Ban: </label>
-									<input type="radio" name="ban" value="IP"><br>
-									<label>Delete: </label>
-									<input type="radio" name="ban" value="DEL">
+									<select class="edit-user" name="ban">
+										<option selected value="">No Ban</option>
+										<option value="ACC">Ban Account</option>
+										<option value="IP">IP Ban</option>
+										<option value="DEL">Delete Account</option>
+									</select>
 								</div>
 								<div class="separator"><div class="dark-blue-bg"></div></div>
 								<div class="center-justify x-pad-3_9">

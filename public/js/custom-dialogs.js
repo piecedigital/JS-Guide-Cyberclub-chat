@@ -6,9 +6,31 @@ var getData = function (data) {
   });
   return obj;
 };
-
+var removeBackdrop = function() {
+  $(".back-drop").remove();
+};
+var backdrop = function() {
+  removeBackdrop();
+  $("body").append(
+    $("<div>")
+    .addClass("back-drop")
+    .css({
+      "z-index": 10,
+      "position": "fixed",
+      "top": 0,
+      "left": 0,
+      "width": "100%",
+      "height": "100%",
+      "background-color": "black",
+      "opacity": .5
+    })
+  );
+};
 var alert2 = function(msg, cb) {
 	$(".alert-box").remove();
+  // append back drop
+  backdrop();
+  // append dialog box
   $("body").append(
     $("<div>").addClass("alert-box").html(
     	$("<div>").addClass("alert").attr({
@@ -28,21 +50,26 @@ var alert2 = function(msg, cb) {
 	    )
     )
   );
+  $(".alert-box input[value='true']").parent().find("button").focus();
 
   $(document).on("click", ".alert form button", function(e) {
     e.preventDefault();
-    
+
     var data = getData( $(this).parent() );
     $(".alert").parent().remove();
     if(typeof cb === "function") {
     	cb(data);
     	cb = null;
     }
+    removeBackdrop();
     return null;
   });
 }
 var confirm2 = function(msg, cb) {
 	$(".alert-box").remove();
+  // append back drop
+  backdrop();
+  // append dialog box
   $("body").append(
     $("<div>").addClass("alert-box").html(
     	$("<div>").addClass("alert").attr({
@@ -70,21 +97,26 @@ var confirm2 = function(msg, cb) {
 	    )
     )
   );
+  $(".alert-box input[value='true']").parent().find("button").focus();
 
   $(document).on("click", ".alert form button", function(e) {
     e.preventDefault();
-    
+
     var data = getData( $(this).parent() );
     $(".alert").parent().remove();
     if(typeof cb === "function") {
     	cb(data);
     	cb = null;
     }
+    removeBackdrop();
     return false;
   });
 }
 var prompt2 = function(msg, defaultVal, cb) {
 	$(".alert-box").remove();
+  // append back drop
+  backdrop();
+  // append dialog box
   $("body").append(
     $("<div>").addClass("alert-box").html(
     	$("<div>").addClass("alert").attr({
@@ -119,9 +151,11 @@ var prompt2 = function(msg, defaultVal, cb) {
 	    )
     )
   );
+  $(".alert-box .top-form input[type='text']").focus();
 
   $(document).on("keydown", ".alert .top-form", function(e) {
   	if(e.keyCode === 13) {
+      $(this).parent().find("form.true").submit();
 	  	return false;
   	}
   });
@@ -135,6 +169,7 @@ var prompt2 = function(msg, defaultVal, cb) {
     	cb(data);
     	cb = null;
     }
+    removeBackdrop();
   });
   $(document).on("click", ".alert form form.true button", function(e) {
     e.preventDefault();
@@ -145,6 +180,7 @@ var prompt2 = function(msg, defaultVal, cb) {
     	cb(data);
     	cb = null;
     }
+    removeBackdrop();
   });
 
   $(document).on("submit", ".alert form form.false", function(e) {
@@ -155,6 +191,7 @@ var prompt2 = function(msg, defaultVal, cb) {
     	cb(data);
     	cb = null;
     }
+    removeBackdrop();
   });
   $(document).on("submit", ".alert form form.false button", function(e) {
     e.preventDefault();
@@ -164,5 +201,6 @@ var prompt2 = function(msg, defaultVal, cb) {
     	cb(data);
     	cb = null;
     }
+    removeBackdrop();
   });
 }

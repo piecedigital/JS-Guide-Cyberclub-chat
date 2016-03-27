@@ -1038,7 +1038,7 @@ sass.render({
 					if(dbQErr) throw dbQErr;
 
 					if(dbQData) {
-						console.log(dbQData)
+						// console.log(dbQData)
 						res.status(200).send({
 							"msg": "success",
 							"data": dbQData,
