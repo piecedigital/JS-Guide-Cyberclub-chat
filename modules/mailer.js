@@ -5,12 +5,21 @@ var app = require('express')(),
 		smtpTransport  = require("nodemailer-smtp-transport"),
 		fs  = require("fs"),
 		config = require("./config");
-var sender = "piecedigitalstudios@gmail.com",
+var sender = config.senderEmail,
 	recipient = process.env.emailRecipient || sender;
 
+// var transporter = nodemailer.createTransport(smtpTransport({
+// 	host: "smtp.mandrillapp.com",
+// 	port: config.mailPort,
+// 	auth: {
+// 		user: sender,
+// 		pass: config.mailPass
+// 	}
+// }));
 var transporter = nodemailer.createTransport(smtpTransport({
-	host: "smtp.mandrillapp.com",
-	port: config.mailPort,
+	host: "smtp.gmail.com",
+	port: 465,
+	secure: true,
 	auth: {
 		user: sender,
 		pass: config.mailPass

@@ -21,5 +21,6 @@ module.exports = {
   mailPort: process.env.mailPort ||
             priVars.mailerVariables.port,
   mailPass: process.env.mailPass ||
-            priVars.mailerVariables.pass
+            priVars.mailerVariables.pass,
+  senderEmail: priVars.mailerVariables.senderEmail
 }
