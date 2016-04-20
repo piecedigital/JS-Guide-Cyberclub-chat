@@ -18,7 +18,7 @@ var sender = config.senderEmail,
 // }));
 var transporter = nodemailer.createTransport(smtpTransport({
 	host: "smtp.gmail.com",
-	port: 465,
+	port: config.mailPort,
 	secure: true,
 	auth: {
 		user: sender,
