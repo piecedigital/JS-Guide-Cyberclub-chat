@@ -641,6 +641,13 @@ sass.render({
 			.get('/app-check', function(req, res) {
 				res.status(200).send({"message" : "Server is online"});
 			})
+			.get('/chat-status', function(req, res) {
+				if(serverOn) {
+					res.status(200).send({"message" : "Server is online"});
+				} else {
+					res.status(400).send({"message" : "Server is offline"});
+				};
+			})
 			.get("/downloads", function(req, res, next) {
 				res.render("downloads", { "title" : "Download the desktop client for your system of choice" });
 			})

@@ -956,36 +956,54 @@ label[for="admin-tab"] {
 		background-color: $midBlue;
 		border-radius: .5*$em;
 		box-shadow: 0 0 0 .2*$em $darkBlue;
-		& #item-list {
-			vertical-align: top;
-			margin: 0;
-			padding: 0*$em;
+		& .side-panel {
 			display: inline-block;
-			width: 25%;
+			position: relative;
 			box-shadow: .1*$em 0 0 0 $darkBlue;
+			width: 25%;
 			height: 100%;
-			overflow: auto;
-			& .item {
-				list-style: none;
-				text-align: left;
-				color: $lightBlue;
-				&:first-child span.name {
-					border-radius: .5*$em 0 0 0;
-				}
-				& > .name {
-					cursor: pointer;
-					display: inline-block;
+			vertical-align: top;
+			padding: 1.8*$em 0 0;
+			& .filter {
+				display: block;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 1.8*$em;
+				& input {
 					width: 100%;
-					background-color: $dimBlue;
-					padding: .1*$em .2*$em;
+					height: 100%;
 				}
-				&:not(:last-child) {
-					margin: 0 0 .1*$em;
-				}
-				& .number {
-					position: absolute;
-					top: 0;
-					right: 1*$em;
+			}
+			& #item-list {
+				display: block;
+				margin: 0;
+				padding: 0*$em;
+				height: 100%;
+				overflow: auto;
+				& .item {
+					list-style: none;
+					text-align: left;
+					color: $lightBlue;
+					&:first-child span.name {
+						border-radius: .5*$em 0 0 0;
+					}
+					& > .name {
+						cursor: pointer;
+						display: inline-block;
+						width: 100%;
+						background-color: $dimBlue;
+						padding: .1*$em .2*$em;
+					}
+					&:not(:last-child) {
+						margin: 0 0 .1*$em;
+					}
+					& .number {
+						position: absolute;
+						top: 0;
+						right: 1*$em;
+					}
 				}
 			}
 		}

@@ -60,13 +60,15 @@
 				</div>
 				<div class="panel chat-opt">
 					<div id="mgmt">
-						<ul id="item-list">
-							{{#each chatOptions}}
+						<div class="side-panel">
+							<ul id="item-list">
+								{{#each chatOptions}}
 								<li class="item">
 									<span class="name" data-ind="{{@key}}">{{name}}</span>
 								</li>
-							{{/each}}
-						</ul><!--
+								{{/each}}
+							</ul>
+						</div><!--
 						--><div id="item-options">
 							<h1 class="title font-size-1_5">Chat Options</h1>
 							{{#each chatOptions}}
@@ -237,15 +239,17 @@
 				</div>
 				<div class="panel rooms">
 					<div id="mgmt">
-						<ul id="item-list">
-							{{#each rooms}}
+						<div class="side-panel">
+							<ul id="item-list">
+								{{#each rooms}}
 								<li class="item parent">
 									<span class="name" data-roomname="{{roomname}}" data-topic="{{topic}}" data-mods="{{minMods}}">{{roomname}}</span>
 									<!-- <span class="number">{{users.length}}</span> -->
 								</li>
-							{{/each}}
-							<li class="item add"><span class="name">Add A Room +</span></li>
-						</ul><!--
+								{{/each}}
+								<li class="item add"><span class="name">Add A Room +</span></li>
+							</ul>
+						</div><!--
 						--><div id="item-options">
 							<h1 class="title font-size-1_5">Add Room</h1>
 							<form class="add-window" action="/update-rooms">
@@ -287,14 +291,19 @@
 				</div>
 				<div class="panel users">
 					<div id="mgmt">
-						<ul id="item-list">
-							{{#each users}}
+						<div class="side-panel">
+							<div class="filter">
+								<input class="search-users" type="text" name="search-users" value="">
+							</div>
+							<ul id="item-list">
+								{{#each users}}
 								<li class="item parent">
 									<span class="name" data-first-name="{{firstName}}" data-last-name="{{lastName}}" data-usernamefull="{{usernameFull}}" data-accesslevel="{{accessLevel}}" data-email="{{email}}" data-is-banned="{{#if banned}}true{{else}}false{{/if}}">{{usernameFull}}</span>
 									<span class="number {{#if banned}}banned-true{{/if}}"></span>
 								</li>
-							{{/each}}
-						</ul><!--
+								{{/each}}
+							</ul>
+						</div><!--
 						--><div id="item-options" class="invisible">
 							<h1 class="title font-size-1_5">User Options</h1>
 							<h1 class="title font-size-1_2">Adjust User Info</h1>

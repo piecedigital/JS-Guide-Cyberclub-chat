@@ -11,7 +11,18 @@ $.ajax({
     myLevel = data.accessLevel;
   },
   error: function(err1, err2, err3) {
-    confirm2("There was an error retreiving your user data", ".alert form", function(data) {
+    confirm2("There was an error retreiving your user data", function(data) {
+      console.log(data);
+    });
+    console.log(err1.status);
+    console.log(err2);
+    console.log(err3);
+  }
+});
+$.ajax({
+  "url": "/chat-status",
+  error: function(err1, err2, err3) {
+    alert2("Don't forget to open the chat server for regular users!", function(data) {
       console.log(data);
     });
     console.log(err1.status);
@@ -138,6 +149,19 @@ var getData = function (data) {
 		panels.users.find(".add-window").find("select.edit-user").val("1");
     panels.users.find(".add-window").find("select.edit-user")[0].selectedIndex = thisBan ? 1 : 0;
 	});
+
+  // filtering user list
+  $(".filter .search-users").on("keyup keydown", function(e) {
+    var filter = $(this).val();
+    var itemList = $(this).parent().parent().find("#item-list");
+    console.log(itemList);
+    if(filter) {
+      $(itemList).find(".item").hide();
+      $(itemList).find(".item span[data-usernamefull*=" + filter + "]").parent().show();
+    } else {
+      $(itemList).find(".item").show();
+    };
+  });
 
 	// form submission handling
 	$(document).on("submit", ".add-window", function(e) {
